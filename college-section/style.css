@@ -1,0 +1,16 @@
+.wp-block-ncs4-custom-blocks-college-section {
+  background-color: #d1f4ff;
+  color: #0d0d0d;
+}
+.wp-block-ncs4-custom-blocks-college-section .ncs4-custom-blocks-college-section-title-area {
+  background-color: #0099cc;
+  color: #fafafa;
+}
+.wp-block-ncs4-custom-blocks-college-section .ncs4-custom-blocks-college-section-title-area::before {
+  content: "Intercollegiate: ";
+}
+.wp-block-ncs4-custom-blocks-college-section .ncs4-custom-blocks-college-section-title-area__hidden::before {
+  content: "Intercollegiate";
+}
+
+/*# sourceMappingURL=style.css.map */

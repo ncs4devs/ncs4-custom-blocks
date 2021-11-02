@@ -1,0 +1,24 @@
+@use "sass:color";
+@import "../../sass/colors";
+@import "../../sass/vars";
+
+$header-bg: $color_college-title;
+$section-bg: color.scale($header-bg, $lightness: $color_section-bg-light-percent);
+
+.wp-block-ncs4-custom-blocks-college-section {
+  background-color: $section-bg;
+  color: $color_text-black;
+
+  .ncs4-custom-blocks-college-section-title-area {
+      background-color: $header-bg;
+      color: $color_text-white;
+
+      &::before {
+        content: $header-text__college + ": ";
+      }
+
+      &__hidden::before {
+        content: $header-text__college;
+      }
+  }
+}
