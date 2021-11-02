@@ -28,7 +28,6 @@ include 'hs-section/index.php';
 include 'marathon-section/index.php';
 include 'accordion-section/index.php';
 include 'mixed-section/index.php';
-include 'bp-filter/index.php';
 include 'margin/index.php';
 include 'fluid-layout/index.php';
 include 'fluid-layout__item/index.php';
