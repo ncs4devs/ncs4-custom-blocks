@@ -19,9 +19,6 @@ call npm run build
 cd ../mixed-section
 call npm run build
 
-cd ../bp-filter
-call npm run build
-
 cd ../margin
 call npm run build
 
@@ -35,6 +32,9 @@ cd ../bp-content
 call npm run build
 
 cd ../bp-subtopic
+call npm run build
+
+cd ../bp-topic
 call npm run build
 
 cd ../
