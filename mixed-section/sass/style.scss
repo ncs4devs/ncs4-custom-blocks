@@ -1,0 +1,78 @@
+@use "sass:color";
+@use "sass:math";
+@import "../../sass/colors";
+@import "../../sass/vars";
+
+$section-bg: $color_mixed-bg;
+$beam-angle: $mixed-section_beam-angle;
+$beam-height: $mixed-section_beam-height;
+
+.wp-block-ncs4-custom-blocks-mixed-section {
+  background-color: $section-bg;
+  color: $color_text-black;
+
+  .ncs4-custom-blocks-mixed-section-beam-area {
+    width: 100%;
+
+    &__inner {
+      display: flex;
+      flex-wrap: wrap;
+      overflow: hidden;
+    }
+  }
+
+  .ncs4-custom-blocks-mixed-section-beam {
+    display: flex;
+    height: $beam-height;
+    padding: 0 calc(0.8rem + var(--beam-triangle-width));
+    margin: 0;
+    color: $color_text-white;
+    flex: 1 0 0;
+    height: auto;
+    overflow-wrap: anywhere;
+    min-width: 19ch;
+
+    &::before {
+      margin-top: auto;
+      margin-bottom: auto;
+      font-weight: bold;
+    }
+
+    &::after {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 100%;
+      width: var(--beam-triangle-width);
+      background-color: inherit;
+      z-index: 1;
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+      shape-outside: polygon(0 0, 100% 0, 0 100%);
+    }
+
+    @mixin beam($name, $text, $color) {
+      &__#{$name} {
+        position: relative;
+        background-color: $color;
+
+        &::before {
+          content: $text;
+        }
+
+        &::after {
+          content: "";
+        }
+      }
+    }
+
+    @include beam("pro", $header-text__pro, $color_pro-title);
+    @include beam("college", $header-text__college, $color_college-title);
+    @include beam("hs", $header-text__hs, $color_hs-title);
+    @include beam("marathon", $header-text__marathon, $color_marathon-title);
+  }
+
+  .ncs4-custom-blocks-mixed-section-title-area.ncs4-custom-blocks-mixed-section-title-area {
+    margin: 0;
+    color: $color_text-black;
+  }
+}
