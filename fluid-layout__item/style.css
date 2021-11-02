@@ -1,0 +1,10 @@
+.ncs4-fluid-layout-item {
+  --minw: max(0px, min(var(--min-width), 1000px, 60vw, 100%));
+  --maxw: max(var(--max-width), var(--minw));
+  min-width: var(--minw);
+}
+.ncs4-fluid-layout-item.has-max-width {
+  max-width: var(--maxw);
+}
+
+/*# sourceMappingURL=style.css.map */
