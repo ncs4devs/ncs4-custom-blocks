@@ -1,0 +1,16 @@
+.wp-block-ncs4-custom-blocks-marathon-section {
+  background-color: #e8ddf4;
+  color: #0d0d0d;
+}
+.wp-block-ncs4-custom-blocks-marathon-section .ncs4-custom-blocks-marathon-section-title-area {
+  background-color: rebeccapurple;
+  color: #fafafa;
+}
+.wp-block-ncs4-custom-blocks-marathon-section .ncs4-custom-blocks-marathon-section-title-area::before {
+  content: "Marathon & Endurance Events: ";
+}
+.wp-block-ncs4-custom-blocks-marathon-section .ncs4-custom-blocks-marathon-section-title-area__hidden::before {
+  content: "Marathon & Endurance Events";
+}
+
+/*# sourceMappingURL=style.css.map */
