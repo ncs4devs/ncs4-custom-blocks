@@ -10,3 +10,4 @@ call sass ./fluid-layout/sass:./fluid-layout/
 call sass ./fluid-layout__item/sass:./fluid-layout__item/
 call sass ./bp-content/sass:./bp-content/
 call sass ./bp-subtopic/sass:./bp-subtopic/
+call sass ./bp-topic/sass:./bp-topic/
