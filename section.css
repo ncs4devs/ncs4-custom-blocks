@@ -1,0 +1,34 @@
+div.ncs4-section {
+  --beam-triangle-width: calc(3.2rem / 2.7474774195);
+  display: block;
+  margin: 0.8rem 0;
+  /* Subsections */
+}
+div.ncs4-section .ncs4-custom-blocks-section-title-area {
+  padding: 0.3rem calc(0.8rem + var(--beam-triangle-width));
+  padding-bottom: 0.3rem;
+  margin: 0;
+  margin-bottom: 0.8rem;
+}
+div.ncs4-section .ncs4-custom-blocks-section-title-area::before {
+  font-weight: bold;
+}
+div.ncs4-section p {
+  padding: 0.3rem 1.6rem;
+}
+div.ncs4-section ul {
+  padding: 0;
+  margin: 0;
+  margin-left: 1.6rem;
+}
+div.ncs4-section ul li {
+  margin-left: 2.4rem;
+}
+div.ncs4-section .ncs4-section {
+  margin-left: 1.6rem;
+}
+div.ncs4-section .ncs4-section ul {
+  margin: 0;
+}
+
+/*# sourceMappingURL=section.css.map */

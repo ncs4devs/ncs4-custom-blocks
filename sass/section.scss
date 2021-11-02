@@ -1,0 +1,42 @@
+@use "sass:math";
+@import "vars";
+@import "mixins";
+
+$section-padding-top: 0;
+$section-padding-bottom: 0.8rem;
+$section-padding-horizontal: 1.6rem;
+
+div.ncs4-section {
+  --beam-triangle-width: calc(#{$mixed-section_beam-height} / #{math.tan($mixed-section_beam-angle)});
+
+  display: block;
+  margin: 0.8rem 0;
+
+  .ncs4-custom-blocks-section-title-area {
+    padding: 0.3rem calc(0.8rem + var(--beam-triangle-width));
+    padding-bottom: 0.3rem;
+    margin: 0;
+    margin-bottom: 0.8rem;
+    // max-width: unset;
+
+    &::before {
+      font-weight: bold;
+    }
+  }
+
+  p {
+    padding: 0.3rem $section-padding-horizontal;
+    // max-width: $max-paragraph-characters;
+  }
+
+  @include list-indent($section-tab, $max-list-characters);
+
+  /* Subsections */
+  .ncs4-section {
+    margin-left: $section-tab;
+
+    ul {
+      margin: 0;
+    }
+  }
+}
