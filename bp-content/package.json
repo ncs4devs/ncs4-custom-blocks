@@ -1,0 +1,15 @@
+{
+  "name": "bp-content",
+  "version": "1.0.0",
+  "description": "A block used for holding content of Best Practices topic pages",
+  "main": "build/index.js",
+  "scripts": {
+    "start": "wp-scripts start",
+    "build": "wp-scripts build"
+  },
+  "author": "Andrew Hood, NCS4",
+  "license": "GPL-2.0+",
+  "devDependencies": {
+    "@wordpress/scripts": "17.1.0"
+  }
+}

@@ -1,0 +1,366 @@
+@use 'sass:map';
+@use 'sass:math';
+@import '../../sass/ncs4-pro-colors';
+@import '../../sass/colors';
+@import '../../sass/vars';
+@import '../../sass/mixins';
+
+$subtopic-sidebar-width-max_px: 300px;
+$subtopic-sidebar-width-max_pc: 10%;
+$subtopic-sidebar-width-min: 100px;
+$subtopic-sidebar-border-width: 3px;
+
+$filter-tab-width: 16px;
+$filter-border-width: 1px;
+$filter-border-color: $color_secondary-1c;
+
+$print-select-box-size: math.div(32, 21) * 1.0em;
+
+@mixin colorBars() {
+  $filterColors: (
+    "pro": $color_pro-title,
+    "college": $color_college-title,
+    "hs": $color_hs-title,
+    "marathon": $color_marathon-title,
+  );
+
+  @each $slug, $color in $filterColors {
+    @at-root #ncs4-bp-filter__#{$slug} .color-bar {
+      background-color: $color;
+    }
+  }
+}
+
+@mixin hideContent() {
+  $industries: "pro", "college", "hs", "marathon";
+
+  @each $slug in $industries {
+    &.hide-bp-content__#{$slug} .ncs4-bp-content__#{$slug} {
+      display: none;
+    }
+
+    &.show-bp-content__#{$slug} .wp-block-ncs4-custom-blocks-mixed-section {
+      &.ncs4-bp-content__#{$slug} {
+        display: block;
+      }
+    }
+  }
+}
+
+@mixin panels($numPanels) {
+  @for $i from 0 through $numPanels - 1 {
+    &.show-panel-#{$i} #ncs4-bp-content__subtopics-widget-panel__#{$i} {
+      display: grid;
+    }
+  }
+}
+
+.ncs4-bp-content {
+  display: grid;
+  grid-template-columns: minmax(
+    $subtopic-sidebar-width-min,
+    max(#{$subtopic-sidebar-width-max_px}, #{$subtopic-sidebar-width-max_pc})
+  ) minmax(66vw, 1fr);
+
+  @at-root #ncs4-bp-content__subtopics-sidebar {
+    background-color: $color_primary-1;
+    border-width: $subtopic-sidebar-border-width;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-right-color: $color_primary-2c;
+    border-bottom-color: $color_white;
+    box-sizing: content-box;
+
+    div, button {
+      font-size: clamp(1rem, 3vw, 2.1rem);
+    }
+
+    input[type="checkbox"] {
+      font-size: inherit;
+    }
+
+    @at-root .ncs4-bp-content__subtopics-panel {
+      display: none;
+    }
+    @include panels(2);
+
+    &.show-panel-1 .ncs4-bp-content__subtopic-print-select {
+      display: block;
+    }
+
+    @at-root &__widget-area {
+
+      #ncs4-bp-content__subtopics-widget-panel {
+
+        &__0 { /* Default panel */
+          grid-template-columns: repeat(auto-fit, 32px);
+          gap: 1.6rem;
+          justify-content: center;
+          color: $color_link-2;
+          padding: 1.6rem 0.8rem;
+        }
+
+        &__1 { /* Print panel */
+          grid-template-rows: auto;
+          grid-template-columns: 100%;
+          row-gap: 1.6rem;
+          color: $color_link-2;
+          padding: 1.6rem 0.8rem;
+
+          button {
+            background-color: $color_secondary-3;
+            color: $color_white-dark;
+            padding: 0.5em 1.0em;
+            border-radius: 8px;
+            width: max-content;
+            margin: 0 auto;
+            font-size: clamp(1rem, 3vw, 1.6rem);
+          }
+
+          p {
+            color: $color_white-dark;
+            grid-column: 2 span;
+            padding-left: 0.8rem;
+          }
+
+          @at-root #ncs4-bp-content__subtopics-print-panel-buttons {
+            display: flex;
+            gap: 1.6rem;
+            flex-wrap: wrap;
+          }
+
+          @at-root .bp-subtopic__print-filter {
+            display: flex;
+            column-gap: 0.5em;
+            align-items: center;
+            padding-left: 0.8rem;
+
+            label {
+              flex: 1 1;
+              color: $color_white-dark;
+              overflow-wrap: anywhere;
+
+              &:hover{
+                cursor: pointer;
+              }
+            }
+
+            input {
+              width: $print-select-box-size;
+              height: $print-select-box-size;
+              flex: 0 0 $print-select-box-size;
+            }
+          }
+        }
+      }
+
+      button, a {
+        padding: 0;
+        background-color: transparent;
+        border: none;
+        color: inherit;
+        text-decoration: none;
+
+        span {
+          font-size: 32px;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+
+    hr {
+      margin: 0 0.8rem 0 1.6rem;
+    }
+
+    @at-root &__subtopics-area {
+
+      display: grid;
+      grid-auto-rows: 1fr;
+      padding: 1.6rem 1px 1.6rem 0.8rem;
+
+      .ncs4-bp-content__subtopic-btn {
+        $padding: 0.8rem;
+
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) $print-select-box-size;
+        column-gap: 0.5em;
+        color: $color_white-dark;
+        background-color: transparent;
+        text-align: left;
+        padding: $padding;
+        border: none;
+        border-radius: 8px 0 0 8px;
+        align-items: center;
+
+        &.shown {
+          background-color: $color_primary-0;
+          text-decoration: underline;
+        }
+
+        @at-root .ncs4-bp-content__subtopic-print-select {
+          display: none;
+          width: $print-select-box-size;
+          height: $print-select-box-size;
+          padding-left: 0.8rem;
+          font-size: inherit;
+        }
+      }
+
+    }
+  }
+
+  @at-root #ncs4-bp-content__content-area__wrapper {
+    position: relative;
+    min-height: 100vh;
+    padding: 1.6rem;
+    padding-right: 2.4rem;
+
+    @at-root .ncs4-bp-content__content-area {
+      max-width: max-content;
+      margin: 0 auto;
+
+      p {
+        padding: 0;
+        margin-left: 0;
+      }
+
+      @include list-indent($section-tab, 80);
+
+      @include hideContent();
+    }
+  }
+
+  @at-root #ncs4-bp-content__filter-sidebar__wrapper {
+    --header-height: 100px; /* Default value */
+
+    position: fixed;
+    display: flex;
+    z-index: 100;
+    top: var(--header-height);
+    right: 0;
+    height: calc(100vh - var(--header-height));
+    flex-direction: column;
+    justify-content: center;
+    font-size: 1.6rem;
+
+    @at-root #ncs4-bp-content__filter-sidebar {
+      display: grid;
+      grid-auto-rows: 1fr;
+      row-gap: 0.8em;
+      position: relative;
+      transform: translateX(100%);
+      max-width: 150px;
+      word-wrap: break-word;
+      padding: 0.8rem;
+      padding-left: 0;
+      line-height: 1.2em;
+      background-color: $color_white-dark;
+      border-color: $filter-border-color;
+      border-width: $filter-border-width;
+      border-style: solid none solid solid;
+      max-height: 62.5vh; /* 200px / 320px */
+
+      @media (prefers-reduced-motion: no-preference) {
+        transition: transform 0.3s ease-in-out;
+      }
+
+      &.toggled {
+        transform: translateX(0);
+
+        #filter-sidebar__expand svg {
+          transform: rotate(0deg);
+        }
+      }
+
+      @at-root #ncs4-bp-filter__back-to-top {
+        display: grid;
+        grid-template-columns: auto 16px;
+        padding-left: 6px;
+        margin: auto 0;
+        color: inherit;
+
+        &:focus, &:hover {
+          color: $color_link-1;
+
+          svg {
+            stroke: $color_link-1;
+          }
+        }
+
+        svg {
+          stroke: $color_secondary-1c;
+          width: 16px;
+
+          circle {
+            stroke-width: 3px;
+          }
+
+          path {
+            stroke-width: 2px;
+          }
+        }
+      }
+
+      .ncs4-bp-filter {
+        display: grid;
+        grid-template-columns: 6px auto 16px;
+        column-gap: 2px;
+
+        @include colorBars();
+
+        .bp-lbl {
+          margin: auto 0;
+
+          &:focus, &:hover {
+            text-decoration: underline;
+            cursor: pointer;
+          }
+        }
+      }
+
+      #filter-sidebar__expand {
+        position: absolute;
+        left: -$filter-tab-width - $filter-border-width;
+        bottom: -$filter-border-width;
+        background-color: inherit;
+        width: $filter-tab-width;
+        padding: 2px;
+        border-color: $filter-border-color;
+        border-width: $filter-border-width;
+        border-style: solid none solid solid;
+        border-radius: 0;
+
+        svg {
+          stroke: $color_secondary-1c;
+          stroke-width: 3px;
+          vertical-align: bottom;
+          transform: rotate(180deg);
+
+          path {
+            stroke: inherit;
+          }
+
+          @media (prefers-reduced-motion: no-preference) {
+            transition: transform 0.3s ease-in-out;
+          }
+        }
+
+        &:focus svg {
+          stroke: $color_link-1;
+        }
+
+        &:hover {
+          @extend :focus;
+          cursor: pointer;
+        }
+
+        &:focus-visible {
+          @extend :focus;
+          outline: 4px solid $color_primary-2c;
+          outline-offset: 5px;
+        }
+      }
+    }
+  }
+}
