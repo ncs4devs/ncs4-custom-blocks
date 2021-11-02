@@ -1,0 +1,85 @@
+.wp-block-ncs4-custom-blocks-mixed-section {
+  background-color: #e6e6e6;
+  color: #0d0d0d;
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam-area {
+  width: 100%;
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam-area__inner {
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam {
+  display: flex;
+  height: 3.2rem;
+  padding: 0 calc(0.8rem + var(--beam-triangle-width));
+  margin: 0;
+  color: #fafafa;
+  flex: 1 0 0;
+  height: auto;
+  overflow-wrap: anywhere;
+  min-width: 19ch;
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam::before {
+  margin-top: auto;
+  margin-bottom: auto;
+  font-weight: bold;
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: var(--beam-triangle-width);
+  background-color: inherit;
+  z-index: 1;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  shape-outside: polygon(0 0, 100% 0, 0 100%);
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam__pro {
+  position: relative;
+  background-color: #ff3333;
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam__pro::before {
+  content: "Professional & Entertainment";
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam__pro::after {
+  content: "";
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam__college {
+  position: relative;
+  background-color: #0099cc;
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam__college::before {
+  content: "Intercollegiate";
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam__college::after {
+  content: "";
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam__hs {
+  position: relative;
+  background-color: #009933;
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam__hs::before {
+  content: "Interscholastic";
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam__hs::after {
+  content: "";
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam__marathon {
+  position: relative;
+  background-color: rebeccapurple;
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam__marathon::before {
+  content: "Marathon & Endurance Events";
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-beam__marathon::after {
+  content: "";
+}
+.wp-block-ncs4-custom-blocks-mixed-section .ncs4-custom-blocks-mixed-section-title-area.ncs4-custom-blocks-mixed-section-title-area {
+  margin: 0;
+  color: #0d0d0d;
+}
+
+/*# sourceMappingURL=style.css.map */
