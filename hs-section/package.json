@@ -1,0 +1,15 @@
+{
+  "name": "hs-section",
+  "version": "1.0.0",
+  "description": "An Interscholastic Section block",
+  "main": "build/index.js",
+  "scripts": {
+    "start": "wp-scripts start",
+    "build": "wp-scripts build"
+  },
+  "author": "Andrew Hood, NCS4",
+  "license": "GPL-2.0+",
+  "devDependencies": {
+    "@wordpress/scripts": "17.1.0"
+  }
+}

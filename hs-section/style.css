@@ -1,0 +1,16 @@
+.wp-block-ncs4-custom-blocks-hs-section {
+  background-color: #c9ffdb;
+  color: #0d0d0d;
+}
+.wp-block-ncs4-custom-blocks-hs-section .ncs4-custom-blocks-hs-section-title-area {
+  background-color: #009933;
+  color: #fafafa;
+}
+.wp-block-ncs4-custom-blocks-hs-section .ncs4-custom-blocks-hs-section-title-area::before {
+  content: "Interscholastic: ";
+}
+.wp-block-ncs4-custom-blocks-hs-section .ncs4-custom-blocks-hs-section-title-area__hidden::before {
+  content: "Interscholastic";
+}
+
+/*# sourceMappingURL=style.css.map */
