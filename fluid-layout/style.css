@@ -1,0 +1,52 @@
+.ncs4-fluid-layout {
+  --minw: max(0px, min(var(--min-width), 800px, 60vw, 100%));
+  --maxw: max(var(--max-width), var(--minw));
+}
+.ncs4-fluid-layout__equal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--minw), 1fr));
+}
+.ncs4-fluid-layout__equal-grid.has-max-width {
+  grid-template-columns: repeat(auto-fit, minmax(var(--minw), var(--maxw)));
+}
+.ncs4-fluid-layout__equal-columns {
+  display: flex;
+  flex-wrap: wrap;
+}
+.ncs4-fluid-layout__equal-columns > .ncs4-fluid-layout-item {
+  flex: 1 0 0;
+}
+.ncs4-fluid-layout__equal-columns.has-max-width > .ncs4-fluid-layout-item {
+  flex: 0 1 var(--maxw);
+}
+.ncs4-fluid-layout__auto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--minw), auto));
+}
+.ncs4-fluid-layout__auto-grid .ncs4-fluid-layout-item {
+  display: flex;
+  justify-content: inherit;
+}
+.ncs4-fluid-layout__fixed-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--columns, 3), var(--column-size, 1fr));
+}
+.ncs4-fluid-layout__fixed-columns {
+  display: flex;
+  flex-wrap: wrap;
+}
+.ncs4-fluid-layout__fixed-columns > .ncs4-fluid-layout-item {
+  /* - 4rem is the max gap size */
+  flex: 0 1 calc(100% / var(--columns, 3) - 4rem);
+  min-width: var(--minw);
+}
+.ncs4-fluid-layout__floated-image {
+  display: block;
+}
+.ncs4-fluid-layout__floated-image > .ncs4-fluid-layout-item::before {
+  content: "";
+  display: table;
+  width: var(--minw);
+}
+
+/*# sourceMappingURL=style.css.map */

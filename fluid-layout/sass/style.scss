@@ -1,0 +1,10 @@
+@import "layout";
+
+.ncs4-fluid-layout {
+  $max-mins: 800px, 60vw, 100%;
+
+  --minw: max(0px, min(var(--min-width), #{$max-mins}));
+  --maxw: max(var(--max-width), var(--minw));
+
+  @include layouts();
+}

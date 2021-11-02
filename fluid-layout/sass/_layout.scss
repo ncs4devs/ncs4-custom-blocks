@@ -1,0 +1,136 @@
+@function eCond($edit: false) {
+  @if $edit {
+    @return '> .block-editor-inner-blocks > .block-editor-block-list__layout';
+  }
+  @return "&";
+}
+
+@mixin layouts($edit: false) {
+  @include equalGrid($edit);
+  @include equalColumn($edit);
+  @include autoGrid($edit);
+  @include fixedGrid($edit);
+  @include fixedColumn($edit);
+  @include floatedImage($edit);
+}
+
+@mixin equalColumn($edit: false) {
+  &__equal-columns {
+
+    #{eCond($edit)} {
+      display: flex;
+      flex-wrap: wrap;
+
+      > .ncs4-fluid-layout-item {
+        flex: 1 0 0;
+      }
+    }
+
+    &.has-max-width {
+
+      #{eCond($edit)} > .ncs4-fluid-layout-item {
+        flex: 0 1 var(--maxw);
+      }
+    }
+  }
+}
+
+@mixin equalGrid($edit: false) {
+  &__equal-grid {
+    @if $edit {
+      display: block;
+    }
+
+    #{eCond($edit)} {
+      display: grid;
+      grid-template-columns: repeat(
+        auto-fit, minmax(
+          var(--minw),
+          1fr
+        )
+      );
+    }
+
+    &.has-max-width {
+
+      #{eCond($edit)} {
+        grid-template-columns: repeat(
+          auto-fit, minmax(
+            var(--minw),
+            var(--maxw)
+          )
+        );
+      }
+    }
+
+  }
+}
+
+@mixin autoGrid($edit: false) {
+  &__auto-grid {
+    @if $edit {
+      display: block;
+    }
+
+    #{eCond($edit)} {
+      display: grid;
+      grid-template-columns: repeat(
+        auto-fit, minmax(
+          var(--minw),
+          auto
+        )
+      );
+
+      .ncs4-fluid-layout-item {
+        display: flex;
+        justify-content: inherit;
+      }
+    }
+  }
+}
+
+@mixin fixedGrid($edit: false) {
+  &__fixed-grid {
+    @if $edit {
+      display: block;
+    }
+
+    #{eCond($edit)} {
+      display: grid;
+      grid-template-columns: repeat(var(--columns, 3), var(--column-size, 1fr));
+    }
+  }
+}
+
+@mixin fixedColumn($edit: false) {
+  &__fixed-columns {
+
+    #{eCond($edit)} {
+      display: flex;
+      flex-wrap: wrap;
+
+      > .ncs4-fluid-layout-item {
+        /* - 4rem is the max gap size */
+        flex: 0 1 calc(100% / var(--columns, 3) - 4rem);
+        min-width: var(--minw);
+      }
+    }
+  }
+}
+
+@mixin floatedImage($edit: false) {
+  &__floated-image {
+    #{eCond($edit)} {
+      display: block;
+
+      > .ncs4-fluid-layout-item {
+
+        &::before {
+          content: "";
+          display: table;
+          width: var(--minw);
+        }
+      }
+    }
+  }
+}
