@@ -1,0 +1,70 @@
+/* These colors are kept for compatibility reasons and should not be used */
+/* These colors may be used */
+/* Colors are swapped around to be in order from darkest to lightest */
+/* Navy */
+/* Dark Blue */
+/* Yellow */
+/* Grey */
+/* Links */
+.ncs4-bp-subtopic-title {
+  text-transform: none;
+}
+
+.ncs4-bp-subtopic {
+  display: none;
+}
+.ncs4-bp-subtopic.shown {
+  display: block;
+}
+
+.bp-subtopic-anchor {
+  position: absolute;
+  top: 0;
+  transform: translateY(calc(-1 * var(--header-height, 100px)));
+  visibility: hidden;
+}
+
+.share-section {
+  position: relative;
+  margin-left: 0.3em;
+}
+.share-section::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 35%;
+  width: 30%;
+  height: 15%;
+  background-color: #171717;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.share-section::after {
+  content: "Copied!";
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 4px);
+  border-radius: 8px;
+  padding: 0.3em 0.75em;
+  background-color: #171717;
+  color: #e6e6e6;
+  font-size: clamp(10px, 2.2857142857vw, 1.6rem);
+}
+.share-section::before, .share-section::after {
+  opacity: 0;
+  transition: opacity 0.1s cubic-bezier(0.95, 0.05, 0.8, 0.04);
+}
+.share-section.copied::before, .share-section.copied::after {
+  opacity: 100%;
+}
+.share-section:hover, .share-section:visited:hover, .share-section:focus-visible {
+  text-decoration: none;
+}
+.share-section .dashicons {
+  color: #E4B005;
+  font-size: 1em;
+  vertical-align: middle;
+  width: auto;
+  height: auto;
+}
+
+/*# sourceMappingURL=style.css.map */

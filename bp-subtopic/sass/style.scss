@@ -1,0 +1,78 @@
+@use 'sass:math';
+@import '../../sass/ncs4-pro-colors';
+
+.ncs4-bp-subtopic-title {
+  text-transform: none;
+}
+
+.ncs4-bp-subtopic {
+  display: none;
+
+  &.shown {
+    display: block;
+  }
+}
+
+.bp-subtopic-anchor {
+  position: absolute;
+  top: 0;
+  transform: translateY(calc(-1 * var(--header-height, 100px)));
+  visibility: hidden;
+}
+
+.share-section {
+  $tri-width: 30%;
+  $tri-height: math.div($tri-width, 2);
+  $tri-offset-top: -4px;
+  $share-bubble-bg: $color_secondary-1c;
+  $share-bubble-color: $color_white-dark;
+
+  position: relative;
+  margin-left: 0.3em;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: $tri-offset-top;
+    left: 50% - math.div($tri-width, 2);
+    width: $tri-width;
+    height: $tri-height;
+    background-color: $share-bubble-bg;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+  }
+
+  &::after {
+    content: "Copied!";
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + #{-$tri-offset-top});
+    border-radius: 8px;
+    padding: 0.3em 0.75em;
+    background-color: $share-bubble-bg;
+    color: $share-bubble-color;
+    font-size: clamp(10px, #{math.div(100vw * 16, 700)}, 1.6rem);
+  }
+
+  &::before, &::after {
+    opacity: 0;
+    transition: opacity 0.1s cubic-bezier(.95,.05,.8,.04);
+  }
+
+  &.copied {
+    &::before, &::after {
+      opacity: 100%;
+    }
+  }
+
+  &:hover, &:visited:hover, &:focus-visible {
+    text-decoration: none;
+  }
+
+  .dashicons {
+    color: $color_primary-1c;
+    font-size: 1em;
+    vertical-align: middle;
+    width: auto;
+    height: auto;
+  }
+}

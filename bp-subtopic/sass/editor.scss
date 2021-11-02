@@ -1,0 +1,35 @@
+@import "layout";
+
+.ncs4-fluid-layout {
+  $secondary-outline-color: #555;
+
+  &.is-selected {
+    box-shadow: 0 0 0 var(--wp-admin-border-width-focus) var(--wp-admin-theme-color);
+
+    > .block-editor-inner-blocks
+    > .block-editor-block-list__layout
+    > *:not(.block-list-appender) {
+      box-shadow: 0 0 0 var(--wp-admin-border-width-focus) $secondary-outline-color;
+    }
+  }
+
+  &.has-child-selected {
+    box-shadow: 0 0 0 var(--wp-admin-border-width-focus) $secondary-outline-color;
+  }
+
+  @include layouts(true);
+
+  /* Pass down certain inline props to InnerBlocks container */
+  @mixin inheritInlineProps() {
+    gap: inherit;
+    justify-content: inherit;
+  }
+
+  > .block-editor-inner-blocks {
+    @include inheritInlineProps();
+
+    > .block-editor-block-list__layout {
+      @include inheritInlineProps();
+    }
+  }
+}

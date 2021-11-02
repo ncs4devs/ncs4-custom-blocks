@@ -1,0 +1,58 @@
+.ncs4-fluid-layout {
+  /* Pass down certain inline props to InnerBlocks container */
+}
+.ncs4-fluid-layout.is-selected {
+  box-shadow: 0 0 0 var(--wp-admin-border-width-focus) var(--wp-admin-theme-color);
+}
+.ncs4-fluid-layout.is-selected > .block-editor-inner-blocks > .block-editor-block-list__layout > *:not(.block-list-appender) {
+  box-shadow: 0 0 0 var(--wp-admin-border-width-focus) #555;
+}
+.ncs4-fluid-layout.has-child-selected {
+  box-shadow: 0 0 0 var(--wp-admin-border-width-focus) #555;
+}
+.ncs4-fluid-layout__equal-grid {
+  display: block;
+}
+.ncs4-fluid-layout__equal-grid > .block-editor-inner-blocks > .block-editor-block-list__layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--minw), 1fr));
+}
+.ncs4-fluid-layout__equal-grid.has-max-width > .block-editor-inner-blocks > .block-editor-block-list__layout {
+  grid-template-columns: repeat(auto-fit, minmax(var(--minw), var(--maxw)));
+}
+.ncs4-fluid-layout__equal-columns > .block-editor-inner-blocks > .block-editor-block-list__layout {
+  display: flex;
+  flex-wrap: wrap;
+}
+.ncs4-fluid-layout__equal-columns > .block-editor-inner-blocks > .block-editor-block-list__layout > .ncs4-fluid-layout-item {
+  flex: 1 0 0;
+}
+.ncs4-fluid-layout__equal-columns.has-max-width > .block-editor-inner-blocks > .block-editor-block-list__layout > .ncs4-fluid-layout-item {
+  flex: 0 1 var(--maxw);
+}
+.ncs4-fluid-layout__fixed-grid {
+  display: block;
+}
+.ncs4-fluid-layout__fixed-grid > .block-editor-inner-blocks > .block-editor-block-list__layout {
+  display: grid;
+  grid-template-columns: repeat(var(--columns, 3), var(--column-size, 1fr));
+}
+.ncs4-fluid-layout__fixed-columns > .block-editor-inner-blocks > .block-editor-block-list__layout {
+  display: flex;
+  flex-wrap: wrap;
+}
+.ncs4-fluid-layout__fixed-columns > .block-editor-inner-blocks > .block-editor-block-list__layout > .ncs4-fluid-layout-item {
+  /* - 4rem is the max gap size */
+  flex: 0 1 calc(100% / var(--columns, 3) - 4rem);
+  min-width: var(--minw);
+}
+.ncs4-fluid-layout > .block-editor-inner-blocks {
+  gap: inherit;
+  justify-content: inherit;
+}
+.ncs4-fluid-layout > .block-editor-inner-blocks > .block-editor-block-list__layout {
+  gap: inherit;
+  justify-content: inherit;
+}
+
+/*# sourceMappingURL=editor.css.map */
