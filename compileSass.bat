@@ -1,0 +1,12 @@
+call sass ./sass:./
+call sass ./pro-section/sass:./pro-section/
+call sass ./college-section/sass:./college-section/
+call sass ./hs-section/sass:./hs-section/
+call sass ./marathon-section/sass:./marathon-section/
+call sass ./accordion-section/sass:./accordion-section/
+call sass ./mixed-section/sass:./mixed-section/
+call sass ./margin/sass:./margin/
+call sass ./fluid-layout/sass:./fluid-layout/
+call sass ./fluid-layout__item/sass:./fluid-layout__item/
+call sass ./bp-content/sass:./bp-content/
+call sass ./bp-subtopic/sass:./bp-subtopic/
