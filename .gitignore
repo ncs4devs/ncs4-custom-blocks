@@ -1,3 +1,4 @@
 node_modules
 ncs4-custom-blocks/*
 ncs4-custom-blocks.zip
+.gitignores
