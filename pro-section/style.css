@@ -1,0 +1,16 @@
+.wp-block-ncs4-custom-blocks-pro-section {
+  background-color: #ffe0e0;
+  color: #0d0d0d;
+}
+.wp-block-ncs4-custom-blocks-pro-section .ncs4-custom-blocks-pro-section-title-area {
+  background-color: #ff3333;
+  color: #fafafa;
+}
+.wp-block-ncs4-custom-blocks-pro-section .ncs4-custom-blocks-pro-section-title-area::before {
+  content: "Professional & Entertainment: ";
+}
+.wp-block-ncs4-custom-blocks-pro-section .ncs4-custom-blocks-pro-section-title-area__hidden::before {
+  content: "Professional & Entertainment";
+}
+
+/*# sourceMappingURL=style.css.map */
