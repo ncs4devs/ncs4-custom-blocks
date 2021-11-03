@@ -77,8 +77,11 @@ $text-shrink-breakpoint: 700; /* Start shrinking text when vw = 700px */
   }
 
   * {
-    height: 100%;
     font-size: inherit;
+  }
+
+  > * {
+    height: 100%;
   }
 
   &__text-area {
@@ -107,6 +110,7 @@ $text-shrink-breakpoint: 700; /* Start shrinking text when vw = 700px */
 
     p {
       display: inline-flex;
+      height: 100%;
       width: $bx;
       font-size: 1.5em;
       margin-right: $bx - $tx;

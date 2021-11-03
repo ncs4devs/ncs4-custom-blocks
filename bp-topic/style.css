@@ -41,8 +41,10 @@
   }
 }
 .ncs4-bp-topic * {
-  height: 100%;
   font-size: inherit;
+}
+.ncs4-bp-topic > * {
+  height: 100%;
 }
 .ncs4-bp-topic__text-area {
   /* Note: convert 1em = 24px to 1em = 16px */
@@ -61,6 +63,7 @@
 }
 .ncs4-bp-topic__text-area p {
   display: inline-flex;
+  height: 100%;
   width: 8.2426468228em;
   font-size: 1.5em;
   margin-right: -2.4264682284em;
