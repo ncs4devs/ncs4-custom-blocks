@@ -1,0 +1,100 @@
+/* These colors are kept for compatibility reasons and should not be used */
+/* These colors may be used */
+/* Colors are swapped around to be in order from darkest to lightest */
+/* Navy */
+/* Dark Blue */
+/* Yellow */
+/* Grey */
+/* Links */
+/* Start shrinking text when vw = 700px */
+.ncs4-bp-topic {
+  display: block;
+  position: relative;
+  flex: 0 0 auto;
+  height: 12em;
+  color: #e6e6e6;
+  font-size: clamp( 10px, 2.2857142857vw, 16px );
+  transition: transform 0.1s ease-in-out;
+  border-radius: 1em 0 0 1em;
+  /* Used for box shadow */
+  /* Reset link stylings */
+}
+.ncs4-bp-topic:visited, .ncs4-bp-topic:hover, .ncs4-bp-topic:visited:hover, .ncs4-bp-topic:focus, .ncs4-bp-topic:visited:focus, .ncs4-bp-topic:focus-visible {
+  color: #e6e6e6;
+  text-decoration: none;
+  outline: none;
+}
+.ncs4-bp-topic:hover, .ncs4-bp-topic:focus, .ncs4-bp-topic:focus-visible {
+  box-shadow: 10px 10px 5px #FFCE2F;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ncs4-bp-topic:hover, .ncs4-bp-topic:focus, .ncs4-bp-topic:focus-visible {
+    transform: scale(1.1);
+  }
+}
+.ncs4-bp-topic:hover .ncs4-bp-topic__overlay, .ncs4-bp-topic:focus .ncs4-bp-topic__overlay, .ncs4-bp-topic:focus-visible .ncs4-bp-topic__overlay {
+  display: block;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ncs4-bp-topic:active {
+    transform: scale(0.9);
+  }
+}
+.ncs4-bp-topic * {
+  font-size: inherit;
+}
+.ncs4-bp-topic > * {
+  height: 100%;
+}
+.ncs4-bp-topic__text-area {
+  /* Note: convert 1em = 24px to 1em = 16px */
+  width: 17.3676428112em;
+  background-color: #18243E;
+  shape-outside: polygon(0 0, 100% 0, 13em 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 13em 100%, 0 100%);
+  float: left;
+  margin-right: -4.4676428112em;
+  padding: 1em 0.3639702343em 1em 1em;
+  /* pr: pt / tan */
+  border-width: 3px;
+  border-style: solid none solid solid;
+  border-radius: 1em 0 0 1em;
+  border-color: #00499A;
+}
+.ncs4-bp-topic__text-area p {
+  display: inline-flex;
+  height: 100%;
+  width: 8.2426468228em;
+  font-size: 1.5em;
+  margin-right: -2.4264682284em;
+  align-items: center;
+  overflow-wrap: anywhere;
+}
+.ncs4-bp-topic__icon-area {
+  display: flex;
+  align-items: center;
+  background-color: #555555;
+  width: 13em;
+  shape-outside: polygon(4.3676428112em 0, 100% 0, 100% 100%, 0 100%);
+  clip-path: polygon(4.3676428112em 0, 100% 0, 100% 100%, 0 100%);
+  border-width: 3px;
+  border-style: solid solid solid none;
+  border-color: #00499A;
+}
+.ncs4-bp-topic__icon-area img, .ncs4-bp-topic__icon-area svg {
+  width: auto;
+  height: 80%;
+  display: block;
+  margin-left: auto;
+}
+.ncs4-bp-topic__overlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/*# sourceMappingURL=style.css.map */

@@ -1,0 +1,150 @@
+@use 'sass:math';
+@import '../../sass/ncs4-pro-colors';
+@import '../../sass/colors';
+@import '../../sass/vars';
+
+$text-shrink-breakpoint: 700; /* Start shrinking text when vw = 700px */
+
+@function clampFont($min, $max) {
+  $max-unitless: math.div($max, $max * 0 + 1);
+  @return clamp(
+    #{$min},
+    #{math.div(100vw * $max-unitless, $text-shrink-breakpoint)},
+    #{$max}
+  )
+};
+
+.ncs4-bp-topic {
+  $text-area-width: 13em;
+  $text-area-height: 12em;
+  $image-height: 80%;
+  $border-color: $color_secondary-2;
+  $border-width: 3px;
+  $border-radius: 1em;
+
+  $tan: math.tan($bp-topic-angle);
+  $divider-width: math.div($text-area-height, $tan);
+  $iw: 1 * $text-area-width;
+  $icon-area-width: $iw - $divider-width;
+
+  $shape-left: polygon(
+    0 0,
+    100% 0,
+    $text-area-width 100%,
+    0 100%
+  );
+
+  $shape-right: polygon(
+    $divider-width 0,
+    100% 0,
+    100% 100%,
+    0 100%
+  );
+
+  display: block;
+  position: relative;
+  flex: 0 0 auto;
+  height: $text-area-height;
+  color: $color_white-dark;
+  font-size: clampFont(10px, 16px);
+  transition: transform 0.1s ease-in-out;
+  border-radius: $border-radius 0 0 $border-radius; /* Used for box shadow */
+
+  /* Reset link stylings */
+  &:visited, &:hover, &:visited:hover,
+  &:focus, &:visited:focus, &:focus-visible {
+    color: $color_white-dark;
+    text-decoration: none;
+    outline: none;
+  }
+
+  &:hover, &:focus, &:focus-visible {
+    box-shadow: 10px 10px 5px $color_primary-2c;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transform: scale(1.1);
+    }
+
+    & .ncs4-bp-topic__overlay {
+      display: block;
+    }
+  }
+
+  &:active {
+    @media (prefers-reduced-motion: no-preference) {
+      transform: scale(0.9);
+    }
+  }
+
+  * {
+    font-size: inherit;
+  }
+
+  > * {
+    height: 100%;
+  }
+
+  &__text-area {
+    $padding-right: 0;
+    /* Note: convert 1em = 24px to 1em = 16px */
+    $tx: math.div( /* 100% - pt/tan(phi) */
+      2 * (($text-area-width + $divider-width - 1em) * $tan - 1em),
+      3 * $tan
+    ) - $padding-right;
+    $bx: math.div( /* width - pb/tan(phi) - pl */
+      2 * (($text-area-width - 1em) * $tan + 1em),
+      3 * $tan
+    ) - $padding-right;
+
+    width: $text-area-width + $divider-width;
+    background-color: $color_primary-1;
+    shape-outside: $shape-left;
+    clip-path: $shape-left;
+    float: left;
+    margin-right: -#{$divider-width + 0.1em};
+    padding: 1em #{math.div(1em, $tan)} 1em 1em; /* pr: pt / tan */
+    border-width: $border-width;
+    border-style: solid none solid solid;
+    border-radius: $border-radius 0 0 $border-radius;
+    border-color: $border-color;
+
+    p {
+      display: inline-flex;
+      height: 100%;
+      width: $bx;
+      font-size: 1.5em;
+      margin-right: $bx - $tx;
+      align-items: center;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  &__icon-area {
+    display: flex;
+    align-items: center;
+    background-color: $color_secondary-2c;
+    width: $iw;
+    shape-outside: $shape-right;
+    clip-path: $shape-right;
+    border-width: $border-width;
+    border-style: solid solid solid none;
+    border-color: $border-color;
+
+    img, svg {
+      width: auto;
+      height: $image-height;
+      display: block;
+      margin-left: auto;
+    }
+  }
+
+  &__overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: hsla(0deg, 100%, 100%, 0.1);
+  }
+}
