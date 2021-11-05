@@ -9,6 +9,11 @@ import {
   ColorPalette,
 } from '@wordpress/components';
 
+function createColorClass(slug, bg = false) {
+  return "has-" + slug
+    + (bg ? "-background-color" : "-color");
+}
+
 export class PopupEdit extends React.Component {
   constructor(props) {
     super(props);
@@ -20,11 +25,11 @@ export class PopupEdit extends React.Component {
     this.setStateAttributes = this.setStateAttributes.bind(this);
     this.handleSelected = this.handleSelected.bind(this);
     this.onButtonTitleChange = this.onButtonTitleChange.bind(this);
+    this.onBgColorChange = this.onBgColorChange.bind(this);
 
     this.state = {
       showModal: false,
       bgColor: this.attributes.bgColor,
-      customBgColor: this.attributes.customBgColor,
       buttonTitle: this.attributes.buttonTitle,
     }
 
@@ -48,6 +53,10 @@ export class PopupEdit extends React.Component {
     );
   }
 
+  getSettings() {
+    return select("core/block-editor").getSettings();
+  }
+
   handleSelected() {
     let selectedBlock =
        select("core/block-editor")
@@ -66,8 +75,19 @@ export class PopupEdit extends React.Component {
     this.setStateAttributes({ buttonTitle: v });
   }
 
+  onBgColorChange(c) {
+    let color = this.getSettings().colors
+      .filter( (obj) => obj.color === c)[0];
+    this.setStateAttributes({
+      bgColor: {
+        color: c,
+        slug: color ? color.slug : null,
+      },
+    });
+  }
+
   render() {
-    const settings = select("core/block-editor").getSettings();
+    const settings = this.getSettings();
 
     return (
       <div { ...this.blockProps }
@@ -92,11 +112,13 @@ export class PopupEdit extends React.Component {
             title = "Popup area settings"
             initialOpen = { true }
           >
+            <p>Popup background</p>
             <ColorPalette
               colors = { settings.colors }
               disableCustomColors = { settings.disableCustomColors }
-              value = { this.state.customBgColor || this.state.bgColor }
-              onChange = { (v) => { this.setStateAttributes({ bgColor: v }) } }
+              clearable = { false }
+              value = { this.state.bgColor.color }
+              onChange = { this.onBgColorChange }
             />
           </PanelBody>
         </InspectorControls>
@@ -124,7 +146,14 @@ class PopupContent extends React.Component {
             + (attributes.showModal ? " shown" : null)
           }
         >
-          <div className="ncs4-modal-content">
+          <div
+            className = {
+              [
+                "ncs4-modal-content",
+                createColorClass(attributes.bgColor.slug, true),
+              ].join(' ')
+            }
+          >
             <InnerBlocks/>
           </div>
         </div>

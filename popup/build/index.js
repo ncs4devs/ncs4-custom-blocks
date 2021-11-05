@@ -145,6 +145,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+function createColorClass(slug, bg = false) {
+  return "has-" + slug + (bg ? "-background-color" : "-color");
+}
+
 class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
   constructor(props) {
     super(props);
@@ -155,10 +160,10 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     this.setStateAttributes = this.setStateAttributes.bind(this);
     this.handleSelected = this.handleSelected.bind(this);
     this.onButtonTitleChange = this.onButtonTitleChange.bind(this);
+    this.onBgColorChange = this.onBgColorChange.bind(this);
     this.state = {
       showModal: false,
       bgColor: this.attributes.bgColor,
-      customBgColor: this.attributes.customBgColor,
       buttonTitle: this.attributes.buttonTitle
     };
     wp.data.subscribe(this.handleSelected);
@@ -177,6 +182,10 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     this.setState(attrs, () => {
       this.setAttributes(attrs);
     });
+  }
+
+  getSettings() {
+    return Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["select"])("core/block-editor").getSettings();
   }
 
   handleSelected() {
@@ -203,8 +212,18 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     });
   }
 
+  onBgColorChange(c) {
+    let color = this.getSettings().colors.filter(obj => obj.color === c)[0];
+    this.setStateAttributes({
+      bgColor: {
+        color: c,
+        slug: color ? color.slug : null
+      }
+    });
+  }
+
   render() {
-    const settings = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["select"])("core/block-editor").getSettings();
+    const settings = this.getSettings();
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.blockProps, {
       className: this.createClassName(this.blockProps.className)
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(PopupContent, {
@@ -220,15 +239,12 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["PanelBody"], {
       title: "Popup area settings",
       initialOpen: true
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["ColorPalette"], {
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", null, "Popup background"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["ColorPalette"], {
       colors: settings.colors,
       disableCustomColors: settings.disableCustomColors,
-      value: this.state.customBgColor || this.state.bgColor,
-      onChange: v => {
-        this.setStateAttributes({
-          bgColor: v
-        });
-      }
+      clearable: false,
+      value: this.state.bgColor.color,
+      onChange: this.onBgColorChange
     }))));
   }
 
@@ -244,7 +260,7 @@ class PopupContent extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Componen
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", null, attributes.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
       className: "ncs4-modal-overlay" + (attributes.showModal ? " shown" : null)
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: "ncs4-modal-content"
+      className: ["ncs4-modal-content", createColorClass(attributes.bgColor.slug, true)].join(' ')
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["InnerBlocks"], null))));
   }
 
@@ -288,10 +304,11 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
       default: 0.1
     },
     bgColor: {
-      type: 'string'
-    },
-    customBgColor: {
-      type: 'string'
+      type: 'object',
+      default: {
+        color: null,
+        slug: 'white'
+      }
     },
     buttonTitle: {
       type: 'string'

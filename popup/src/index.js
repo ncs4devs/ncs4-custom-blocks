@@ -20,10 +20,11 @@ registerBlockType( 'ncs4-custom-blocks/popup', {
       default: 0.1,
     },
     bgColor: {
-      type: 'string',
-    },
-    customBgColor: {
-      type: 'string',
+      type: 'object',
+      default: {
+        color: null,
+        slug: 'white',
+      },
     },
     buttonTitle: {
       type: 'string',
