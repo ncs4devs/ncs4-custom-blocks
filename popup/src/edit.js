@@ -26,10 +26,12 @@ export class PopupEdit extends React.Component {
     this.handleSelected = this.handleSelected.bind(this);
     this.onButtonTitleChange = this.onButtonTitleChange.bind(this);
     this.onBgColorChange = this.onBgColorChange.bind(this);
+    this.onTextColorChange = this.onTextColorChange.bind(this);
 
     this.state = {
       showModal: false,
       bgColor: this.attributes.bgColor,
+      textColor: this.attributes.textColor,
       buttonTitle: this.attributes.buttonTitle,
     }
 
@@ -75,15 +77,27 @@ export class PopupEdit extends React.Component {
     this.setStateAttributes({ buttonTitle: v });
   }
 
-  onBgColorChange(c) {
-    let color = this.getSettings().colors
-      .filter( (obj) => obj.color === c)[0];
+  getColor(c) {
+    return this.getSettings().colors.filter( (obj) => obj.color === c)[0];
+  }
+
+  setColorStateAttribute(attr, c, color) {
     this.setStateAttributes({
-      bgColor: {
+      [attr]: {
         color: c,
         slug: color ? color.slug : null,
       },
     });
+  }
+
+  onBgColorChange(c) {
+    let color = this.getColor(c);
+    this.setColorStateAttribute("bgColor", c, color);
+  }
+
+  onTextColorChange(c) {
+    let color = this.getColor(c);
+    this.setColorStateAttribute("textColor", c, color);
   }
 
   render() {
@@ -120,6 +134,14 @@ export class PopupEdit extends React.Component {
               value = { this.state.bgColor.color }
               onChange = { this.onBgColorChange }
             />
+            <p>Popup text</p>
+            <ColorPalette
+              colors = { settings.colors }
+              disableCustomColors = { settings.disableCustomColors }
+              clearable = { false }
+              value = { this.state.textColor.color }
+              onChange = { this.onTextColorChange }
+            />
           </PanelBody>
         </InspectorControls>
       </div>
@@ -143,7 +165,7 @@ class PopupContent extends React.Component {
         <div
           className = {
             "ncs4-modal-overlay"
-            + (attributes.showModal ? " shown" : null)
+            + (attributes.showModal ? " shown" : "")
           }
         >
           <div
@@ -151,6 +173,7 @@ class PopupContent extends React.Component {
               [
                 "ncs4-modal-content",
                 createColorClass(attributes.bgColor.slug, true),
+                createColorClass(attributes.textColor.slug, false),
               ].join(' ')
             }
           >

@@ -161,9 +161,11 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     this.handleSelected = this.handleSelected.bind(this);
     this.onButtonTitleChange = this.onButtonTitleChange.bind(this);
     this.onBgColorChange = this.onBgColorChange.bind(this);
+    this.onTextColorChange = this.onTextColorChange.bind(this);
     this.state = {
       showModal: false,
       bgColor: this.attributes.bgColor,
+      textColor: this.attributes.textColor,
       buttonTitle: this.attributes.buttonTitle
     };
     wp.data.subscribe(this.handleSelected);
@@ -212,14 +214,27 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     });
   }
 
-  onBgColorChange(c) {
-    let color = this.getSettings().colors.filter(obj => obj.color === c)[0];
+  getColor(c) {
+    return this.getSettings().colors.filter(obj => obj.color === c)[0];
+  }
+
+  setColorStateAttribute(attr, c, color) {
     this.setStateAttributes({
-      bgColor: {
+      [attr]: {
         color: c,
         slug: color ? color.slug : null
       }
     });
+  }
+
+  onBgColorChange(c) {
+    let color = this.getColor(c);
+    this.setColorStateAttribute("bgColor", c, color);
+  }
+
+  onTextColorChange(c) {
+    let color = this.getColor(c);
+    this.setColorStateAttribute("textColor", c, color);
   }
 
   render() {
@@ -245,6 +260,12 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
       clearable: false,
       value: this.state.bgColor.color,
       onChange: this.onBgColorChange
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", null, "Popup text"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["ColorPalette"], {
+      colors: settings.colors,
+      disableCustomColors: settings.disableCustomColors,
+      clearable: false,
+      value: this.state.textColor.color,
+      onChange: this.onTextColorChange
     }))));
   }
 
@@ -258,9 +279,9 @@ class PopupContent extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Componen
   render() {
     const attributes = this.props.attributes;
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", null, attributes.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: "ncs4-modal-overlay" + (attributes.showModal ? " shown" : null)
+      className: "ncs4-modal-overlay" + (attributes.showModal ? " shown" : "")
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: ["ncs4-modal-content", createColorClass(attributes.bgColor.slug, true)].join(' ')
+      className: ["ncs4-modal-content", createColorClass(attributes.bgColor.slug, true), createColorClass(attributes.textColor.slug, false)].join(' ')
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["InnerBlocks"], null))));
   }
 
@@ -283,15 +304,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _edit_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./edit.js */ "./src/edit.js");
-/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _edit_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./edit.js */ "./src/edit.js");
+/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
 
 
 
 
 
+
+
+let colors = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["select"])("core/block-editor").getSettings().colors;
+
+const getColorBySlug = slug => {
+  let color = colors.filter(obj => obj.slug === slug)[0];
+  return color ? color.color : null;
+};
 
 Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs4-custom-blocks/popup', {
   apiVersion: 2,
@@ -306,19 +337,26 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
     bgColor: {
       type: 'object',
       default: {
-        color: null,
+        color: getColorBySlug('white'),
         slug: 'white'
+      }
+    },
+    textColor: {
+      type: 'object',
+      default: {
+        color: getColorBySlug('secondary-1c'),
+        slug: 'secondary-1c'
       }
     },
     buttonTitle: {
       type: 'string'
     }
   },
-  edit: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_edit_js__WEBPACK_IMPORTED_MODULE_4__["PopupEdit"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
-    blockProps: Object(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["useBlockProps"])()
+  edit: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_edit_js__WEBPACK_IMPORTED_MODULE_5__["PopupEdit"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+    blockProps: Object(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["useBlockProps"])()
   })),
-  save: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_save_js__WEBPACK_IMPORTED_MODULE_5__["PopupSave"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
-    blockProps: _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["useBlockProps"].save()
+  save: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_save_js__WEBPACK_IMPORTED_MODULE_6__["PopupSave"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+    blockProps: _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["useBlockProps"].save()
   }))
 });
 
