@@ -36,6 +36,7 @@
   }
 
   &-content {
+    pointer-events: all;
 
     &__wrapper {
       display: flex;

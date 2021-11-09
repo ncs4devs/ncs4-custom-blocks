@@ -29,6 +29,9 @@
 .ncs4-popup-overlay:hover {
   cursor: default;
 }
+.ncs4-popup-content {
+  pointer-events: all;
+}
 .ncs4-popup-content__wrapper {
   display: flex;
   position: absolute;
