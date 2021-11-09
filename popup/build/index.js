@@ -332,6 +332,8 @@ class PopupContent extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Componen
       className: "ncs4-popup-button"
     }, attributes.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
       className: "ncs4-popup-overlay" + (attributes.showModal ? " shown" : "")
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+      className: "ncs4-popup-content__wrapper"
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
       className: ["ncs4-popup-content", createColorClass(attributes.bgColor.slug, true), createColorClass(attributes.textColor.slug, false)].join(' ')
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["InnerBlocks"], null))));
@@ -384,7 +386,7 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
   attributes: {
     overlayOpacity: {
       type: 'number',
-      default: 0.1
+      default: 0.7
     },
     bgColor: {
       type: 'object',
@@ -439,6 +441,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+function createColorClass(slug, bg = false) {
+  return "has-" + slug + (bg ? "-background-color" : "-color");
+}
+
 class PopupSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
   constructor(props) {
     super(props);
@@ -452,16 +459,30 @@ class PopupSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
 
   render() {
     const attributes = this.props.attributes;
+    let id = "popup-" + attributes.id;
+    let css = `
+      #${id}:target {
+        display: block;
+      }
+    `;
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.blockProps, {
       className: this.createClassName(this.blockProps.className)
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
       className: "ncs4-popup-button",
-      href: "#" + attributes.id
+      href: "#" + id
     }, attributes.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: "ncs4-popup-overlay"
+      id: id,
+      className: "ncs4-popup__wrapper"
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: "ncs4-popup-content"
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"].Content, null))));
+      className: "ncs4-popup-overlay",
+      style: {
+        opacity: attributes.overlayOpacity
+      }
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+      className: "ncs4-popup-content__wrapper"
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+      className: ["ncs4-popup-content", createColorClass(attributes.bgColor.slug, true), createColorClass(attributes.textColor.slug, false)].join(' ')
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"].Content, null))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("style", null, css)));
   }
 
 }

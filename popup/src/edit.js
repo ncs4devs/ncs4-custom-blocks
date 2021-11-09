@@ -220,7 +220,8 @@ class PopupContent extends React.Component {
             "ncs4-popup-overlay"
             + (attributes.showModal ? " shown" : "")
           }
-        >
+        />
+        <div className = "ncs4-popup-content__wrapper">
           <div
             className = {
               [

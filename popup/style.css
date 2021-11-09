@@ -9,9 +9,29 @@
 .ncs4-popup a:focus-within .ncs4-popup-overlay {
   display: block;
 }
-.ncs4-popup-overlay {
+.ncs4-popup__wrapper {
   display: none;
-  text-decoration: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999999;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+.ncs4-popup-overlay {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: #000;
+}
+.ncs4-popup-content__wrapper {
+  display: flex;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /*# sourceMappingURL=style.css.map */

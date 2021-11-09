@@ -1,6 +1,11 @@
 import React from 'react';
 import { InnerBlocks } from '@wordpress/block-editor';
 
+function createColorClass(slug, bg = false) {
+  return "has-" + slug
+    + (bg ? "-background-color" : "-color");
+}
+
 export class PopupSave extends React.Component {
   constructor(props) {
     super(props);
@@ -17,20 +22,46 @@ export class PopupSave extends React.Component {
 
   render() {
     const attributes = this.props.attributes;
+    let id = "popup-" + attributes.id;
+    let css = `
+      #${id}:target {
+        display: block;
+      }
+    `
     return (
       <div { ...this.blockProps }
         className = { this.createClassName(this.blockProps.className) }
       >
         <a
           className = "ncs4-popup-button"
-          href = { "#" + attributes.id }
+          href = { "#" + id }
         >
           { attributes.buttonTitle }
         </a>
-        <div className="ncs4-popup-overlay">
-          <div className="ncs4-popup-content">
-            <InnerBlocks.Content/>
+        <div
+          id = { id }
+          className = "ncs4-popup__wrapper"
+        >
+          <div
+            className = "ncs4-popup-overlay"
+            style = {{
+              opacity: attributes.overlayOpacity,
+            }}
+          />
+          <div className = "ncs4-popup-content__wrapper">
+            <div
+              className = {
+                [
+                  "ncs4-popup-content",
+                  createColorClass(attributes.bgColor.slug, true),
+                  createColorClass(attributes.textColor.slug, false),
+                ].join(' ')
+              }
+            >
+              <InnerBlocks.Content/>
+            </div>
           </div>
+          <style>{ css }</style>
         </div>
       </div>
     );

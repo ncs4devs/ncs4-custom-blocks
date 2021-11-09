@@ -12,9 +12,33 @@
     }
   }
 
-  &-overlay {
+  &__wrapper {
     display: none;
-    text-decoration: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999999;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+  }
 
+  &-overlay {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #000;
+  }
+
+  &-content {
+
+    &__wrapper {
+      display: flex;
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      flex-direction: column;
+      justify-content: center;
+    }
   }
 }
