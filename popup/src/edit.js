@@ -33,10 +33,17 @@ export class PopupEdit extends React.Component {
       bgColor: this.attributes.bgColor,
       textColor: this.attributes.textColor,
       buttonTitle: this.attributes.buttonTitle,
+      id: this.attributes.id,
     }
 
     wp.data.subscribe(this.handleSelected);
-    this.setAttributes({ id: this.clientId });
+  }
+
+  componentDidMount() {
+    let ids = this.getUsedIds();
+    if (!this.state.id || !this.isIdAvailable(this.state.id, ids)) {
+      this.setStateAttributes({ id: String(this.getNextId(ids)) });
+    }
   }
 
   createClassName(classes) {
@@ -73,12 +80,58 @@ export class PopupEdit extends React.Component {
     }
   }
 
-  onButtonTitleChange(v) {
-    this.setStateAttributes({ buttonTitle: v });
-  }
-
   getColor(c) {
     return this.getSettings().colors.filter( (obj) => obj.color === c)[0];
+  }
+
+  // Functions for settings and getting popup ids to be used in anchors
+
+  getUsedIds() {
+    let nl =
+      document.querySelectorAll('[data-type="ncs4-custom-blocks/popup"]');
+    let ids = [];
+    nl.forEach( (n) => {
+      let id =
+        select("core/block-editor").getBlock( n.getAttribute('data-block') )
+        .attributes.id
+      ids.push(
+        /^\d+$/.test(id)
+          ? parseInt(id)
+          : id
+      );
+    })
+    return ids.sort();
+  }
+
+  // short-circuiting array.contains() taking advantage of the sorted list
+  isIdAvailable(id, ids) {
+    for (let i of ids) {
+      if (i === id) {
+        return false;
+      }
+      if (id < i) { // number < str, str < number is always false.
+        return true;
+      }
+    }
+    return true;
+  }
+
+  getNextId(ids) {
+    let id = (typeof ids[0] === "number") ? ids[0] : -1;
+    for (let i = 1; i < ids.length; i++) {
+      if (typeof ids[i] !== "number" || ids[i] - id - 1) {
+        break;
+      } else {
+        id = ids[i];
+      }
+    }
+    return id + 1;
+  }
+
+  // Change handlers
+
+  onButtonTitleChange(v) {
+    this.setStateAttributes({ buttonTitle: v });
   }
 
   setColorStateAttribute(attr, c, color) {
@@ -159,19 +212,19 @@ class PopupContent extends React.Component {
 
     return (
       <>
-        <a>
+        <a className = "ncs4-popup-button">
           { attributes.buttonTitle }
         </a>
         <div
           className = {
-            "ncs4-modal-overlay"
+            "ncs4-popup-overlay"
             + (attributes.showModal ? " shown" : "")
           }
         >
           <div
             className = {
               [
-                "ncs4-modal-content",
+                "ncs4-popup-content",
                 createColorClass(attributes.bgColor.slug, true),
                 createColorClass(attributes.textColor.slug, false),
               ].join(' ')

@@ -43,6 +43,9 @@ registerBlockType( 'ncs4-custom-blocks/popup', {
     buttonTitle: {
       type: 'string',
     },
+    id: {
+      type: 'string',
+    },
   },
 
   edit: (props) => (

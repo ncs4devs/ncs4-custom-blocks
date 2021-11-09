@@ -166,12 +166,20 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
       showModal: false,
       bgColor: this.attributes.bgColor,
       textColor: this.attributes.textColor,
-      buttonTitle: this.attributes.buttonTitle
+      buttonTitle: this.attributes.buttonTitle,
+      id: this.attributes.id
     };
     wp.data.subscribe(this.handleSelected);
-    this.setAttributes({
-      id: this.clientId
-    });
+  }
+
+  componentDidMount() {
+    let ids = this.getUsedIds();
+
+    if (!this.state.id || !this.isIdAvailable(this.state.id, ids)) {
+      this.setStateAttributes({
+        id: String(this.getNextId(ids))
+      });
+    }
   }
 
   createClassName(classes) {
@@ -208,14 +216,56 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     }
   }
 
+  getColor(c) {
+    return this.getSettings().colors.filter(obj => obj.color === c)[0];
+  } // Functions for settings and getting popup ids to be used in anchors
+
+
+  getUsedIds() {
+    let nl = document.querySelectorAll('[data-type="ncs4-custom-blocks/popup"]');
+    let ids = [];
+    nl.forEach(n => {
+      let id = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["select"])("core/block-editor").getBlock(n.getAttribute('data-block')).attributes.id;
+      ids.push(/^\d+$/.test(id) ? parseInt(id) : id);
+    });
+    return ids.sort();
+  } // short-circuiting array.contains() taking advantage of the sorted list
+
+
+  isIdAvailable(id, ids) {
+    for (let i of ids) {
+      if (i === id) {
+        return false;
+      }
+
+      if (id < i) {
+        // number < str, str < number is always false.
+        return true;
+      }
+    }
+
+    return true;
+  }
+
+  getNextId(ids) {
+    let id = typeof ids[0] === "number" ? ids[0] : -1;
+
+    for (let i = 1; i < ids.length; i++) {
+      if (typeof ids[i] !== "number" || ids[i] - id - 1) {
+        break;
+      } else {
+        id = ids[i];
+      }
+    }
+
+    return id + 1;
+  } // Change handlers
+
+
   onButtonTitleChange(v) {
     this.setStateAttributes({
       buttonTitle: v
     });
-  }
-
-  getColor(c) {
-    return this.getSettings().colors.filter(obj => obj.color === c)[0];
   }
 
   setColorStateAttribute(attr, c, color) {
@@ -278,10 +328,12 @@ class PopupContent extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Componen
 
   render() {
     const attributes = this.props.attributes;
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", null, attributes.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: "ncs4-modal-overlay" + (attributes.showModal ? " shown" : "")
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
+      className: "ncs4-popup-button"
+    }, attributes.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+      className: "ncs4-popup-overlay" + (attributes.showModal ? " shown" : "")
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: ["ncs4-modal-content", createColorClass(attributes.bgColor.slug, true), createColorClass(attributes.textColor.slug, false)].join(' ')
+      className: ["ncs4-popup-content", createColorClass(attributes.bgColor.slug, true), createColorClass(attributes.textColor.slug, false)].join(' ')
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["InnerBlocks"], null))));
   }
 
@@ -350,6 +402,9 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
     },
     buttonTitle: {
       type: 'string'
+    },
+    id: {
+      type: 'string'
     }
   },
   edit: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_edit_js__WEBPACK_IMPORTED_MODULE_5__["PopupEdit"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
@@ -400,11 +455,12 @@ class PopupSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.blockProps, {
       className: this.createClassName(this.blockProps.className)
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
-      href: "javascript:void(0)"
+      className: "ncs4-popup-button",
+      href: "#" + attributes.id
     }, attributes.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: "ncs4-modal-overlay"
+      className: "ncs4-popup-overlay"
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: "ncs4-modal-content"
+      className: "ncs4-popup-content"
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"].Content, null))));
   }
 

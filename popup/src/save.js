@@ -22,12 +22,13 @@ export class PopupSave extends React.Component {
         className = { this.createClassName(this.blockProps.className) }
       >
         <a
-          href="javascript:void(0)"
+          className = "ncs4-popup-button"
+          href = { "#" + attributes.id }
         >
           { attributes.buttonTitle }
         </a>
-        <div className="ncs4-modal-overlay">
-          <div className="ncs4-modal-content">
+        <div className="ncs4-popup-overlay">
+          <div className="ncs4-popup-content">
             <InnerBlocks.Content/>
           </div>
         </div>
