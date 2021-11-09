@@ -215,7 +215,7 @@ class PopupContent extends React.Component {
         <a className = "ncs4-popup-button">
           { attributes.buttonTitle }
         </a>
-        <div
+        <a
           className = {
             "ncs4-popup-overlay"
             + (attributes.showModal ? " shown" : "")

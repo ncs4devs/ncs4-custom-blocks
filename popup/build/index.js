@@ -330,7 +330,7 @@ class PopupContent extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Componen
     const attributes = this.props.attributes;
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
       className: "ncs4-popup-button"
-    }, attributes.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+    }, attributes.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
       className: "ncs4-popup-overlay" + (attributes.showModal ? " shown" : "")
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
       className: "ncs4-popup-content__wrapper"
@@ -473,8 +473,9 @@ class PopupSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     }, attributes.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
       id: id,
       className: "ncs4-popup__wrapper"
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
       className: "ncs4-popup-overlay",
+      href: "#",
       style: {
         opacity: attributes.overlayOpacity
       }

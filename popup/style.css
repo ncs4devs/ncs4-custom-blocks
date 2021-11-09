@@ -24,6 +24,10 @@
   height: 100%;
   width: 100%;
   background-color: #000;
+  pointer-events: all;
+}
+.ncs4-popup-overlay:hover {
+  cursor: default;
 }
 .ncs4-popup-content__wrapper {
   display: flex;
