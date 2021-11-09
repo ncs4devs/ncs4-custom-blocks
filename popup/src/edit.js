@@ -6,6 +6,7 @@ import {
   PanelBody,
   PanelRow,
   TextControl,
+  RadioControl,
   ColorPalette,
 } from '@wordpress/components';
 
@@ -13,6 +14,23 @@ function createColorClass(slug, bg = false) {
   return "has-" + slug
     + (bg ? "-background-color" : "-color");
 }
+
+let sizeOptions = [
+  ['size-alert', 'Alert'],
+  ['size-small', 'Small'],
+  ['size-body', 'Medium (body size)', true], /* default */
+  ['size-large', 'Large'],
+];
+
+// Add option functions
+[
+  sizeOptions,
+].forEach( (arr) => {
+  arr.values = () => arr.map(x => x[0]);
+  arr.labels = () => arr.map(x => x[1]);
+  arr.default = () => arr.filter(x => x[2])[0][0];
+  arr.toOptions = () => arr.map(x => { return {value: x[0], label: x[1]} });
+});
 
 export class PopupEdit extends React.Component {
   constructor(props) {
@@ -34,6 +52,11 @@ export class PopupEdit extends React.Component {
       textColor: this.attributes.textColor,
       buttonTitle: this.attributes.buttonTitle,
       id: this.attributes.id,
+      optionSize: this.attributes.optionSize,
+    }
+
+    if (!this.state.optionSize) {
+      this.setStateAttributes({ optionSize: sizeOptions.default() });
     }
 
     wp.data.subscribe(this.handleSelected);
@@ -194,6 +217,12 @@ export class PopupEdit extends React.Component {
               clearable = { false }
               value = { this.state.textColor.color }
               onChange = { this.onTextColorChange }
+            />
+            <RadioControl
+              label = "Content size"
+              selected = { this.state.optionSize }
+              onChange = {v => { this.setStateAttributes({ optionSize: v }) }}
+              options = { sizeOptions.toOptions() }
             />
           </PanelBody>
         </InspectorControls>

@@ -150,6 +150,24 @@ function createColorClass(slug, bg = false) {
   return "has-" + slug + (bg ? "-background-color" : "-color");
 }
 
+let sizeOptions = [['size-alert', 'Alert'], ['size-small', 'Small'], ['size-body', 'Medium (body size)', true],
+/* default */
+['size-large', 'Large']]; // Add option functions
+
+[sizeOptions].forEach(arr => {
+  arr.values = () => arr.map(x => x[0]);
+
+  arr.labels = () => arr.map(x => x[1]);
+
+  arr.default = () => arr.filter(x => x[2])[0][0];
+
+  arr.toOptions = () => arr.map(x => {
+    return {
+      value: x[0],
+      label: x[1]
+    };
+  });
+});
 class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
   constructor(props) {
     super(props);
@@ -167,8 +185,16 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
       bgColor: this.attributes.bgColor,
       textColor: this.attributes.textColor,
       buttonTitle: this.attributes.buttonTitle,
-      id: this.attributes.id
+      id: this.attributes.id,
+      optionSize: this.attributes.optionSize
     };
+
+    if (!this.state.optionSize) {
+      this.setStateAttributes({
+        optionSize: sizeOptions.default()
+      });
+    }
+
     wp.data.subscribe(this.handleSelected);
   }
 
@@ -316,6 +342,15 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
       clearable: false,
       value: this.state.textColor.color,
       onChange: this.onTextColorChange
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["RadioControl"], {
+      label: "Content size",
+      selected: this.state.optionSize,
+      onChange: v => {
+        this.setStateAttributes({
+          optionSize: v
+        });
+      },
+      options: sizeOptions.toOptions()
     }))));
   }
 
@@ -406,6 +441,9 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
       type: 'string'
     },
     id: {
+      type: 'string'
+    },
+    optionSize: {
       type: 'string'
     }
   },

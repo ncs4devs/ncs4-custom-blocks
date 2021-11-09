@@ -46,6 +46,9 @@ registerBlockType( 'ncs4-custom-blocks/popup', {
     id: {
       type: 'string',
     },
+    optionSize: {
+      type: 'string',
+    },
   },
 
   edit: (props) => (
