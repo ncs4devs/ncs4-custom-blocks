@@ -360,13 +360,13 @@ const BlockWithColorSettings = (props) => {
 
             {/* Min Width controls */}
             <SelectControl
-            label = "Units"
-            value = { minWidthUnit }
-            onChange = { (v) => {
-              clampMinWidth(v);
-              setAttributes( { minWidthUnit: v } );
-            }}
-            options = { createOptions(unitOptions) }
+              label = "Units"
+              value = { minWidthUnit }
+              onChange = { (v) => {
+                clampMinWidth(v);
+                setAttributes( { minWidthUnit: v } );
+              }}
+              options = { createOptions(unitOptions) }
             />
             <RangeControl
               label = "Min width"
