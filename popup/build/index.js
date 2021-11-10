@@ -182,6 +182,7 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     this.onTextColorChange = this.onTextColorChange.bind(this);
     this.state = {
       showModal: false,
+      overlayOpacity: this.attributes.overlayOpacity,
       bgColor: this.attributes.bgColor,
       textColor: this.attributes.textColor,
       buttonTitle: this.attributes.buttonTitle,
@@ -342,6 +343,24 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
       clearable: false,
       value: this.state.textColor.color,
       onChange: this.onTextColorChange
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["RangeControl"], {
+      label: "Overlay opacity",
+      value: Math.round(100 * this.state.overlayOpacity),
+      min: 0,
+      max: 100,
+      step: 1,
+      marks: [...Array(6).keys()].map(x => {
+        return {
+          value: 20 * x,
+          label: String(20 * x) + "%"
+        };
+      }),
+      renderTooltipContent: x => String(x) + "%",
+      onChange: v => {
+        this.setStateAttributes({
+          overlayOpacity: v / 100
+        });
+      }
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["RadioControl"], {
       label: "Content size",
       selected: this.state.optionSize,

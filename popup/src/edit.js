@@ -7,6 +7,7 @@ import {
   PanelRow,
   TextControl,
   RadioControl,
+  RangeControl,
   ColorPalette,
 } from '@wordpress/components';
 
@@ -48,6 +49,7 @@ export class PopupEdit extends React.Component {
 
     this.state = {
       showModal: false,
+      overlayOpacity: this.attributes.overlayOpacity,
       bgColor: this.attributes.bgColor,
       textColor: this.attributes.textColor,
       buttonTitle: this.attributes.buttonTitle,
@@ -217,6 +219,20 @@ export class PopupEdit extends React.Component {
               clearable = { false }
               value = { this.state.textColor.color }
               onChange = { this.onTextColorChange }
+            />
+            <RangeControl
+              label = "Overlay opacity"
+              value = { Math.round(100 * this.state.overlayOpacity) }
+              min = { 0 }
+              max = { 100 }
+              step = { 1 }
+              marks = { [...Array(6).keys()].map((x) => {
+                return { value: 20 * x, label: String(20 * x) + "%" }
+              }) }
+              renderTooltipContent = { x => String(x) + "%" }
+              onChange = { (v) => {
+                this.setStateAttributes( { overlayOpacity: v / 100 } )
+              }}
             />
             <RadioControl
               label = "Content size"
