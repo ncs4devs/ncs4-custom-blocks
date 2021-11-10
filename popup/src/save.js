@@ -56,6 +56,7 @@ export class PopupSave extends React.Component {
                   "ncs4-popup-content",
                   createColorClass(attributes.bgColor.slug, true),
                   createColorClass(attributes.textColor.slug, false),
+                  attributes.optionSize,
                 ].join(' ')
               }
             >

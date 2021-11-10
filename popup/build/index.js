@@ -389,7 +389,7 @@ class PopupContent extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Componen
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
       className: "ncs4-popup-content__wrapper"
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: ["ncs4-popup-content", createColorClass(attributes.bgColor.slug, true), createColorClass(attributes.textColor.slug, false)].join(' ')
+      className: ["ncs4-popup-content", createColorClass(attributes.bgColor.slug, true), createColorClass(attributes.textColor.slug, false), attributes.optionSize].join(' ')
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["InnerBlocks"], null))));
   }
 
@@ -539,7 +539,7 @@ class PopupSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
       className: "ncs4-popup-content__wrapper"
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: ["ncs4-popup-content", createColorClass(attributes.bgColor.slug, true), createColorClass(attributes.textColor.slug, false)].join(' ')
+      className: ["ncs4-popup-content", createColorClass(attributes.bgColor.slug, true), createColorClass(attributes.textColor.slug, false), attributes.optionSize].join(' ')
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"].Content, null))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("style", null, css)));
   }
 
