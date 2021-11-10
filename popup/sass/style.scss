@@ -36,7 +36,32 @@
   }
 
   &-content {
+    $max-vw: 80vw;
+
+    overflow-y: auto;
     pointer-events: all;
+    max-height: 80vh;
+    margin: 0 auto;
+    padding: 3.2rem;
+    width: 100%;
+    border: 16px solid var(--palette-bg-color);
+    border-radius: 16px;
+
+    &.size-alert {
+      max-width: min(30ch, #{$max-vw});
+    }
+
+    &.size-small {
+      max-width: min(600px, #{$max-vw});
+    }
+
+    &.size-body {
+      max-width: min(1000px, #{$max-vw});
+    }
+
+    &.size-large {
+      max-width: min(1720px, #{$max-vw});
+    }
 
     &__wrapper {
       display: flex;

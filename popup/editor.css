@@ -1,6 +1,13 @@
 .ncs4-popup-overlay {
   display: none;
 }
+.ncs4-popup-content {
+  overflow-y: visible;
+  max-height: unset;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+}
 .ncs4-popup-content__wrapper {
   display: block;
   position: static;

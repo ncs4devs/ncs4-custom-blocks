@@ -440,7 +440,7 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
   attributes: {
     overlayOpacity: {
       type: 'number',
-      default: 0.7
+      default: 0.9
     },
     bgColor: {
       type: 'object',
@@ -532,7 +532,7 @@ class PopupSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
       className: "ncs4-popup__wrapper"
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
       className: "ncs4-popup-overlay",
-      href: "#",
+      href: "#!",
       style: {
         opacity: attributes.overlayOpacity
       }

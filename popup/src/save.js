@@ -44,7 +44,7 @@ export class PopupSave extends React.Component {
         >
           <a
             className = "ncs4-popup-overlay"
-            href = "#"
+            href = "#!"
             style = {{
               opacity: attributes.overlayOpacity,
             }}

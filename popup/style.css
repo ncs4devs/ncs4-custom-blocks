@@ -30,7 +30,26 @@
   cursor: default;
 }
 .ncs4-popup-content {
+  overflow-y: auto;
   pointer-events: all;
+  max-height: 80vh;
+  margin: 0 auto;
+  padding: 3.2rem;
+  width: 100%;
+  border: 16px solid var(--palette-bg-color);
+  border-radius: 16px;
+}
+.ncs4-popup-content.size-alert {
+  max-width: min(30ch, 80vw);
+}
+.ncs4-popup-content.size-small {
+  max-width: min(600px, 80vw);
+}
+.ncs4-popup-content.size-body {
+  max-width: min(1000px, 80vw);
+}
+.ncs4-popup-content.size-large {
+  max-width: min(1720px, 80vw);
 }
 .ncs4-popup-content__wrapper {
   display: flex;

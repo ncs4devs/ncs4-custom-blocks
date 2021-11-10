@@ -24,7 +24,7 @@ registerBlockType( 'ncs4-custom-blocks/popup', {
   attributes: {
     overlayOpacity: {
       type: 'number',
-      default: 0.7,
+      default: 0.9,
     },
     bgColor: {
       type: 'object',

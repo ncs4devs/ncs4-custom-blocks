@@ -5,6 +5,11 @@
   }
 
   &-content {
+    overflow-y: visible;
+    max-height: unset;
+    padding: 0;
+    border: none;
+    border-radius: 0;
 
     &__wrapper {
       display: block;
