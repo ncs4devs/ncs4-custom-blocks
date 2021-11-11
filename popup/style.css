@@ -36,7 +36,7 @@
   margin: 0 auto;
   padding: 3.2rem;
   width: 100%;
-  border: 16px solid var(--palette-bg-color);
+  border: 16px solid var(--palette-bg-color, #fff);
   border-radius: 16px;
 }
 .ncs4-popup-content.size-alert {

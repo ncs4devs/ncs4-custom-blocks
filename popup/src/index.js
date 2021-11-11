@@ -29,8 +29,8 @@ registerBlockType( 'ncs4-custom-blocks/popup', {
     bgColor: {
       type: 'object',
       default: {
-        color: getColorBySlug('white'),
-        slug: 'white',
+        color: getColorBySlug('white-bright'),
+        slug: 'white-bright',
       },
     },
     textColor: {
