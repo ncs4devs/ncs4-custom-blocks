@@ -3,8 +3,8 @@ import React from 'react';
 import { select } from '@wordpress/data';
 import { ColorPalette } from '@wordpress/components';
 
-export function createColorClass(slug, bg = false) {
-  return "has-" + slug + (bg ? "-background-color" : "-color");
+export function createColorClass(slug, prop) {
+  return "has-" + slug + "-" + prop;
 }
 
 export class ColorSelector extends React.Component {

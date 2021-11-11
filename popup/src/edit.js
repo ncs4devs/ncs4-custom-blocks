@@ -230,8 +230,8 @@ class PopupContent extends React.Component {
             className = {
               [
                 "ncs4-popup-content",
-                createColorClass(attributes.bgColor.slug, true),
-                createColorClass(attributes.textColor.slug, false),
+                createColorClass(attributes.bgColor.slug, "background-color"),
+                createColorClass(attributes.textColor.slug, "color"),
                 attributes.optionSize,
               ].join(' ')
             }
