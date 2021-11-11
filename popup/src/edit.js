@@ -8,13 +8,8 @@ import {
   TextControl,
   RadioControl,
   RangeControl,
-  ColorPalette,
 } from '@wordpress/components';
-
-function createColorClass(slug, bg = false) {
-  return "has-" + slug
-    + (bg ? "-background-color" : "-color");
-}
+import { ColorSelector, createColorClass } from '../../js/ColorSelector.js';
 
 let sizeOptions = [
   ['size-alert', 'Alert'],
@@ -44,8 +39,6 @@ export class PopupEdit extends React.Component {
     this.setStateAttributes = this.setStateAttributes.bind(this);
     this.handleSelected = this.handleSelected.bind(this);
     this.onButtonTitleChange = this.onButtonTitleChange.bind(this);
-    this.onBgColorChange = this.onBgColorChange.bind(this);
-    this.onTextColorChange = this.onTextColorChange.bind(this);
 
     this.state = {
       showModal: false,
@@ -87,10 +80,6 @@ export class PopupEdit extends React.Component {
     );
   }
 
-  getSettings() {
-    return select("core/block-editor").getSettings();
-  }
-
   handleSelected() {
     let selectedBlock =
        select("core/block-editor")
@@ -103,10 +92,6 @@ export class PopupEdit extends React.Component {
     } else if ( this.state.showModal && selectedBlock.clientId !== this.clientId ) {
       this.setState( { showModal: false } );
     }
-  }
-
-  getColor(c) {
-    return this.getSettings().colors.filter( (obj) => obj.color === c)[0];
   }
 
   // Functions for settings and getting popup ids to be used in anchors
@@ -159,27 +144,7 @@ export class PopupEdit extends React.Component {
     this.setStateAttributes({ buttonTitle: v });
   }
 
-  setColorStateAttribute(attr, c, color) {
-    this.setStateAttributes({
-      [attr]: {
-        color: c,
-        slug: color ? color.slug : null,
-      },
-    });
-  }
-
-  onBgColorChange(c) {
-    let color = this.getColor(c);
-    this.setColorStateAttribute("bgColor", c, color);
-  }
-
-  onTextColorChange(c) {
-    let color = this.getColor(c);
-    this.setColorStateAttribute("textColor", c, color);
-  }
-
   render() {
-    const settings = this.getSettings();
 
     return (
       <div { ...this.blockProps }
@@ -204,21 +169,15 @@ export class PopupEdit extends React.Component {
             title = "Popup area settings"
             initialOpen = { true }
           >
-            <p>Popup background</p>
-            <ColorPalette
-              colors = { settings.colors }
-              disableCustomColors = { settings.disableCustomColors }
-              clearable = { false }
+            <ColorSelector
+              label = "Popup background"
               value = { this.state.bgColor.color }
-              onChange = { this.onBgColorChange }
+              onChange = { c => { this.setStateAttributes({ bgColor: c }) }}
             />
-            <p>Popup text</p>
-            <ColorPalette
-              colors = { settings.colors }
-              disableCustomColors = { settings.disableCustomColors }
-              clearable = { false }
+            <ColorSelector
+              label = "Popup text"
               value = { this.state.textColor.color }
-              onChange = { this.onTextColorChange }
+              onChange = { c => { this.setStateAttributes({ textColor: c }) }}
             />
             <RangeControl
               label = "Overlay opacity"
