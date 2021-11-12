@@ -59,6 +59,14 @@ export class PopupSave extends React.Component {
                   attributes.optionSize,
                 ].join(' ')
               }
+              style = {{
+                backgroundColor: (attributes.bgColor.slug)
+                  ? null
+                  : attributes.bgColor.color,
+                color: (attributes.textColor.slug)
+                  ? null
+                  : attributes.textColor.color,
+              }}
             >
               <InnerBlocks.Content/>
             </div>
