@@ -4,6 +4,9 @@ import { select } from '@wordpress/data';
 import { ColorPalette } from '@wordpress/components';
 
 export function createColorClass(slug, prop) {
+  if (!slug || !prop) {
+    return null;
+  }
   return "has-" + slug + "-" + prop;
 }
 
