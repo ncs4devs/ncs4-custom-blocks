@@ -1,10 +1,6 @@
 import React from 'react';
 import { InnerBlocks } from '@wordpress/block-editor';
-
-function createColorClass(slug, bg = false) {
-  return "has-" + slug
-    + (bg ? "-background-color" : "-color");
-}
+import { createColorClass } from '../../js/ColorSelector.js';
 
 export class PopupSave extends React.Component {
   constructor(props) {
