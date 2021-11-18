@@ -231,6 +231,10 @@ export class OptionsControl extends React.Component {
           }
           disabled = { options[i].disabled }
           callback = { (v) => {
+            // allows for option-specific onChange hooks
+            if (typeof options[i].onChange === "function") {
+              v = options[i].onChange(v);
+            }
             var cs = [ ...choices ]
             for (let j in cs) {
               if (cs[j].attribute === options[i].attribute) {
