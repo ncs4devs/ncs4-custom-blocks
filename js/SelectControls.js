@@ -40,6 +40,120 @@ import {
 
 */
 
+/*
+  --- Example Usage ---
+  this.state = {
+    doToggle: true,
+    attr1: null,
+    attr2: null,
+    maxWidth: null,
+    minWidth: {
+      useMinWidth: false,
+      unit: "%",
+      value: 20,
+      asString: "20%",
+    },
+  }
+
+
+  let options = [
+    {
+      attribute: 'doToggle',
+      label: 'Toggle test',
+      default: false,
+      value: this.state.doToggle,
+    },
+    {
+      attribute: 'attr1',
+      label: 'Attribute one',
+      help: 'This is help text',
+      choices: [
+        { value: 'val1', label: 'Value one' },
+        { value: 'val2', label: 'Value two' },
+      ],
+      value: this.state.attr1,
+    },
+    {
+      attribute: 'attr2',
+      label: 'Attribute two',
+      choices: [
+        { value: 'a', label: 'A' },
+        { value: 'b', label: 'B' },
+        { value: 'c', label: 'C' },
+      ],
+      multiple: true,
+      default: 'c',
+      value: this.state.attr2,
+    },
+    {
+      attribute: 'maxWidth',
+      label: 'Max width',
+      help: 'SliderControl test',
+      min: 10,
+      max: 50,
+      step: 5,
+      markStep: 10,
+      markRender: (v) => String(v) + 'ch',
+      default: 30,
+      value: this.state.maxWidth,
+    },
+  ];
+
+  let units = [
+    {
+      value: "%",
+      label: "%",
+      min: 0,
+      max: 100,
+      step: 1,
+      markStep: 10,
+    },
+    {
+      value: "vw",
+      label: "vw",
+      min: 0,
+      max: 100,
+      step: 1,
+      markStep: 10,
+    },
+    {
+      value: "ch",
+      label: "ch",
+      min: 10,
+      max: 50,
+      step: 5,
+    },
+  ];
+
+  render() {
+    <OptionsControl
+      options = { options }
+      onChange = { (v) => { console.log(v); this.setState(v) } }
+    />
+    <UnitControl
+      label = "Mininum Width"
+      help = "UnitControl test"
+      toggleSelector = {{
+        attribute: "useMinWidth",
+        label: "Use min width",
+        help: "toggleSelector",
+        value: this.state.minWidth.useMinWidth,
+      }}
+      unitSelector = {{
+        label: "Units",
+        value: this.state.minWidth.unit,
+        units: units,
+      }}
+      slider = {{
+        label: "Value",
+        value: this.state.minWidth.value,
+      }}
+      onChange = { (v) => { this.setState( { minWidth: v } ) } }
+    />
+  }
+
+*/
+
 
 /*
 Handles enumerable selections
