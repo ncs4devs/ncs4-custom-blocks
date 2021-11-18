@@ -128,7 +128,7 @@ import {
   render() {
     <OptionsControl
       options = { options }
-      onChange = { (v) => { console.log(v); this.setState(v) } }
+      onChange = { (v) => { this.setState(v) } }
     />
     <UnitControl
       label = "Mininum Width"
