@@ -671,8 +671,12 @@ registerBlockType( 'ncs4-custom-blocks/fluid-layout', {
           ['--columns']: numColumns + ';',
           ['--column-size']: optionColSize,
 
-          backgroundColor: colorSettings.bgColor.color,
-          color: colorSettings.textColor.color,
+          backgroundColor: (attributes.bgColor.slug)
+            ? null
+            : attributes.bgColor.color,
+          color: (attributes.textColor.slug)
+            ? null
+            : attributes.textColor.color,
           textAlign: (alignment != "none") ? alignment : null,
           padding: padding.join("rem ") + "rem",
           margin: margin.join("rem ") + "rem",
