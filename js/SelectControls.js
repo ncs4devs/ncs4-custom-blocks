@@ -36,6 +36,7 @@ import {
     default: <value> | <array of value>, (arrays used for multiselects)
     value: [value] | <array of value>,
     disabled: <boolean> | false,
+    onChange: [value] => [value], (pre-processing hook before returning state object)
   }
 
 */
