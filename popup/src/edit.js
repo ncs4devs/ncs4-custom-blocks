@@ -10,23 +10,14 @@ import {
   RangeControl,
 } from '@wordpress/components';
 import { ColorSelector, createColorClass } from '../../js/ColorSelector.js';
+import { OptionsControl } from '../../js/SelectControls.js';
 
 let sizeOptions = [
-  ['size-alert', 'Alert'],
-  ['size-small', 'Small'],
-  ['size-body', 'Medium (body size)', true], /* default */
-  ['size-large', 'Large'],
+  { value: 'size-alert', label: 'Alert' },
+  { value: 'size-small', label: 'Small' },
+  { value: 'size-body', label: 'Medium (body size)' },
+  { value: 'size-large', label: 'Large' },
 ];
-
-// Add option functions
-[
-  sizeOptions,
-].forEach( (arr) => {
-  arr.values = () => arr.map(x => x[0]);
-  arr.labels = () => arr.map(x => x[1]);
-  arr.default = () => arr.filter(x => x[2])[0][0];
-  arr.toOptions = () => arr.map(x => { return {value: x[0], label: x[1]} });
-});
 
 export class PopupEdit extends React.Component {
   constructor(props) {
@@ -138,14 +129,7 @@ export class PopupEdit extends React.Component {
     return id + 1;
   }
 
-  // Change handlers
-
-  onButtonTitleChange(v) {
-    this.setStateAttributes({ buttonTitle: v });
-  }
-
   render() {
-
     return (
       <div { ...this.blockProps }
         className = { this.createClassName(this.blockProps.className) }
@@ -162,7 +146,7 @@ export class PopupEdit extends React.Component {
               label = "Button title"
               placeholder = "Show"
               value = { this.state.buttonTitle }
-              onChange = { this.onButtonTitleChange }
+              onChange = { v => {this.setStateAttributes({ buttonTitle: v }) }}
             />
           </PanelBody>
           <PanelBody
@@ -179,25 +163,27 @@ export class PopupEdit extends React.Component {
               value = { this.state.textColor.color }
               onChange = { c => { this.setStateAttributes({ textColor: c }) }}
             />
-            <RangeControl
-              label = "Overlay opacity"
-              value = { Math.round(100 * this.state.overlayOpacity) }
-              min = { 0 }
-              max = { 100 }
-              step = { 1 }
-              marks = { [...Array(6).keys()].map((x) => {
-                return { value: 20 * x, label: String(20 * x) + "%" }
-              }) }
-              renderTooltipContent = { x => String(x) + "%" }
-              onChange = { (v) => {
-                this.setStateAttributes( { overlayOpacity: v / 100 } )
-              }}
-            />
-            <RadioControl
-              label = "Content size"
-              selected = { this.state.optionSize }
-              onChange = {v => { this.setStateAttributes({ optionSize: v }) }}
-              options = { sizeOptions.toOptions() }
+            <OptionsControl
+              options = {[
+                {
+                  attribute: 'overlayOpacity',
+                  label: 'Overlay opacity',
+                  value: Math.round(100 * this.state.overlayOpacity),
+                  min: 0,
+                  max: 100,
+                  step: 1,
+                  markStep: 20,
+                  markRender: (v) => String(v) + "%",
+                  onChange: (v) => v / 100,
+                },
+                {
+                  attribute: 'optionSize',
+                  label: "Content size",
+                  value: this.state.optionSize,
+                  choices: sizeOptions,
+                },
+              ]}
+              onChange = { (v) => { this.setStateAttributes(v) } }
             />
           </PanelBody>
         </InspectorControls>

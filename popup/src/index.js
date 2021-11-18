@@ -48,6 +48,7 @@ registerBlockType( 'ncs4-custom-blocks/popup', {
     },
     optionSize: {
       type: 'string',
+      default: 'size-body',
     },
   },
 
