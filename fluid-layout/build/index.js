@@ -1,1 +1,1264 @@
-!function(e){var t={};function n(o){if(t[o])return t[o].exports;var l=t[o]={i:o,l:!1,exports:{}};return e[o].call(l.exports,l,l.exports,n),l.l=!0,l.exports}n.m=e,n.c=t,n.d=function(e,t,o){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:o})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var o=Object.create(null);if(n.r(o),Object.defineProperty(o,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var l in e)n.d(o,l,function(t){return e[t]}.bind(null,l));return o},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=5)}([function(e,t){e.exports=window.wp.element},function(e,t){e.exports=window.wp.components},function(e,t){e.exports=window.wp.blockEditor},function(e,t){function n(){return e.exports=n=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var o in n)Object.prototype.hasOwnProperty.call(n,o)&&(e[o]=n[o])}return e},e.exports.default=e.exports,e.exports.__esModule=!0,n.apply(this,arguments)}e.exports=n,e.exports.default=e.exports,e.exports.__esModule=!0},function(e,t){e.exports=window.wp.blocks},function(e,t,n){"use strict";n.r(t);var o=n(3),l=n.n(o),a=n(0),r=n(4),i=n(2),m=n(1);const u=["ncs4-custom-blocks/fluid-layout-item"];var s=[["equal-grid","Equal Grid"],["equal-columns","Equal Columns"],["auto-grid","Auto Grid"],["fixed-columns","Fixed Columns"],["floated-image","Floated Image"]],c=[["space-around","Space Around"],["space-between","Space Between"],["space-evenly","Space Evenly"],["left","Left"],["center","Center"],["right","Right"],["normal","None"]],d=[["%","%"],["vw","vw"],["ch","ch"],["em","em"],["rem","rem"]],p=[["1fr","Equal Width"],["auto","Auto Width"]];const g=["equal-grid","equal-columns","floated-image"],b=["fixed-grid","fixed-columns"];function C(e){var t=[];return e.forEach(e=>{t.push({value:e[0],label:e[1]})}),t}[s,c,d,p].forEach(e=>{e.values=()=>e.map(e=>e[0]),e.labels=()=>e.map(e=>e[1]),e.default=()=>e[0][0]});const f=(e,t,n,o)=>["ncs4-fluid-layout",e.bgColor.class,e.textColor.class,"ncs4-fluid-layout__"+t,n?"has-max-width":null].join(" ")+" "+o;Object(r.registerBlockType)("ncs4-custom-blocks/fluid-layout",{apiVersion:2,title:"Fluid Layout",icon:"columns",category:"layout",supports:{color:{gradients:!0}},attributes:{bgColor:{type:"string"},customBgColor:{type:"string"},textColor:{type:"string"},customTextColor:{type:"string"},alignment:{type:"string",default:"none"},padding:{type:"array",default:[0,0,0,0]},margin:{type:"array",default:[3,3,3,3]},optionLayout:{enum:s.values(),default:s.default()},minWidth:{type:"number",default:0},minWidthUnit:{enum:d.values(),default:d.default()},minWidth2:{type:"number",default:0},minWidth2Unit:{enum:d.values(),default:d.default()},useMaxWidth:{type:"boolean",default:!1},maxWidth:{type:"number",default:0},maxWidthUnit:{enum:d.values(),default:d.default()},rowGap:{type:"number",default:3},columnGap:{type:"number",default:3},optionJustify:{enum:c.values(),default:c.default()},numColumns:{type:"number",default:3},optionColSize:{enum:p.values(),default:p.default()}},edit:Object(i.withColors)({bgColor:"background-color",textColor:"color"})(e=>{const{bgColor:t,textColor:n,attributes:{alignment:o,padding:r,margin:h,optionLayout:x,minWidth:y,minWidthUnit:v,minWidth2:j,minWidth2Unit:O,maxWidth:E,useMaxWidth:w,maxWidthUnit:k,rowGap:W,columnGap:R,optionJustify:S,numColumns:M,optionColSize:P},setAttributes:B,clientId:U}=e,G=Object(i.useBlockProps)(),T=function(e,t){var n={bgColor:{class:"",color:""},textColor:{class:"",color:""}};return null!=e&&(n.bgColor=null!=e.class?{class:e.class}:{color:e.color}),null!=t&&(n.textColor=null!=t.class?{class:t.class}:{color:t.color}),n}(t,n);function _(e,t,n){for(var o=[];e<=t;)o.push({value:e,label:String(e)}),e+=n;return o}const L={"%":{min:0,max:100,step:1,marks:_(0,100,10)},vw:{min:0,max:100,step:1,marks:_(0,100,10)},ch:{min:10,max:50,step:5,marks:_(10,50,5)},em:{min:0,max:100,step:1,marks:_(0,100,10)},rem:{min:10,max:100,step:1,marks:_(10,100,10)}},q=L;function A(e){return t=>{var n=[...r];n[e]=t,B({padding:n})}}function N(e){return t=>{var n=[...h];n[e]=t,B({margin:n})}}const z=(e,t)=>n=>{e<t[n].min?B({[e]:t[n].min}):e>t[n].max&&B({[e]:t[n].max})},F=z(E,L),I=z(y,q);return Object(a.createElement)(a.Fragment,null,Object(a.createElement)(i.InspectorControls,null,Object(a.createElement)(m.PanelBody,{title:"Layout Settings",initialOpen:!0},Object(a.createElement)(m.SelectControl,{label:"Layout Type",value:x,onChange:e=>{B({optionLayout:e})},options:C(s)}),g.includes(x)&&Object(a.createElement)(a.Fragment,null,Object(a.createElement)(m.PanelRow,null,Object(a.createElement)(m.ToggleControl,{label:"Use max width",checked:w,help:w?"Content has a max width":"Content does not have a max width",onChange:e=>{B({useMaxWidth:e})}}),Object(a.createElement)(m.SelectControl,{label:"Units",value:k,onChange:e=>{F(e),B({maxWidthUnit:e})},options:C(d),disabled:!w})),Object(a.createElement)(m.RangeControl,{label:"Max width",value:E,onChange:e=>{B({maxWidth:e})},min:L[k].min,max:L[k].max,step:L[k].step,marks:L[k].marks,disabled:!w,renderTooltipContent:e=>e+k})),b.includes(x)&&Object(a.createElement)(a.Fragment,null,Object(a.createElement)(m.RangeControl,{label:"Columns",value:M,onChange:e=>{B({numColumns:e})},min:2,max:10,step:1,marks:_(2,10,1)}),Object(a.createElement)(m.RadioControl,{label:"Column Width",selected:P,onChange:e=>{B({optionColSize:e})},options:C(p)})),Object(a.createElement)(m.SelectControl,{label:"Units",value:v,onChange:e=>{I(e),B({minWidthUnit:e})},options:C(d)}),Object(a.createElement)(m.RangeControl,{label:"Min width",value:y,onChange:e=>{B({minWidth:e})},min:q[v].min,max:q[v].max,step:q[v].step,marks:q[v].marks,renderTooltipContent:e=>e+v}),Object(a.createElement)(m.SelectControl,{label:"Justify items",value:S,onChange:e=>{B({optionJustify:e})},options:C(c)})),Object(a.createElement)(m.PanelBody,{title:"Spacings",initialOpen:!0},Object(a.createElement)(m.RangeControl,{label:"Row Gap (rem)",value:W,onChange:e=>{B({rowGap:e})},min:0,max:5,step:.5,marks:!0}),Object(a.createElement)(m.RangeControl,{label:"Column Gap (rem)",value:R,onChange:e=>{B({columnGap:e})},min:0,max:5,step:.5,marks:!0}),Object(a.createElement)(m.RangeControl,{label:"Padding Top (rem)",value:r[0],onChange:A(0),min:0,max:5,step:.5,marks:!0}),Object(a.createElement)(m.RangeControl,{label:"Padding Right (rem)",value:r[1],onChange:A(1),min:0,max:5,step:.5,marks:!0}),Object(a.createElement)(m.RangeControl,{label:"Padding Bottom (rem)",value:r[2],onChange:A(2),min:0,max:5,step:.5,marks:!0}),Object(a.createElement)(m.RangeControl,{label:"Padding Left (rem)",value:r[3],onChange:A(3),min:0,max:5,step:.5,marks:!0}),Object(a.createElement)(m.RangeControl,{label:"Margin Top (rem)",value:h[0],onChange:N(0),min:0,max:5,step:.5,marks:!0}),Object(a.createElement)(m.RangeControl,{label:"Margin Right (rem)",value:h[1],onChange:N(1),min:0,max:5,step:.5,marks:!0}),Object(a.createElement)(m.RangeControl,{label:"Margin Bottom (rem)",value:h[2],onChange:N(2),min:0,max:5,step:.5,marks:!0}),Object(a.createElement)(m.RangeControl,{label:"Margin Left (rem)",value:h[3],onChange:N(3),min:0,max:5,step:.5,marks:!0}))),Object(a.createElement)(i.BlockControls,null,Object(a.createElement)(i.AlignmentToolbar,{value:o,onChange:e=>B({alignment:void 0===e?"none":e})})),Object(a.createElement)("div",l()({},G,{className:f(T,x,w,G.className),style:{"--min-width":y+v,"--max-width":w?E+k:null,"--columns":M,"--column-size":P,backgroundColor:T.bgColor.color,color:T.textColor.color,textAlign:"none"!=o?o:null,padding:r.join("rem ")+"rem",gap:W+"rem "+R+"rem",justifyContent:S}}),Object(a.createElement)(i.InnerBlocks,{allowedBlocks:u})))}),save:({attributes:e})=>{const{bgColor:t,customBgColor:n,textColor:o,customTextColor:l,alignment:r,padding:m,margin:u,optionLayout:s,minWidth:c,minWidthUnit:d,maxWidth:p,useMaxWidth:g,maxWidthUnit:b,rowGap:C,columnGap:h,optionJustify:x,numColumns:y,optionColSize:v,floatOptions:j}=e,O=i.useBlockProps.save(),E=function(e,t,n,o){var l={bgColor:{class:"",color:""},textColor:{class:"",color:""}};return l.bgColor=null!=e?{class:Object(i.getColorClassName)("background-color",e)}:{color:t},l.textColor=null!=n?{class:Object(i.getColorClassName)("color",n)}:{color:o},l}(t,n,o,l);return Object(a.createElement)("div",{className:f(E,s,g,O.className),style:{"--min-width":c+d,"--max-width":g?p+b:null,"--columns":y+";","--column-size":v,backgroundColor:E.bgColor.color,color:E.textColor.color,textAlign:"none"!=r?r:null,padding:m.join("rem ")+"rem",margin:u.join("rem ")+"rem",gap:C+"rem "+h+"rem",justifyContent:x}},Object(a.createElement)(i.InnerBlocks.Content,null))}})}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/index.js");
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "../js/ColorSelector.js":
+/*!******************************!*\
+  !*** ../js/ColorSelector.js ***!
+  \******************************/
+/*! exports provided: createColorClass, ColorSelector */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColorClass", function() { return createColorClass; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ColorSelector", function() { return ColorSelector; });
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
+
+
+
+
+function createColorClass(slug, prop) {
+  if (!slug || !prop) {
+    return null;
+  }
+
+  return "has-" + slug + "-" + prop;
+}
+class ColorSelector extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
+  render() {
+    let label = this.props.label;
+    let allowGradients = this.props.allowGradients; // TODO
+
+    let value = this.props.value;
+    let onChange = this.props.onChange;
+    let settings = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__["select"])("core/block-editor").getSettings();
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("p", null, label), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["ColorPalette"], {
+      colors: settings.colors,
+      disableCustomColors: settings.disableCustomColors,
+      clearable: !settings.disableCustomColors,
+      value: value,
+      onChange: c => {
+        let color = settings.colors.filter(obj => obj.color === c)[0];
+        onChange({
+          color: c,
+          slug: color ? color.slug : null
+        });
+      }
+    }));
+  }
+
+}
+
+/***/ }),
+
+/***/ "../js/SelectControls.js":
+/*!*******************************!*\
+  !*** ../js/SelectControls.js ***!
+  \*******************************/
+/*! exports provided: OptionsControl, OptionControl, OptionGroup, CheckboxGroup, SliderControl, UnitControl */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OptionsControl", function() { return OptionsControl; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OptionControl", function() { return OptionControl; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OptionGroup", function() { return OptionGroup; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckboxGroup", function() { return CheckboxGroup; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SliderControl", function() { return SliderControl; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnitControl", function() { return UnitControl; });
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js");
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
+
+
+
+ // Dev note: OptionsControl doesn't use multi-select SelectControls.
+// This is because WordPress's styling and implementation of it is terrible.
+// Creates inspector controls for selecting options via
+// radios, multi-select boxes, and range selects.
+// Implements functions for getting the default option, custom marks, etc
+
+/*
+  Option object format
+
+  {
+    attribute: <string>, // should be unique in the options array
+    label: <string>,
+    help: <string>,
+    choices: <array of {value, label}> | null, (null for boolean)
+
+    ( min, max, step required for sliders, choices must be null )
+    min: <number>,
+    max: <number>,
+    step: <number>,
+    markStep: <number>,
+    markRender: (number) => string,
+    tooltipRender: (number) => string,
+
+    multiple: <boolean> | false, ( checkboxgroup instead of radios )
+    invertValue: <boolean> | false, (inverts displayed value for booleans)
+    default: <value> | <array of value>, (arrays used for multiselects)
+    value: [value] | <array of value>,
+    disabled: <boolean> | false,
+    onChange: [value] => [value], (pre-processing hook before returning state object)
+  }
+
+*/
+
+/*
+  --- Example Usage ---
+  this.state = {
+    doToggle: true,
+    attr1: null,
+    attr2: null,
+    maxWidth: null,
+    minWidth: {
+      useMinWidth: false,
+      unit: "%",
+      value: 20,
+      asString: "20%",
+    },
+  }
+
+
+  let options = [
+    {
+      attribute: 'doToggle',
+      label: 'Toggle test',
+      default: false,
+      value: this.state.doToggle,
+    },
+    {
+      attribute: 'attr1',
+      label: 'Attribute one',
+      help: 'This is help text',
+      choices: [
+        { value: 'val1', label: 'Value one' },
+        { value: 'val2', label: 'Value two' },
+      ],
+      value: this.state.attr1,
+    },
+    {
+      attribute: 'attr2',
+      label: 'Attribute two',
+      choices: [
+        { value: 'a', label: 'A' },
+        { value: 'b', label: 'B' },
+        { value: 'c', label: 'C' },
+      ],
+      multiple: true,
+      default: 'c',
+      value: this.state.attr2,
+    },
+    {
+      attribute: 'maxWidth',
+      label: 'Max width',
+      help: 'SliderControl test',
+      min: 10,
+      max: 50,
+      step: 5,
+      markStep: 10,
+      markRender: (v) => String(v) + 'ch',
+      default: 30,
+      value: this.state.maxWidth,
+    },
+  ];
+
+  let units = [
+    {
+      value: "%",
+      label: "%",
+      min: 0,
+      max: 100,
+      step: 1,
+      markStep: 10,
+    },
+    {
+      value: "vw",
+      label: "vw",
+      min: 0,
+      max: 100,
+      step: 1,
+      markStep: 10,
+    },
+    {
+      value: "ch",
+      label: "ch",
+      min: 10,
+      max: 50,
+      step: 5,
+    },
+  ];
+
+  render() {
+    <OptionsControl
+      options = { options }
+      onChange = { (v) => { this.setState(v) } }
+    />
+    <UnitControl
+      label = "Mininum Width"
+      help = "UnitControl test"
+      toggleSelector = {{
+        attribute: "useMinWidth",
+        label: "Use min width",
+        help: "toggleSelector",
+        value: this.state.minWidth.useMinWidth,
+      }}
+      unitSelector = {{
+        label: "Units",
+        value: this.state.minWidth.unit,
+        units: units,
+      }}
+      slider = {{
+        label: "Value",
+        value: this.state.minWidth.value,
+      }}
+      onChange = { (v) => { this.setState( { minWidth: v } ) } }
+    />
+  }
+
+*/
+
+/*
+Handles enumerable selections
+(ToggleControl, CheckboxControl, SelectControl, RadioControl, RangeControl)
+
+Props (* denotes required props):
+  options*
+    array of option objects, format for which is above.
+
+  onChange
+    Callback, typically used to set state in the parent.
+    The callback is passed an object of `attribute: value` pairs
+
+  maxRadioOptions
+    max enumerable options before a SelectControl is used instead of
+    RadioControl/CheckboxControl, default 5.
+*/
+
+class OptionsControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+  // Returns attr: value pairs currently selected
+  getChoices(options) {
+    let choices = [];
+    options.forEach((o, i) => {
+      choices[i] = {
+        attribute: o.attribute,
+        value: o.value || o.default
+      };
+    });
+    return choices;
+  } // returns choice from choices with the given attribute
+
+
+  getChoice(attribute, choices) {
+    for (let c of choices) {
+      if (c.attribute === attribute) {
+        return c;
+      }
+    }
+  } // used to pass to callback, returns object of attribute: value pairs
+
+
+  choicesToObject(choices) {
+    var obj = {};
+
+    for (let c of choices) {
+      obj[c.attribute] = c.value;
+    }
+
+    return obj;
+  }
+
+  render() {
+    let maxRadioOptions = this.props.maxRadioOptions || 5;
+    let options = this.props.options;
+    let onChange = this.props.onChange; // array of {attribute: attr, value: val}}
+
+    let choices = this.getChoices(options);
+    let optionControls = [...Array(options.length).keys()].map(i => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(OptionControl, {
+      key: i,
+      maxRadioOptions: maxRadioOptions,
+      label: options[i].label,
+      help: options[i].help,
+      choices: options[i].choices,
+      multiple: options[i].multiple,
+      invertValue: options[i].invertValue,
+      min: options[i].min,
+      max: options[i].max,
+      step: options[i].step,
+      markStep: options[i].markStep,
+      markRender: options[i].markRender,
+      tooltipRender: options[i].tooltipRender,
+      value: this.getChoice(options[i].attribute, choices).value,
+      disabled: options[i].disabled,
+      callback: v => {
+        // allows for option-specific onChange hooks
+        if (typeof options[i].onChange === "function") {
+          v = options[i].onChange(v);
+        }
+
+        var cs = [...choices];
+
+        for (let j in cs) {
+          if (cs[j].attribute === options[i].attribute) {
+            cs[j] = {
+              attribute: cs[j].attribute,
+              value: v
+            };
+            break;
+          }
+        }
+
+        onChange(this.choicesToObject(cs)); // callback
+      }
+    }));
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, optionControls);
+  }
+
+}
+class OptionControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+  render() {
+    let maxRadioOptions = this.props.maxRadioOptions;
+    let value = this.props.value;
+    let label = this.props.label;
+    let help = this.props.help;
+    let choices = this.props.choices;
+    let min = this.props.min;
+    let max = this.props.max;
+    let step = this.props.step;
+    let markStep = this.props.markStep;
+    let markRender = this.props.markRender;
+    let tooltipRender = this.props.tooltipRender;
+    let multiple = this.props.multiple;
+    let invertValue = this.props.invertValue || false;
+    let disabled = this.props.disabled;
+    let callback = this.props.callback;
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Array.isArray(value) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(OptionGroup, this.props) : !choices ? !(isNaN(min) || isNaN(max) || isNaN(step)) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(SliderControl, {
+      label: label,
+      help: help,
+      value: value,
+      min: min,
+      max: max,
+      step: step,
+      markStep: markStep,
+      markRender: markRender,
+      tooltipRender: tooltipRender,
+      disabled: disabled,
+      callback: callback
+    }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["ToggleControl"], {
+      label: label,
+      help: help,
+      checked: invertValue != Boolean(value) // != <-> XOR
+      ,
+      onChange: b => callback(invertValue != b),
+      disabled: disabled
+    }) : multiple ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(CheckboxGroup, {
+      label: label,
+      help: help,
+      options: choices,
+      value: value,
+      callback: callback,
+      disabled: disabled
+    }) : choices.length <= maxRadioOptions ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["RadioControl"], {
+      label: label,
+      help: help,
+      selected: value,
+      onChange: callback,
+      options: choices,
+      disabled: disabled
+    }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["SelectControl"], {
+      label: label,
+      help: help,
+      value: value,
+      onChange: callback,
+      options: choices,
+      disabled: disabled
+    }));
+  }
+
+} // a group of option controls that accepts array props and returns
+// an array of values
+
+class OptionGroup extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+  // Returns correct properties for a given Option index
+  getProps(props, i) {
+    var out = { ...props
+    };
+
+    for (let [k, v] of Object.entries(out)) {
+      if (Array.isArray(v)) {
+        out[k] = v[i];
+      }
+    }
+
+    return out;
+  }
+
+  render() {
+    let values = this.props.value;
+    let callback = this.props.callback;
+    let options = [...Array(values.length).keys()].map(i => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(OptionControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.getProps(this.props, i), {
+      key: i,
+      callback: v => {
+        let vs = [...values];
+        vs[i] = v;
+        callback(vs);
+      }
+    })));
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, options);
+  }
+
+} // Creates multiple CheckboxControls from a group of attributes
+
+class CheckboxGroup extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+  constructor(props) {
+    super(props);
+    this.id = "ncs4-components-checkboxgroup-" + String(document.getElementsByClassName("ncs4-components-checkboxgroup").length);
+  }
+
+  render() {
+    let label = this.props.label;
+    let help = this.props.help;
+    let value = this.props.value;
+    let options = this.props.options;
+    let disabled = this.props.disabled;
+    let callback = this.props.callback;
+    let boxes = [...Array(options.length).keys()].map(i => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["CheckboxControl"], {
+      key: i,
+      label: options[i].label,
+      checked: value.includes(options[i].value),
+      disabled: disabled,
+      name: this.id,
+      onChange: b => {
+        var choice = [...value];
+
+        if (b) {
+          choice.push(options[i].value);
+        } else {
+          let j = choice.indexOf(options[i].value);
+
+          if (j > -1) {
+            choice.splice(j, 1);
+          }
+        }
+
+        callback(choice);
+      }
+    }));
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+      className: "ncs4-components-checkboxgroup"
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("label", {
+      className: "components-base-control__label css-pezhm9-StyledLabel e1puf3u2",
+      for: this.id
+    }, label), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
+      className: "components-base-control__help css-1gbp77-StyledHelp e1puf3u3"
+    }, help), boxes);
+  }
+
+} // Handles number selects (RangeControl)
+
+class SliderControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+  createMarks(min, max, step, render) {
+    var marks = Array(Math.floor((max - min) / step) + 1);
+
+    for (let i = 0; i < marks.length; i++) {
+      marks[i] = {
+        value: min,
+        label: render(min)
+      };
+      min += step;
+    }
+
+    return marks;
+  }
+
+  render() {
+    let label = this.props.label;
+    let help = this.props.help;
+    let value = this.props.value;
+    let min = this.props.min;
+    let max = this.props.max;
+    let step = this.props.step || 1;
+    let markStep = this.props.markStep || step;
+
+    let markRender = this.props.markRender || (v => String(v));
+
+    let disabled = this.props.disabled;
+    let tooltipRender = this.props.tooltipRender || markRender;
+    let callback = this.props.callback;
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["RangeControl"], {
+      label: label,
+      help: help,
+      value: value,
+      min: min,
+      max: max,
+      step: step,
+      marks: this.createMarks(min, max, markStep, markRender),
+      renderTooltipContent: tooltipRender,
+      disabled: disabled,
+      onChange: callback
+    });
+  }
+
+} // Handles unit selection
+// Toggle (optional)
+// unit selector
+// Range
+
+class UnitControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+  clamp(x, min, max) {
+    return Math.min(Math.max(x, min), max);
+  }
+
+  getUnitSettings(props) {
+    for (let unit of props.units) {
+      if (unit.value === props.value) {
+        return unit;
+      }
+    }
+  }
+
+  render() {
+    let label = this.props.label;
+    let help = this.props.help;
+    let disabled = this.props.disabled;
+    let onChange = this.props.onChange;
+    let toggleProps = this.props.toggleSelector; // may be undefined
+
+    let unitProps = this.props.unitSelector;
+    let sliderProps = this.props.slider;
+    let toggleAttr = toggleProps && toggleProps.attribute;
+    let toggleValue = !toggleProps || toggleProps.value || toggleProps.default;
+    let unitValue = unitProps.value || unitProps.default;
+    let sliderValue = !isNaN(sliderProps.value) ? sliderProps.value : sliderProps.default; // Set default values
+
+    if (toggleProps && typeof toggleProps.value === "undefined" || typeof unitProps.value === "undefined" || isNaN(sliderProps.value)) {
+      onChange({
+        [toggleAttr]: toggleValue,
+        unit: unitValue,
+        value: sliderValue,
+        asString: String(sliderValue) + unitValue
+      });
+    }
+
+    let selectorsDisabled = disabled || !toggleValue;
+    let unitSettings = this.getUnitSettings(unitProps);
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, label && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
+      className: "components-base-control__label css-pezhm9-StyledLabel e1puf3u2"
+    }, label), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["PanelRow"], null, toggleAttr && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(OptionControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, toggleProps, {
+      value: toggleValue,
+      callback: v => onChange({
+        [toggleAttr]: v,
+        unit: unitValue,
+        value: sliderValue,
+        asString: String(sliderValue) + unitValue
+      })
+    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(OptionControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, unitProps, {
+      multiple: false,
+      choices: unitProps.units,
+      disabled: disabled || !toggleValue,
+      callback: v => {
+        let props = { ...unitProps,
+          value: v
+        };
+        let unitSettings = this.getUnitSettings(props);
+        onChange({
+          [toggleAttr]: toggleValue,
+          unit: v,
+          value: this.clamp(sliderValue, unitSettings.min, unitSettings.max),
+          asString: this.clamp(sliderValue, unitSettings.min, unitSettings.max) + v
+        });
+      }
+    }))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(SliderControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, sliderProps, {
+      value: sliderValue,
+      min: unitSettings.min,
+      max: unitSettings.max,
+      step: unitSettings.step,
+      markStep: unitSettings.markStep || unitSettings.step,
+      tooltipRender: v => String(v) + (unitSettings.label || unitSettings.value),
+      disabled: disabled || !toggleValue,
+      callback: v => onChange({
+        [toggleAttr]: toggleValue,
+        unit: unitValue,
+        value: this.clamp(v, unitSettings.min, unitSettings.max),
+        asString: this.clamp(v, unitSettings.min, unitSettings.max) + unitValue
+      })
+    })), help && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
+      className: "components-base-control__help css-1gbp77-StyledHelp e1puf3u3"
+    }, help));
+  }
+
+}
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime/helpers/extends.js":
+/*!*********************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/extends.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _extends() {
+  module.exports = _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  module.exports["default"] = module.exports, module.exports.__esModule = true;
+  return _extends.apply(this, arguments);
+}
+
+module.exports = _extends;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
+
+/***/ }),
+
+/***/ "./src/edit.js":
+/*!*********************!*\
+  !*** ./src/edit.js ***!
+  \*********************/
+/*! exports provided: FluidLayoutEdit */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FluidLayoutEdit", function() { return FluidLayoutEdit; });
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../js/ColorSelector.js */ "../js/ColorSelector.js");
+/* harmony import */ var _js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../js/SelectControls.js */ "../js/SelectControls.js");
+/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
+
+
+
+
+
+
+
+let allowed_inner_blocks = ['ncs4-custom-blocks/fluid-layout-item'];
+let paddingMax = 5;
+let paddingStep = 0.5;
+let units = [{
+  value: "%",
+  label: "%",
+  min: 0,
+  max: 100,
+  step: 1,
+  markStep: 10
+}, {
+  value: "vw",
+  label: "vw",
+  min: 0,
+  max: 100,
+  markStep: 10
+}, {
+  value: "ch",
+  label: "ch",
+  min: 10,
+  max: 50,
+  step: 5
+}, {
+  value: "em",
+  label: "em",
+  min: 0,
+  max: 100,
+  markStep: 10
+}, {
+  value: "rem",
+  label: "rem",
+  min: 10,
+  max: 100,
+  markStep: 10
+}];
+let layoutUsesMaxWidth = ["equal-grid", "equal-columns", "floated-image"];
+let layoutUsesFixedColumns = ["fixed-grid", "fixed-columns"];
+let layoutOptions = [{
+  value: "equal-grid",
+  label: "Equal Grid"
+}, {
+  value: "equal-columns",
+  label: "Equal Columns"
+}, {
+  value: "auto-grid",
+  label: "Auto Grid"
+}, //{ value: "fixed-grid", label: "Fixed Grid" }, // Unsafe, causes shrinkage or overflow
+{
+  value: "fixed-columns",
+  label: "Fixed Columns"
+}, {
+  value: "floated-image",
+  label: "Floated Image"
+}];
+let justifyOptions = [{
+  value: "space-around",
+  label: "Space Around"
+}, {
+  value: "space-between",
+  label: "Space Between"
+}, {
+  value: "space-evenly",
+  label: "Space Evenly"
+}, {
+  value: "left",
+  label: "Left"
+}, {
+  value: "center",
+  label: "Center"
+}, {
+  value: "right",
+  label: "Right"
+}, {
+  value: "normal",
+  label: "None"
+}];
+let colSizeOptions = [{
+  value: "1fr",
+  label: "Equal Width"
+}, {
+  value: "auto",
+  label: "Auto Width"
+}];
+class FluidLayoutEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
+  constructor(props) {
+    super(props);
+    this.attributes = props.attributes;
+    this.blockProps = props.blockProps;
+    this.setAttributes = props.setAttributes;
+    this.setStateAttributes = this.setStateAttributes.bind(this);
+    this.updateState = this.updateState.bind(this);
+    this.state = {
+      bgColor: this.attributes.bgColor,
+      textColor: this.attributes.textColor,
+      alignment: this.attributes.alignment,
+      padding: this.attributes.padding,
+      margin: this.attributes.margin,
+      optionLayout: this.attributes.optionLayout,
+      minWidth: this.attributes.minWidth,
+      // object
+      maxWidth: this.attributes.maxWidth,
+      // object
+      rowGap: this.attributes.rowGap,
+      columnGap: this.attributes.columnGap,
+      optionJustify: this.attributes.optionJustify,
+      numColumns: this.attributes.numColumns,
+      optionColSize: this.attributes.optionColSize
+    };
+  }
+
+  createClassName(classes) {
+    return ['ncs4-fluid-layout', // for some reason, selection isn't working
+    // (Doesn't add this class after reload)
+    this.state.showModal ? 'is-selected' : null].join(' ') + ' ' + classes;
+  }
+
+  setStateAttributes(attrs) {
+    this.setState(attrs, () => {
+      this.setAttributes(attrs);
+    });
+  }
+
+  updateState(v) {
+    this.setStateAttributes(v);
+  }
+
+  render() {
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_save_js__WEBPACK_IMPORTED_MODULE_6__["FluidLayoutSave"], {
+      attributes: this.state,
+      backend: true,
+      allowed_inner_blocks: allowed_inner_blocks
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["PanelBody"], {
+      title: "Color",
+      initialOpen: false
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["ColorSelector"], {
+      label: "Background color",
+      value: this.state.bgColor.color,
+      onChange: c => {
+        this.setStateAttributes({
+          bgColor: c
+        });
+      }
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["ColorSelector"], {
+      label: "Text color",
+      value: this.state.textColor.color,
+      onChange: c => {
+        this.setStateAttributes({
+          textColor: c
+        });
+      }
+    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["PanelBody"], {
+      title: "Layout Settings",
+      initialOpen: true
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__["OptionsControl"], {
+      options: [{
+        attribute: "optionLayout",
+        label: "Layout Type",
+        value: this.state.optionLayout,
+        choices: layoutOptions
+      }],
+      onChange: this.updateState
+    }), layoutUsesMaxWidth.includes(this.state.optionLayout) && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__["UnitControl"], {
+      label: "Maximum width settings",
+      help: "The max width that the entire content block can have",
+      toggleSelector: {
+        attribute: "useMaxWidth",
+        label: "Use max width",
+        help: this.state.maxWidth.useMaxWidth ? "The block has a max width" : "The block will take up as much space as possible",
+        value: this.state.maxWidth.useMaxWidth
+      },
+      unitSelector: {
+        label: "Units",
+        value: this.state.maxWidth.unit,
+        units: units
+      },
+      slider: {
+        label: "Max width",
+        value: this.state.maxWidth.value
+      },
+      onChange: v => {
+        this.setStateAttributes({
+          maxWidth: v
+        });
+      }
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__["UnitControl"], {
+      label: "Minimum width settings",
+      help: "The minimum width the concent block can have",
+      unitSelector: {
+        label: "Units",
+        value: this.state.minWidth.unit,
+        units: units
+      },
+      slider: {
+        label: "Min width",
+        value: this.state.minWidth.value
+      },
+      onChange: v => {
+        this.setStateAttributes({
+          minWidth: v
+        });
+      }
+    }), layoutUsesFixedColumns.includes(this.state.optionLayout) && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__["OptionsControl"], {
+      options: [{
+        attribute: "numColumns",
+        label: "Columns",
+        value: this.state.numColumns,
+        min: 2,
+        max: 10
+      }, {
+        attribute: "optionColSize",
+        label: "Column Width",
+        value: this.state.optionColSize,
+        choices: colSizeOptions
+      }],
+      onChange: this.updateState
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__["OptionsControl"], {
+      options: [{
+        attribute: "optionJustify",
+        label: "Justify items",
+        value: this.state.optionJustify,
+        choices: justifyOptions
+      }],
+      onChange: this.updateState
+    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["PanelBody"], {
+      title: "Spacings",
+      initialOpen: true
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__["OptionsControl"], {
+      options: [{
+        attribute: "rowGap",
+        label: "Row Gap (rem)",
+        value: this.state.rowGap,
+        min: 0,
+        max: paddingMax,
+        step: paddingStep
+      }, {
+        attribute: "columnGap",
+        label: "Column Gap (rem)",
+        value: this.state.columnGap,
+        min: 0,
+        max: paddingMax,
+        step: paddingStep
+      }, {
+        attribute: "padding",
+        label: ["Padding Top (rem)", "Padding Right (rem)", "Padding Bottom (rem)", "Padding Left (rem)"],
+        value: this.state.padding,
+        min: 0,
+        max: paddingMax,
+        step: paddingStep,
+        tooltipRender: v => String(v) + "rem"
+      }, {
+        attribute: "margin",
+        label: ["Margin Top (rem)", "Margin Right (rem)", "Margin Bottom (rem)", "Margin Left (rem)"],
+        value: this.state.margin,
+        min: 0,
+        max: paddingMax,
+        step: paddingStep,
+        tooltipRender: v => String(v) + "rem"
+      }],
+      onChange: this.updateState
+    }))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__["BlockControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__["AlignmentToolbar"], {
+      value: this.state.alignment,
+      onChange: a => this.setStateAttributes({
+        alignment: a === undefined ? 'none' : a
+      })
+    })));
+  }
+
+}
+
+/***/ }),
+
+/***/ "./src/index.js":
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js");
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _edit_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./edit.js */ "./src/edit.js");
+/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
+
+
+
+
+
+
+
+let colors = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["select"])("core/block-editor").getSettings().colors;
+
+const getColorBySlug = slug => {
+  let color = colors.filter(obj => obj.slug === slug)[0];
+  return color ? color.color : null;
+};
+
+Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs4-custom-blocks/fluid-layout', {
+  apiVersion: 2,
+  title: 'Fluid Layout',
+  icon: 'columns',
+  category: 'layout',
+  attributes: {
+    bgColor: {
+      type: 'object',
+      default: {
+        color: null,
+        slug: null
+      }
+    },
+    textColor: {
+      type: 'object',
+      default: {
+        color: null,
+        slug: null
+      }
+    },
+    alignment: {
+      type: 'string',
+      default: 'none'
+    },
+    padding: {
+      type: 'array',
+      default: [0, 0, 0, 0]
+    },
+    margin: {
+      type: 'array',
+      default: [3, 3, 3, 3]
+    },
+    optionLayout: {
+      type: "string",
+      default: "equal-grid"
+    },
+    minWidth: {
+      type: "object",
+      default: {
+        value: 0,
+        unit: "%",
+        asString: "0%"
+      }
+    },
+    maxWidth: {
+      type: "object",
+      default: {
+        useMaxWidth: false,
+        value: 0,
+        unit: "%",
+        asString: "0%"
+      }
+    },
+    rowGap: {
+      type: 'number',
+      default: 3
+    },
+    columnGap: {
+      type: 'number',
+      default: 3
+    },
+    optionJustify: {
+      type: "string",
+      default: "space-around"
+    },
+    numColumns: {
+      type: "number",
+      default: 3
+    },
+    optionColSize: {
+      type: "string",
+      default: "1fr"
+    }
+  },
+  edit: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_edit_js__WEBPACK_IMPORTED_MODULE_5__["FluidLayoutEdit"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+    blockProps: Object(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["useBlockProps"])()
+  })),
+  save: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_save_js__WEBPACK_IMPORTED_MODULE_6__["FluidLayoutSave"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+    blockProps: _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["useBlockProps"].save()
+  }))
+});
+
+/***/ }),
+
+/***/ "./src/save.js":
+/*!*********************!*\
+  !*** ./src/save.js ***!
+  \*********************/
+/*! exports provided: FluidLayoutSave */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FluidLayoutSave", function() { return FluidLayoutSave; });
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js");
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../js/ColorSelector.js */ "../js/ColorSelector.js");
+
+
+
+
+
+class FluidLayoutSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+  render() {
+    let attrs = this.props.attributes;
+    let customBgColor = attrs.bgColor.slug ? null : attrs.bgColor.color;
+    let customColor = attrs.textColor.slug ? null : attrs.textColor.color;
+    let backend = this.props.backend || false;
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.props.blockProps, {
+      className: ["ncs4-fluid-layout", Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["createColorClass"])(attrs.bgColor.slug, "background-color"), Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["createColorClass"])(attrs.textColor.slug, "color"), "ncs4-fluid-layout__" + attrs.optionLayout, attrs.useMaxWidth ? "has-max-width" : null].join(' '),
+      style: {
+        ['--min-width']: attrs.minWidth.asString,
+        ['--max-width']: attrs.maxWidth.useMaxWidth ? attrs.maxWidth.asString : null,
+        ['--columns']: attrs.numColumns + ';',
+        ['--column-size']: attrs.optionColSize,
+        backgroundColor: customBgColor,
+        ["--palette-bg-color"]: customBgColor,
+        color: customColor,
+        ["--palette-color"]: customColor,
+        textAlign: attrs.alignment && attrs.alignment != "none" ? attrs.alignment : null,
+        padding: attrs.padding.join("rem ") + "rem",
+        margin: attrs.margin.join("rem ") + "rem",
+        gap: attrs.rowGap + "rem " + attrs.columnGap + "rem",
+        justifyContent: attrs.optionJustify
+      }
+    }), backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"], {
+      allowedBlocks: this.props.allowed_inner_blocks
+    }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"].Content, null));
+  }
+
+}
+
+/***/ }),
+
+/***/ "@wordpress/block-editor":
+/*!*************************************!*\
+  !*** external ["wp","blockEditor"] ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wp"]["blockEditor"]; }());
+
+/***/ }),
+
+/***/ "@wordpress/blocks":
+/*!********************************!*\
+  !*** external ["wp","blocks"] ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wp"]["blocks"]; }());
+
+/***/ }),
+
+/***/ "@wordpress/components":
+/*!************************************!*\
+  !*** external ["wp","components"] ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wp"]["components"]; }());
+
+/***/ }),
+
+/***/ "@wordpress/data":
+/*!******************************!*\
+  !*** external ["wp","data"] ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wp"]["data"]; }());
+
+/***/ }),
+
+/***/ "@wordpress/element":
+/*!*********************************!*\
+  !*** external ["wp","element"] ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["wp"]["element"]; }());
+
+/***/ }),
+
+/***/ "react":
+/*!************************!*\
+  !*** external "React" ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["React"]; }());
+
+/***/ })
+
+/******/ });
+//# sourceMappingURL=index.js.map
