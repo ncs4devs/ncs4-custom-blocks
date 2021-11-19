@@ -279,55 +279,95 @@ export class OptionControl extends React.Component {
 
     return (
       <>
-      { !choices
-        ? !( isNaN(min) || isNaN(max) || isNaN(step) )
-          ? <SliderControl
-              label = { label }
-              help = { help }
-              value = { value }
-              min = { min }
-              max = { max }
-              step = { step }
-              markStep = { markStep }
-              markRender = { markRender }
-              tooltipRender = { tooltipRender }
-              disabled = { disabled }
-              callback = { callback }
-            />
-          : <ToggleControl
-              label = { label }
-              help = { help }
-              checked = { invertValue != Boolean(value) } // != <-> XOR
-              onChange = { (b) => callback(invertValue != b) }
-              disabled = { disabled }
-            />
-        : multiple
-          ? <CheckboxGroup
-              label = { label }
-              help = { help }
-              options = { choices }
-              value = { value }
-              callback = { callback }
-              disabled = { disabled }
-            />
-          : choices.length <= maxRadioOptions
-            ? <RadioControl
-                label = { label }
-                help = { help }
-                selected = { value }
-                onChange = { callback }
-                options = { choices }
-                disabled = { disabled }
-              />
-            : <SelectControl
+      { Array.isArray(value)
+        ? <OptionGroup { ...this.props }/>
+        : !choices
+          ? !( isNaN(min) || isNaN(max) || isNaN(step) )
+            ? <SliderControl
                 label = { label }
                 help = { help }
                 value = { value }
-                onChange = { callback }
-                options = { choices }
+                min = { min }
+                max = { max }
+                step = { step }
+                markStep = { markStep }
+                markRender = { markRender }
+                tooltipRender = { tooltipRender }
+                disabled = { disabled }
+                callback = { callback }
+              />
+            : <ToggleControl
+                label = { label }
+                help = { help }
+                checked = { invertValue != Boolean(value) } // != <-> XOR
+                onChange = { (b) => callback(invertValue != b) }
                 disabled = { disabled }
               />
+          : multiple
+            ? <CheckboxGroup
+                label = { label }
+                help = { help }
+                options = { choices }
+                value = { value }
+                callback = { callback }
+                disabled = { disabled }
+              />
+            : choices.length <= maxRadioOptions
+              ? <RadioControl
+                  label = { label }
+                  help = { help }
+                  selected = { value }
+                  onChange = { callback }
+                  options = { choices }
+                  disabled = { disabled }
+                />
+              : <SelectControl
+                  label = { label }
+                  help = { help }
+                  value = { value }
+                  onChange = { callback }
+                  options = { choices }
+                  disabled = { disabled }
+                />
       }
+      </>
+    );
+  }
+}
+
+// a group of option controls that accepts array props and returns
+// an array of values
+export class OptionGroup extends React.Component {
+
+  // Returns correct properties for a given Option index
+  getProps(props, i) {
+    var out = { ...props };
+    for (let [k, v] of Object.entries(out)) {
+      if (Array.isArray(v)) {
+        out[k] = v[i];
+      }
+    }
+    return out;
+  }
+
+  render() {
+    let values = this.props.value;
+    let callback = this.props.callback;
+    let options = [ ...Array(values.length).keys() ]
+      .map( (i) => (
+        <OptionControl { ...this.getProps(this.props, i) }
+          key = { i }
+          callback = { (v) =>{
+            let vs = [ ...values ];
+            vs[i] = v;
+            callback(vs);
+          }}
+        />
+      )
+    );
+    return (
+      <>
+        { options }
       </>
     );
   }
