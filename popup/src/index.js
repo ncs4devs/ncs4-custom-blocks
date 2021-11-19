@@ -1,10 +1,6 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { select } from '@wordpress/data';
-import {
-  useBlockProps,
-  withColors,
-  getColorClassName
-} from '@wordpress/block-editor';
+import { useBlockProps } from '@wordpress/block-editor';
 
 import { PopupEdit } from './edit.js';
 import { PopupSave } from './save.js';
