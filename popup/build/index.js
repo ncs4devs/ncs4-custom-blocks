@@ -741,7 +741,6 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     this.setAttributes = props.setAttributes;
     this.setStateAttributes = this.setStateAttributes.bind(this);
     this.handleSelected = this.handleSelected.bind(this);
-    this.onButtonTitleChange = this.onButtonTitleChange.bind(this);
     this.state = {
       showModal: false,
       overlayOpacity: this.attributes.overlayOpacity,

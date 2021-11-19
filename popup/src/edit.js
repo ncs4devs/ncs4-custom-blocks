@@ -29,7 +29,6 @@ export class PopupEdit extends React.Component {
 
     this.setStateAttributes = this.setStateAttributes.bind(this);
     this.handleSelected = this.handleSelected.bind(this);
-    this.onButtonTitleChange = this.onButtonTitleChange.bind(this);
 
     this.state = {
       showModal: false,
