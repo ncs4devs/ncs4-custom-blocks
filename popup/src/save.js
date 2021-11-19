@@ -17,8 +17,10 @@ export class PopupSave extends React.Component {
   }
 
   render() {
-    const attributes = this.props.attributes;
+    let attributes = this.props.attributes;
     let id = "popup-" + attributes.id;
+    let customBgColor = attributes.bgColor.slug ? null : attributes.bgColor.color;
+    let customColor = attributes.textColor.slug ? null : attributes.textColor.color;
     let css = `
       #${id}:target {
         display: block;
@@ -56,12 +58,10 @@ export class PopupSave extends React.Component {
                 ].join(' ')
               }
               style = {{
-                backgroundColor: (attributes.bgColor.slug)
-                  ? null
-                  : attributes.bgColor.color,
-                color: (attributes.textColor.slug)
-                  ? null
-                  : attributes.textColor.color,
+                backgroundColor: customBgColor,
+                ["--palette-bg-color"]: customBgColor,
+                color: customColor,
+                ["--palette-color"]: customColor,
               }}
             >
               <InnerBlocks.Content/>

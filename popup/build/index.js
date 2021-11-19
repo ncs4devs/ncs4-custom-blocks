@@ -147,13 +147,14 @@ class ColorSelector extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Compone
 /*!*******************************!*\
   !*** ../js/SelectControls.js ***!
   \*******************************/
-/*! exports provided: OptionsControl, OptionControl, CheckboxGroup, SliderControl, UnitControl */
+/*! exports provided: OptionsControl, OptionControl, OptionGroup, CheckboxGroup, SliderControl, UnitControl */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OptionsControl", function() { return OptionsControl; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OptionControl", function() { return OptionControl; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OptionGroup", function() { return OptionGroup; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckboxGroup", function() { return CheckboxGroup; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SliderControl", function() { return SliderControl; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnitControl", function() { return UnitControl; });
@@ -429,7 +430,7 @@ class OptionControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     let invertValue = this.props.invertValue || false;
     let disabled = this.props.disabled;
     let callback = this.props.callback;
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, !choices ? !(isNaN(min) || isNaN(max) || isNaN(step)) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(SliderControl, {
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Array.isArray(value) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(OptionGroup, this.props) : !choices ? !(isNaN(min) || isNaN(max) || isNaN(step)) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(SliderControl, {
       label: label,
       help: help,
       value: value,
@@ -470,6 +471,38 @@ class OptionControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
       options: choices,
       disabled: disabled
     }));
+  }
+
+} // a group of option controls that accepts array props and returns
+// an array of values
+
+class OptionGroup extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+  // Returns correct properties for a given Option index
+  getProps(props, i) {
+    var out = { ...props
+    };
+
+    for (let [k, v] of Object.entries(out)) {
+      if (Array.isArray(v)) {
+        out[k] = v[i];
+      }
+    }
+
+    return out;
+  }
+
+  render() {
+    let values = this.props.value;
+    let onChange = this.props.onChange;
+    let options = [...Array(values.length).keys()].map(i => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(OptionControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.getProps(this.props, i), {
+      key: i,
+      callback: v => {
+        let vs = [...values];
+        vs[i] = v;
+        onChange(vs);
+      }
+    })));
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, options);
   }
 
 } // Creates multiple CheckboxControls from a group of attributes
@@ -908,7 +941,9 @@ class PopupContent extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Componen
   }
 
   render() {
-    const attributes = this.props.attributes;
+    let attributes = this.props.attributes;
+    let customBgColor = attributes.bgColor.slug ? null : attributes.bgColor.color;
+    let customColor = attributes.textColor.slug ? null : attributes.textColor.color;
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
       className: "ncs4-popup-button"
     }, attributes.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
@@ -918,8 +953,10 @@ class PopupContent extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Componen
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
       className: ["ncs4-popup-content", Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["createColorClass"])(attributes.bgColor.slug, "background-color"), Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["createColorClass"])(attributes.textColor.slug, "color"), attributes.optionSize].join(' '),
       style: {
-        backgroundColor: attributes.bgColor.slug ? null : attributes.bgColor.color,
-        color: attributes.textColor.slug ? null : attributes.textColor.color
+        backgroundColor: customBgColor,
+        ["--palette-bg-color"]: customBgColor,
+        color: customColor,
+        ["--palette-color"]: customColor
       }
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["InnerBlocks"], null))));
   }
@@ -1044,8 +1081,10 @@ class PopupSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
   }
 
   render() {
-    const attributes = this.props.attributes;
+    let attributes = this.props.attributes;
     let id = "popup-" + attributes.id;
+    let customBgColor = attributes.bgColor.slug ? null : attributes.bgColor.color;
+    let customColor = attributes.textColor.slug ? null : attributes.textColor.color;
     let css = `
       #${id}:target {
         display: block;
@@ -1070,8 +1109,10 @@ class PopupSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
       className: ["ncs4-popup-content", Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["createColorClass"])(attributes.bgColor.slug, "background-color"), Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["createColorClass"])(attributes.textColor.slug, "color"), attributes.optionSize].join(' '),
       style: {
-        backgroundColor: attributes.bgColor.slug ? null : attributes.bgColor.color,
-        color: attributes.textColor.slug ? null : attributes.textColor.color
+        backgroundColor: customBgColor,
+        ["--palette-bg-color"]: customBgColor,
+        color: customColor,
+        ["--palette-color"]: customColor
       }
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"].Content, null))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("style", null, css)));
   }

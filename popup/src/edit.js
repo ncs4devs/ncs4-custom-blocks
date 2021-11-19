@@ -197,7 +197,9 @@ class PopupContent extends React.Component {
   }
 
   render() {
-    const attributes = this.props.attributes;
+    let attributes = this.props.attributes;
+    let customBgColor = attributes.bgColor.slug ? null : attributes.bgColor.color;
+    let customColor = attributes.textColor.slug ? null : attributes.textColor.color;
 
     return (
       <>
@@ -221,12 +223,10 @@ class PopupContent extends React.Component {
               ].join(' ')
             }
             style = {{
-              backgroundColor: (attributes.bgColor.slug)
-                ? null
-                : attributes.bgColor.color,
-              color: (attributes.textColor.slug)
-                ? null
-                : attributes.textColor.color,
+              backgroundColor: customBgColor,
+              ["--palette-bg-color"]: customBgColor,
+              color: customColor,
+              ["--palette-color"]: customColor,
             }}
           >
             <InnerBlocks/>
