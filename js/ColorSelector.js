@@ -10,6 +10,29 @@ export function createColorClass(slug, prop) {
   return "has-" + slug + "-" + prop;
 }
 
+// creates a style dictionary suitable for inline styling of custom colors
+/* input format:
+  [
+    { color: attrs.bgColor,
+      props: [ "background-color", "--palette-bg-color"],
+    },
+    { color: attrs.textColor,
+      props: [ "color", "--palette-color" ],
+    },
+  ]
+*/
+export function createColorStyle(attributes) {
+  let style = {};
+  for (let attr of attributes) {
+    if (!attr.color) { continue }
+    let color = attr.color.slug ? null : attr.color.color;
+    for (let prop of attr.props) {
+      style[prop] = color;
+    }
+  }
+  return style;
+}
+
 export class ColorSelector extends React.Component {
   render() {
     let label = this.props.label;
