@@ -118,15 +118,6 @@ export class FluidLayoutEdit extends React.Component {
     }
   }
 
-  createClassName(classes) {
-    return [
-      'ncs4-fluid-layout',
-      // for some reason, selection isn't working
-      // (Doesn't add this class after reload)
-      this.state.showModal ? 'is-selected' : null,
-    ].join(' ') + ' ' + classes;
-  }
-
   setStateAttributes(attrs) {
     this.setState(
       attrs,

@@ -888,12 +888,6 @@ class FluidLayoutEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Compo
     };
   }
 
-  createClassName(classes) {
-    return ['ncs4-fluid-layout', // for some reason, selection isn't working
-    // (Doesn't add this class after reload)
-    this.state.showModal ? 'is-selected' : null].join(' ') + ' ' + classes;
-  }
-
   setStateAttributes(attrs) {
     this.setState(attrs, () => {
       this.setAttributes(attrs);
