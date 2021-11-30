@@ -964,7 +964,7 @@ class FluidLayoutEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Compo
       }
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__["UnitControl"], {
       label: "Minimum width settings",
-      help: "The minimum width the concent block can have",
+      help: "The minimum width the content block can have",
       unitSelector: {
         label: "Units",
         value: this.state.minWidth.unit,

@@ -206,7 +206,7 @@ export class FluidLayoutEdit extends React.Component {
             {/* Min Width controls */}
             <UnitControl
               label = "Minimum width settings"
-              help = "The minimum width the concent block can have"
+              help = "The minimum width the content block can have"
               unitSelector = {{
                 label: "Units",
                 value: this.state.minWidth.unit,
