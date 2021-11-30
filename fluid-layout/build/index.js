@@ -90,12 +90,13 @@
 /*!******************************!*\
   !*** ../js/ColorSelector.js ***!
   \******************************/
-/*! exports provided: createColorClass, ColorSelector */
+/*! exports provided: createColorClass, createColorStyle, ColorSelector */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColorClass", function() { return createColorClass; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColorStyle", function() { return createColorStyle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ColorSelector", function() { return ColorSelector; });
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
@@ -115,6 +116,35 @@ function createColorClass(slug, prop) {
   }
 
   return "has-" + slug + "-" + prop;
+} // creates a style dictionary suitable for inline styling of custom colors
+
+/* input format:
+  [
+    { color: attrs.bgColor,
+      props: [ "background-color", "--palette-bg-color"],
+    },
+    { color: attrs.textColor,
+      props: [ "color", "--palette-color" ],
+    },
+  ]
+*/
+
+function createColorStyle(attributes) {
+  let style = {};
+
+  for (let attr of attributes) {
+    if (!attr.color) {
+      continue;
+    }
+
+    let color = attr.color.slug ? null : attr.color.color;
+
+    for (let prop of attr.props) {
+      style[prop] = color;
+    }
+  }
+
+  return style;
 }
 class ColorSelector extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
   render() {
@@ -1165,26 +1195,17 @@ __webpack_require__.r(__webpack_exports__);
 class FluidLayoutSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
   render() {
     let attrs = this.props.attributes;
-    let customBgColor = attrs.bgColor.slug ? null : attrs.bgColor.color;
-    let customColor = attrs.textColor.slug ? null : attrs.textColor.color;
     let backend = this.props.backend || false;
+    let colorStyle = Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["createColorStyle"])([{
+      color: attrs.bgColor,
+      props: ["background-color", "--palette-bg-color"]
+    }, {
+      color: attrs.textColor,
+      props: ["color", "--palette-color"]
+    }]);
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.props.blockProps, {
       className: ["ncs4-fluid-layout", Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["createColorClass"])(attrs.bgColor.slug, "background-color"), Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["createColorClass"])(attrs.textColor.slug, "color"), "ncs4-fluid-layout__" + attrs.optionLayout, attrs.useMaxWidth ? "has-max-width" : null].join(' '),
-      style: {
-        ['--min-width']: attrs.minWidth.asString,
-        ['--max-width']: attrs.maxWidth.useMaxWidth ? attrs.maxWidth.asString : null,
-        ['--columns']: attrs.numColumns + ';',
-        ['--column-size']: attrs.optionColSize,
-        backgroundColor: customBgColor,
-        ["--palette-bg-color"]: customBgColor,
-        color: customColor,
-        ["--palette-color"]: customColor,
-        textAlign: attrs.alignment && attrs.alignment != "none" ? attrs.alignment : null,
-        padding: attrs.padding.join("rem ") + "rem",
-        margin: attrs.margin.join("rem ") + "rem",
-        gap: attrs.rowGap + "rem " + attrs.columnGap + "rem",
-        justifyContent: attrs.optionJustify
-      }
+      style: colorStyle
     }), backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"], {
       allowedBlocks: this.props.allowed_inner_blocks
     }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"].Content, null));
