@@ -1,15 +1,8 @@
 import { registerBlockType } from '@wordpress/blocks';
-import { select } from '@wordpress/data';
 import { useBlockProps } from '@wordpress/block-editor';
 
 import { FluidLayoutEdit } from './edit.js';
 import { FluidLayoutSave } from './save.js';
-
-let colors = select("core/block-editor").getSettings().colors;
-const getColorBySlug = (slug) => {
-  let color = colors.filter( (obj) => obj.slug === slug )[0]
-  return color ? color.color : null;
-}
 
 registerBlockType( 'ncs4-custom-blocks/fluid-layout', {
   apiVersion: 2,
