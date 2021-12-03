@@ -134,6 +134,7 @@ export class FluidLayoutEdit extends React.Component {
     return (
       <>
         <FluidLayoutSave
+          blockProps = { this.blockProps }
           attributes = { this.state }
           backend = { true }
           allowed_inner_blocks = { allowed_inner_blocks }

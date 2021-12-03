@@ -102,6 +102,7 @@ export class MarginEdit extends React.Component {
     return (
       <>
         <MarginSave
+          blockProps = { this.blockProps }
           attributes = { this.state }
           backend = { true }
         />

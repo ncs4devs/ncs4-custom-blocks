@@ -880,6 +880,7 @@ class MarginEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component 
       tooltipRender: v => String(v) + "rem"
     }];
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_save_js__WEBPACK_IMPORTED_MODULE_6__["MarginSave"], {
+      blockProps: this.blockProps,
       attributes: this.state,
       backend: true
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["PanelBody"], {

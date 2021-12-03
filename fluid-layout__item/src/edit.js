@@ -88,6 +88,7 @@ export class FluidLayoutItemEdit extends React.Component {
     return (
       <>
         <FluidLayoutItemSave
+          blockProps = { this.blockProps }
           attributes = { this.state }
           backend = { true }
         />
