@@ -26,7 +26,7 @@ include 'pro-section/index.php';
 include 'college-section/index.php';
 include 'hs-section/index.php';
 include 'marathon-section/index.php';
-include 'accordion-section/index.php';
+//include 'accordion-section/index.php';
 include 'mixed-section/index.php';
 include 'margin/index.php';
 include 'fluid-layout/index.php';
