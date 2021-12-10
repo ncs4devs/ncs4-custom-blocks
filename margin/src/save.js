@@ -25,6 +25,7 @@ export class MarginSave extends React.Component {
             createColorClass(attrs.textColor.slug, "color"),
             attrs.noPadding ? "no-padding" : null,
             "ncs4-site-margin__size-" + attrs.optionSize,
+            this.props.blockProps.className,
           ].join(' ')
         }
         style = {{
