@@ -61,3 +61,13 @@ export class ColorSelector extends React.Component {
     );
   }
 }
+
+export function verifyColor(color) {
+  let colors = select("core/block-editor").getSettings().colors;
+  return getColorBySlug(color.slug, colors);
+}
+
+function getColorBySlug(slug, colors) {
+  let color = colors.filter( (obj) => obj.slug === slug)[0];
+  return color ? color.color : null;
+}

@@ -5,12 +5,6 @@ import { useBlockProps } from '@wordpress/block-editor';
 import { PopupEdit } from './edit.js';
 import { PopupSave } from './save.js';
 
-let colors = select("core/block-editor").getSettings().colors;
-const getColorBySlug = (slug) => {
-  let color = colors.filter( (obj) => obj.slug === slug )[0]
-  return color ? color.color : null;
-}
-
 registerBlockType( 'ncs4-custom-blocks/popup', {
   apiVersion: 2,
 
@@ -25,19 +19,20 @@ registerBlockType( 'ncs4-custom-blocks/popup', {
     bgColor: {
       type: 'object',
       default: {
-        color: getColorBySlug('white-bright'),
+        color: null,
         slug: 'white-bright',
       },
     },
     textColor: {
       type: 'object',
       default: {
-        color: getColorBySlug('secondary-1c'),
+        color: null,
         slug: 'secondary-1c',
       },
     },
     buttonTitle: {
       type: 'string',
+      default: 'Show',
     },
     id: {
       type: 'string',

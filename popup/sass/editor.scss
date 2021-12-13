@@ -1,19 +1,27 @@
 .ncs4-popup {
+  .ncs4-popup {
 
-  &-overlay {
-    display: none;
-  }
+    &-overlay {
+      display: none;
+    }
 
-  &-content {
-    overflow-y: visible;
-    max-height: unset;
-    padding: 0;
-    border: none;
-    border-radius: 0;
+    &-content {
+      overflow-y: visible;
+      max-height: unset;
+      padding: 0;
+      border: none;
+      border-radius: 0;
 
+      &__wrapper {
+        display: block;
+        position: static;
+      }
+    }
     &__wrapper {
       display: block;
       position: static;
+      width: auto;
+      height: auto;
     }
   }
 }

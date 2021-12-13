@@ -90,13 +90,15 @@
 /*!******************************!*\
   !*** ../js/ColorSelector.js ***!
   \******************************/
-/*! exports provided: createColorClass, ColorSelector */
+/*! exports provided: createColorClass, createColorStyle, ColorSelector, verifyColor */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColorClass", function() { return createColorClass; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createColorStyle", function() { return createColorStyle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ColorSelector", function() { return ColorSelector; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "verifyColor", function() { return verifyColor; });
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
@@ -115,6 +117,35 @@ function createColorClass(slug, prop) {
   }
 
   return "has-" + slug + "-" + prop;
+} // creates a style dictionary suitable for inline styling of custom colors
+
+/* input format:
+  [
+    { color: attrs.bgColor,
+      props: [ "background-color", "--palette-bg-color"],
+    },
+    { color: attrs.textColor,
+      props: [ "color", "--palette-color" ],
+    },
+  ]
+*/
+
+function createColorStyle(attributes) {
+  let style = {};
+
+  for (let attr of attributes) {
+    if (!attr.color) {
+      continue;
+    }
+
+    let color = attr.color.slug ? null : attr.color.color;
+
+    for (let prop of attr.props) {
+      style[prop] = color;
+    }
+  }
+
+  return style;
 }
 class ColorSelector extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
   render() {
@@ -140,6 +171,15 @@ class ColorSelector extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Compone
   }
 
 }
+function verifyColor(color) {
+  let colors = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__["select"])("core/block-editor").getSettings().colors;
+  return getColorBySlug(color.slug, colors);
+}
+
+function getColorBySlug(slug, colors) {
+  let color = colors.filter(obj => obj.slug === slug)[0];
+  return color ? color.color : null;
+}
 
 /***/ }),
 
@@ -147,7 +187,7 @@ class ColorSelector extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Compone
 /*!*******************************!*\
   !*** ../js/SelectControls.js ***!
   \*******************************/
-/*! exports provided: OptionsControl, OptionControl, OptionGroup, CheckboxGroup, SliderControl, UnitControl */
+/*! exports provided: OptionsControl, OptionControl, OptionGroup, CheckboxGroup, SliderControl, UnitControl, PhoneControl, EmailControl */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -158,14 +198,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckboxGroup", function() { return CheckboxGroup; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SliderControl", function() { return SliderControl; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnitControl", function() { return UnitControl; });
-/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js");
-/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PhoneControl", function() { return PhoneControl; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EmailControl", function() { return EmailControl; });
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js");
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__);
+
 
 
 
@@ -333,7 +378,7 @@ Props (* denotes required props):
     RadioControl/CheckboxControl, default 5.
 */
 
-class OptionsControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+class OptionsControl extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Component {
   // Returns attr: value pairs currently selected
   getChoices(options) {
     let choices = [];
@@ -372,7 +417,7 @@ class OptionsControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compon
     let onChange = this.props.onChange; // array of {attribute: attr, value: val}}
 
     let choices = this.getChoices(options);
-    let optionControls = [...Array(options.length).keys()].map(i => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(OptionControl, {
+    let optionControls = [...Array(options.length).keys()].map(i => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(OptionControl, {
       key: i,
       maxRadioOptions: maxRadioOptions,
       label: options[i].label,
@@ -409,11 +454,11 @@ class OptionsControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compon
         onChange(this.choicesToObject(cs)); // callback
       }
     }));
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, optionControls);
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["Fragment"], null, optionControls);
   }
 
 }
-class OptionControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+class OptionControl extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Component {
   render() {
     let maxRadioOptions = this.props.maxRadioOptions;
     let value = this.props.value;
@@ -430,7 +475,7 @@ class OptionControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     let invertValue = this.props.invertValue || false;
     let disabled = this.props.disabled;
     let callback = this.props.callback;
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Array.isArray(value) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(OptionGroup, this.props) : !choices ? !(isNaN(min) || isNaN(max) || isNaN(step)) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(SliderControl, {
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["Fragment"], null, Array.isArray(value) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(OptionGroup, this.props) : !choices ? !(isNaN(min) || isNaN(max) || isNaN(step)) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(SliderControl, {
       label: label,
       help: help,
       value: value,
@@ -442,28 +487,28 @@ class OptionControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
       tooltipRender: tooltipRender,
       disabled: disabled,
       callback: callback
-    }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["ToggleControl"], {
+    }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["ToggleControl"], {
       label: label,
       help: help,
       checked: invertValue != Boolean(value) // != <-> XOR
       ,
       onChange: b => callback(invertValue != b),
       disabled: disabled
-    }) : multiple ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(CheckboxGroup, {
+    }) : multiple ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(CheckboxGroup, {
       label: label,
       help: help,
       options: choices,
       value: value,
       callback: callback,
       disabled: disabled
-    }) : choices.length <= maxRadioOptions ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["RadioControl"], {
+    }) : choices.length <= maxRadioOptions ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["RadioControl"], {
       label: label,
       help: help,
       selected: value,
       onChange: callback,
       options: choices,
       disabled: disabled
-    }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["SelectControl"], {
+    }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["SelectControl"], {
       label: label,
       help: help,
       value: value,
@@ -476,7 +521,7 @@ class OptionControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
 } // a group of option controls that accepts array props and returns
 // an array of values
 
-class OptionGroup extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+class OptionGroup extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Component {
   // Returns correct properties for a given Option index
   getProps(props, i) {
     var out = { ...props
@@ -493,21 +538,21 @@ class OptionGroup extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component
 
   render() {
     let values = this.props.value;
-    let onChange = this.props.onChange;
-    let options = [...Array(values.length).keys()].map(i => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(OptionControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.getProps(this.props, i), {
+    let callback = this.props.callback;
+    let options = [...Array(values.length).keys()].map(i => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(OptionControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, this.getProps(this.props, i), {
       key: i,
       callback: v => {
         let vs = [...values];
         vs[i] = v;
-        onChange(vs);
+        callback(vs);
       }
     })));
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, options);
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["Fragment"], null, options);
   }
 
 } // Creates multiple CheckboxControls from a group of attributes
 
-class CheckboxGroup extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+class CheckboxGroup extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Component {
   constructor(props) {
     super(props);
     this.id = "ncs4-components-checkboxgroup-" + String(document.getElementsByClassName("ncs4-components-checkboxgroup").length);
@@ -520,7 +565,7 @@ class CheckboxGroup extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     let options = this.props.options;
     let disabled = this.props.disabled;
     let callback = this.props.callback;
-    let boxes = [...Array(options.length).keys()].map(i => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["CheckboxControl"], {
+    let boxes = [...Array(options.length).keys()].map(i => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["CheckboxControl"], {
       key: i,
       label: options[i].label,
       checked: value.includes(options[i].value),
@@ -542,19 +587,19 @@ class CheckboxGroup extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
         callback(choice);
       }
     }));
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])("div", {
       className: "ncs4-components-checkboxgroup"
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("label", {
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])("label", {
       className: "components-base-control__label css-pezhm9-StyledLabel e1puf3u2",
       for: this.id
-    }, label), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
+    }, label), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])("p", {
       className: "components-base-control__help css-1gbp77-StyledHelp e1puf3u3"
     }, help), boxes);
   }
 
 } // Handles number selects (RangeControl)
 
-class SliderControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+class SliderControl extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Component {
   createMarks(min, max, step, render) {
     var marks = Array(Math.floor((max - min) / step) + 1);
 
@@ -583,7 +628,7 @@ class SliderControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     let disabled = this.props.disabled;
     let tooltipRender = this.props.tooltipRender || markRender;
     let callback = this.props.callback;
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["RangeControl"], {
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["RangeControl"], {
       label: label,
       help: help,
       value: value,
@@ -602,7 +647,7 @@ class SliderControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
 // unit selector
 // Range
 
-class UnitControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+class UnitControl extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Component {
   clamp(x, min, max) {
     return Math.min(Math.max(x, min), max);
   }
@@ -640,9 +685,9 @@ class UnitControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component
 
     let selectorsDisabled = disabled || !toggleValue;
     let unitSettings = this.getUnitSettings(unitProps);
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, label && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["Fragment"], null, label && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])("p", {
       className: "components-base-control__label css-pezhm9-StyledLabel e1puf3u2"
-    }, label), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["PanelRow"], null, toggleAttr && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(OptionControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, toggleProps, {
+    }, label), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelRow"], null, toggleAttr && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(OptionControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, toggleProps, {
       value: toggleValue,
       callback: v => onChange({
         [toggleAttr]: v,
@@ -650,7 +695,7 @@ class UnitControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component
         value: sliderValue,
         asString: String(sliderValue) + unitValue
       })
-    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(OptionControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, unitProps, {
+    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(OptionControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, unitProps, {
       multiple: false,
       choices: unitProps.units,
       disabled: disabled || !toggleValue,
@@ -666,7 +711,7 @@ class UnitControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component
           asString: this.clamp(sliderValue, unitSettings.min, unitSettings.max) + v
         });
       }
-    }))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(SliderControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, sliderProps, {
+    }))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(SliderControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, sliderProps, {
       value: sliderValue,
       min: unitSettings.min,
       max: unitSettings.max,
@@ -680,12 +725,89 @@ class UnitControl extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component
         value: this.clamp(v, unitSettings.min, unitSettings.max),
         asString: this.clamp(v, unitSettings.min, unitSettings.max) + unitValue
       })
-    })), help && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
+    })), help && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])("p", {
       className: "components-base-control__help css-1gbp77-StyledHelp e1puf3u3"
     }, help));
   }
 
 }
+class PhoneControl extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Component {
+  validateNumber(num) {
+    return PhoneControl.reg.test(num);
+  }
+
+  render() {
+    let valid = this.validateNumber(this.props.value);
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["TextControl"], {
+      value: this.props.value,
+      onChange: n => {
+        this.props.onChange(n); // set state
+
+        if (this.validateNumber(n)) {
+          this.props.onChangeComplete(n); // set attribute
+        }
+      },
+      label: "Phone",
+      help: valid ? null : "Invalid phone number"
+    });
+  }
+
+}
+
+_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(PhoneControl, "reg", /^(\+?[0-9]{1,4})?[ \-.]*[0-9]{3}[ \-.]*[0-9]{3}[ \-.]*[0-9]{4}$/);
+
+class EmailControl extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Component {
+  // https://stackoverflow.com/a/201378
+  validateEmail(s) {
+    return EmailControl.reg.test(s);
+  }
+
+  render() {
+    let valid = this.validateEmail(this.props.value);
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["TextControl"], {
+      value: this.props.value,
+      onChange: e => {
+        this.props.onChange(e); // set state
+
+        if (this.validateEmail(e)) {
+          this.props.onChangeComplete(e); // set attribute
+        }
+      },
+      label: "Email",
+      help: valid ? null : "Invalid email address"
+    });
+  }
+
+}
+
+_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(EmailControl, "reg", /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/);
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime/helpers/defineProperty.js":
+/*!****************************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/defineProperty.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -740,10 +862,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _popup_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./popup.js */ "./src/popup.js");
 /* harmony import */ var _js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../js/ColorSelector.js */ "../js/ColorSelector.js");
-/* harmony import */ var _js_SelectControls_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../js/SelectControls.js */ "../js/SelectControls.js");
 
 
 
@@ -751,20 +871,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-let sizeOptions = [{
-  value: 'size-alert',
-  label: 'Alert'
-}, {
-  value: 'size-small',
-  label: 'Small'
-}, {
-  value: 'size-body',
-  label: 'Medium (body size)'
-}, {
-  value: 'size-large',
-  label: 'Large'
-}];
 class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
   constructor(props) {
     super(props);
@@ -794,17 +900,25 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
   }
 
   componentDidMount() {
-    let ids = this.getUsedIds();
-
-    if (!this.state.id || !this.isIdAvailable(this.state.id, ids)) {
-      this.setStateAttributes({
-        id: String(this.getNextId(ids))
-      });
-    }
+    this.setStateAttributes({
+      id: Object(_popup_js__WEBPACK_IMPORTED_MODULE_5__["requestId"])(this.state.id)
+    });
+    this.setStateAttributes({
+      bgColor: {
+        color: Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["verifyColor"])(this.state.bgColor),
+        slug: this.state.bgColor.slug
+      }
+    });
+    this.setStateAttributes({
+      textColor: {
+        color: Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["verifyColor"])(this.state.textColor),
+        slug: this.state.textColor.slug
+      }
+    });
   }
 
   createClassName(classes) {
-    return ['ncs4-popup', // for some reason, selection isn't working
+    return ['ncs4-popup', _popup_js__WEBPACK_IMPORTED_MODULE_5__["Popup"].classType, // for some reason, selection isn't working
     // (Doesn't add this class after reload)
     this.state.showModal ? 'is-selected' : null].join(' ') + ' ' + classes;
   }
@@ -831,134 +945,17 @@ class PopupEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
         showModal: false
       });
     }
-  } // Functions for settings and getting popup ids to be used in anchors
-
-
-  getUsedIds() {
-    let nl = document.querySelectorAll('[data-type="ncs4-custom-blocks/popup"]');
-    let ids = [];
-    nl.forEach(n => {
-      let id = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["select"])("core/block-editor").getBlock(n.getAttribute('data-block')).attributes.id;
-      ids.push(/^\d+$/.test(id) ? parseInt(id) : id);
-    });
-    return ids.sort();
-  } // short-circuiting array.contains() taking advantage of the sorted list
-
-
-  isIdAvailable(id, ids) {
-    for (let i of ids) {
-      if (i === id) {
-        return false;
-      }
-
-      if (id < i) {
-        // number < str, str < number is always false.
-        return true;
-      }
-    }
-
-    return true;
-  }
-
-  getNextId(ids) {
-    let id = typeof ids[0] === "number" ? ids[0] : -1;
-
-    for (let i = 1; i < ids.length; i++) {
-      if (typeof ids[i] !== "number" || ids[i] - id - 1) {
-        break;
-      } else {
-        id = ids[i];
-      }
-    }
-
-    return id + 1;
   }
 
   render() {
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.blockProps, {
       className: this.createClassName(this.blockProps.className)
-    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(PopupContent, {
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_js__WEBPACK_IMPORTED_MODULE_5__["Popup"], {
       attributes: this.state
-    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["PanelBody"], {
-      title: "Button settings",
-      initialOpen: true
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["TextControl"], {
-      label: "Button title",
-      placeholder: "Show",
-      value: this.state.buttonTitle,
-      onChange: v => {
-        this.setStateAttributes({
-          buttonTitle: v
-        });
-      }
-    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["PanelBody"], {
-      title: "Popup area settings",
-      initialOpen: true
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["ColorSelector"], {
-      label: "Popup background",
-      value: this.state.bgColor.color,
-      onChange: c => {
-        this.setStateAttributes({
-          bgColor: c
-        });
-      }
-    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["ColorSelector"], {
-      label: "Popup text",
-      value: this.state.textColor.color,
-      onChange: c => {
-        this.setStateAttributes({
-          textColor: c
-        });
-      }
-    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_js_SelectControls_js__WEBPACK_IMPORTED_MODULE_7__["OptionsControl"], {
-      options: [{
-        attribute: 'overlayOpacity',
-        label: 'Overlay opacity',
-        value: Math.round(100 * this.state.overlayOpacity),
-        min: 0,
-        max: 100,
-        step: 1,
-        markStep: 20,
-        markRender: v => String(v) + "%",
-        onChange: v => v / 100
-      }, {
-        attribute: 'optionSize',
-        label: "Content size",
-        value: this.state.optionSize,
-        choices: sizeOptions
-      }],
-      onChange: v => {
-        this.setStateAttributes(v);
-      }
-    }))));
-  }
-
-}
-
-class PopupContent extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    let attributes = this.props.attributes;
-    let customBgColor = attributes.bgColor.slug ? null : attributes.bgColor.color;
-    let customColor = attributes.textColor.slug ? null : attributes.textColor.color;
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
-      className: "ncs4-popup-button"
-    }, attributes.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
-      className: "ncs4-popup-overlay" + (attributes.showModal ? " shown" : "")
-    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: "ncs4-popup-content__wrapper"
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: ["ncs4-popup-content", Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["createColorClass"])(attributes.bgColor.slug, "background-color"), Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["createColorClass"])(attributes.textColor.slug, "color"), attributes.optionSize].join(' '),
-      style: {
-        backgroundColor: customBgColor,
-        ["--palette-bg-color"]: customBgColor,
-        color: customColor,
-        ["--palette-color"]: customColor
-      }
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["InnerBlocks"], null))));
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["InnerBlocks"], null)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_js__WEBPACK_IMPORTED_MODULE_5__["PopupSettings"], {
+      attributes: this.state,
+      callback: this.setStateAttributes
+    })));
   }
 
 }
@@ -993,13 +990,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-let colors = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["select"])("core/block-editor").getSettings().colors;
-
-const getColorBySlug = slug => {
-  let color = colors.filter(obj => obj.slug === slug)[0];
-  return color ? color.color : null;
-};
-
 Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs4-custom-blocks/popup', {
   apiVersion: 2,
   title: 'Popup',
@@ -1013,19 +1003,20 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
     bgColor: {
       type: 'object',
       default: {
-        color: getColorBySlug('white-bright'),
+        color: null,
         slug: 'white-bright'
       }
     },
     textColor: {
       type: 'object',
       default: {
-        color: getColorBySlug('secondary-1c'),
+        color: null,
         slug: 'secondary-1c'
       }
     },
     buttonTitle: {
-      type: 'string'
+      type: 'string',
+      default: 'Show'
     },
     id: {
       type: 'string'
@@ -1042,6 +1033,207 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
     blockProps: _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["useBlockProps"].save()
   }))
 });
+
+/***/ }),
+
+/***/ "./src/popup.js":
+/*!**********************!*\
+  !*** ./src/popup.js ***!
+  \**********************/
+/*! exports provided: Popup, PopupSettings, requestId */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Popup", function() { return Popup; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PopupSettings", function() { return PopupSettings; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "requestId", function() { return requestId; });
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../js/SelectControls.js */ "../js/SelectControls.js");
+/* harmony import */ var _js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../js/ColorSelector.js */ "../js/ColorSelector.js");
+
+
+// Library of generic popup classes
+
+
+
+
+ // Should be included by all components that use Popup
+
+let classType = "ncs4-custom-blocks_popup-type"; // stateless popup component, children are rendered as popup contents
+
+class Popup extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+  render() {
+    let attrs = this.props.attributes;
+    let id = "popup-" + attrs.id;
+    let customBgColor = attrs.bgColor.slug ? null : attrs.bgColor.color;
+    let customColor = attrs.textColor.slug ? null : attrs.textColor.color;
+    let css = `
+      #${id}:target {
+        display: block;
+      }
+    `;
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
+      className: "ncs4-popup-button",
+      href: "#" + id
+    }, attrs.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+      id: id,
+      className: "ncs4-popup__wrapper"
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
+      className: "ncs4-popup-overlay",
+      href: "#!",
+      style: {
+        opacity: attrs.overlayOpacity
+      }
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+      className: "ncs4-popup-content__wrapper"
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+      className: ["ncs4-popup-content", Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["createColorClass"])(attrs.bgColor.slug, "background-color"), Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["createColorClass"])(attrs.textColor.slug, "color"), attrs.optionSize].join(' '),
+      style: {
+        backgroundColor: customBgColor,
+        ["--palette-bg-color"]: customBgColor,
+        color: customColor,
+        ["--palette-color"]: customColor
+      }
+    }, this.props.children)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("style", null, css)));
+  }
+
+} // Used to create popup setting controls inside of InspectorControls
+
+_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(Popup, "classType", classType);
+
+_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(Popup, "sizeOptions", [{
+  value: 'size-alert',
+  label: 'Alert'
+}, {
+  value: 'size-small',
+  label: 'Small'
+}, {
+  value: 'size-body',
+  label: 'Medium (body size)'
+}, {
+  value: 'size-large',
+  label: 'Large'
+}]);
+
+class PopupSettings extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+  render() {
+    let attrs = this.props.attributes;
+    let callback = this.props.callback;
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelBody"], {
+      title: "Button settings",
+      initialOpen: true
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["TextControl"], {
+      label: "Button title",
+      placeholder: "Show",
+      value: attrs.buttonTitle,
+      onChange: v => {
+        callback({
+          buttonTitle: v
+        });
+      }
+    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelBody"], {
+      title: "Popup area settings",
+      initialOpen: true
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["ColorSelector"], {
+      label: "Popup background",
+      value: attrs.bgColor.color,
+      onChange: c => {
+        callback({
+          bgColor: c
+        });
+      }
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["ColorSelector"], {
+      label: "Popup text",
+      value: attrs.textColor.color,
+      onChange: c => {
+        callback({
+          textColor: c
+        });
+      }
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__["OptionsControl"], {
+      options: [{
+        attribute: 'overlayOpacity',
+        label: 'Overlay opacity',
+        value: Math.round(100 * attrs.overlayOpacity),
+        min: 0,
+        max: 100,
+        step: 1,
+        markStep: 20,
+        markRender: v => String(v) + "%",
+        onChange: v => v / 100
+      }, {
+        attribute: 'optionSize',
+        label: "Content size",
+        value: attrs.optionSize,
+        choices: Popup.sizeOptions
+      }],
+      onChange: v => {
+        callback(v);
+      }
+    })));
+  }
+
+} // popup id functions
+
+function requestId(curId) {
+  let ids = getUsedIds();
+
+  if (!curId || !isIdAvailable(curId, ids)) {
+    return String(getNextId(ids));
+  }
+
+  return curId;
+}
+
+function getUsedIds() {
+  let nl = document.getElementsByClassName(classType);
+  let ids = [];
+  nl.forEach(n => {
+    let id = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["select"])("core/block-editor").getBlock(n.getAttribute('data-block')).attributes.id;
+    ids.push(/^\d+$/.test(id) ? parseInt(id) : id);
+  });
+  return ids.sort();
+} // short-circuiting array.contains() taking advantage of the sorted list
+
+
+function isIdAvailable(id, ids) {
+  for (let i of ids) {
+    if (i === id) {
+      return false;
+    }
+
+    if (id < i) {
+      // number < str, str < number is always false.
+      return true;
+    }
+  }
+
+  return true;
+}
+
+function getNextId(ids) {
+  let id = typeof ids[0] === "number" ? ids[0] : -1;
+
+  for (let i = 1; i < ids.length; i++) {
+    if (typeof ids[i] !== "number" || ids[i] - id - 1) {
+      break;
+    } else {
+      id = ids[i];
+    }
+  }
+
+  return id + 1;
+}
 
 /***/ }),
 
@@ -1064,6 +1256,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../js/ColorSelector.js */ "../js/ColorSelector.js");
+/* harmony import */ var _popup_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./popup.js */ "./src/popup.js");
+
 
 
 
@@ -1077,44 +1271,15 @@ class PopupSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
   }
 
   createClassName(classes) {
-    return ['ncs4-popup'].join(' ') + ' ' + classes;
+    return ['ncs4-popup', _popup_js__WEBPACK_IMPORTED_MODULE_5__["Popup"].classType].join(' ') + ' ' + classes;
   }
 
   render() {
-    let attributes = this.props.attributes;
-    let id = "popup-" + attributes.id;
-    let customBgColor = attributes.bgColor.slug ? null : attributes.bgColor.color;
-    let customColor = attributes.textColor.slug ? null : attributes.textColor.color;
-    let css = `
-      #${id}:target {
-        display: block;
-      }
-    `;
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.blockProps, {
       className: this.createClassName(this.blockProps.className)
-    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
-      className: "ncs4-popup-button",
-      href: "#" + id
-    }, attributes.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      id: id,
-      className: "ncs4-popup__wrapper"
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
-      className: "ncs4-popup-overlay",
-      href: "#!",
-      style: {
-        opacity: attributes.overlayOpacity
-      }
-    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: "ncs4-popup-content__wrapper"
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-      className: ["ncs4-popup-content", Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["createColorClass"])(attributes.bgColor.slug, "background-color"), Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["createColorClass"])(attributes.textColor.slug, "color"), attributes.optionSize].join(' '),
-      style: {
-        backgroundColor: customBgColor,
-        ["--palette-bg-color"]: customBgColor,
-        color: customColor,
-        ["--palette-color"]: customColor
-      }
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"].Content, null))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("style", null, css)));
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_js__WEBPACK_IMPORTED_MODULE_5__["Popup"], {
+      attributes: this.props.attributes
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"].Content, null)));
   }
 
 }

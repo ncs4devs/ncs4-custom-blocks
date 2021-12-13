@@ -1,16 +1,22 @@
-.ncs4-popup-overlay {
+.ncs4-popup .ncs4-popup-overlay {
   display: none;
 }
-.ncs4-popup-content {
+.ncs4-popup .ncs4-popup-content {
   overflow-y: visible;
   max-height: unset;
   padding: 0;
   border: none;
   border-radius: 0;
 }
-.ncs4-popup-content__wrapper {
+.ncs4-popup .ncs4-popup-content__wrapper {
   display: block;
   position: static;
+}
+.ncs4-popup .ncs4-popup__wrapper {
+  display: block;
+  position: static;
+  width: auto;
+  height: auto;
 }
 
 /*# sourceMappingURL=editor.css.map */
