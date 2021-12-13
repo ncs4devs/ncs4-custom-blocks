@@ -1,5 +1,4 @@
 import { registerBlockType } from '@wordpress/blocks';
-import { select } from '@wordpress/data';
 import { useBlockProps } from '@wordpress/block-editor';
 
 import { PopupEdit } from './edit.js';
