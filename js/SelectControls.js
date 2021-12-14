@@ -4,6 +4,7 @@ import {
   RadioControl,
   ToggleControl,
   CheckboxControl,
+  TextControl,
   RangeControl,
   PanelRow,
 } from '@wordpress/components';
@@ -195,15 +196,6 @@ export class OptionsControl extends React.Component {
     }
   }
 
-  // used to pass to callback, returns object of attribute: value pairs
-  choicesToObject(choices) {
-    var obj = {};
-    for (let c of choices) {
-      obj[c.attribute] = c.value;
-    }
-    return obj;
-  }
-
   render() {
     let maxRadioOptions = this.props.maxRadioOptions || 5;
     let options = this.props.options;
@@ -236,14 +228,7 @@ export class OptionsControl extends React.Component {
             if (typeof options[i].onChange === "function") {
               v = options[i].onChange(v);
             }
-            var cs = [ ...choices ]
-            for (let j in cs) {
-              if (cs[j].attribute === options[i].attribute) {
-                cs[j] = {attribute: cs[j].attribute, value: v};
-                break;
-              }
-            }
-            onChange(this.choicesToObject(cs)); // callback
+            onChange( { [ options[i].attribute ]: v } ); // callback
           } }
         />
       )
@@ -613,6 +598,67 @@ export class UnitControl extends React.Component {
           </p>
         )}
       </>
+    );
+  }
+}
+
+export class PhoneControl extends React.Component {
+
+  static reg = /^(\+?[0-9]{1,4})?[ \-.]*[0-9]{3}[ \-.]*[0-9]{3}[ \-.]*[0-9]{4}$/;
+
+  validateNumber(num) {
+    return !Boolean(num) || PhoneControl.reg.test(num);
+  }
+
+  render() {
+    let valid = this.validateNumber(this.props.value);
+
+    return (
+      <TextControl
+        value = { this.props.value }
+        onChange = { (n) => {
+          this.props.onChange(n); // set state
+          if (this.validateNumber(n)) {
+            this.props.onChangeComplete(n); // set attribute
+          }
+        } }
+        label = "Phone"
+        help = { valid
+          ? null
+          : "Invalid phone number"
+        }
+      />
+    );
+  }
+}
+
+export class EmailControl extends React.Component {
+
+  // https://stackoverflow.com/a/201378
+  static reg = /^(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-zA-Z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/
+
+  validateEmail(s) {
+    return !Boolean(s) || EmailControl.reg.test(s);
+  }
+
+  render() {
+    let valid = this.validateEmail(this.props.value);
+
+    return (
+      <TextControl
+        value = { this.props.value }
+        onChange = { (e) => {
+          this.props.onChange(e); // set state
+          if (this.validateEmail(e)) {
+            this.props.onChangeComplete(e); // set attribute
+          }
+        } }
+        label = "Email"
+        help = { valid
+          ? null
+          : "Invalid email address"
+        }
+      />
     );
   }
 }
