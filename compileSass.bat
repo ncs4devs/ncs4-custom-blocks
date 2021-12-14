@@ -11,3 +11,5 @@ call sass ./fluid-layout__item/sass:./fluid-layout__item/
 call sass ./bp-content/sass:./bp-content/
 call sass ./bp-subtopic/sass:./bp-subtopic/
 call sass ./bp-topic/sass:./bp-topic/
+call sass ./popup/sass:./popup/
+call sass ./bio/sass:./bio/

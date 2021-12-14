@@ -37,4 +37,10 @@ call npm run build
 cd ../bp-topic
 call npm run build
 
+cd ../popup
+call npm run build
+
+cd ../bio
+call npm run build
+
 cd ../
