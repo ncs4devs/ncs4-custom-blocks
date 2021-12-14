@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { ImageSave } from '../../js/ImageControl.js';
+
 export class BPTopicSave extends React.Component {
   constructor(props) {
     super(props);
@@ -46,31 +48,14 @@ class TopicTextArea extends React.Component {
 }
 
 class TopicIconArea extends React.Component {
-  constructor(props) {
-    super(props);
-    this.img = props.img;
-    this.svg = props.svg;
-  }
 
   render() {
     let renderSvg = this.img && this.img.mime === "image/svg+xml" && this.svg;
     return (
-      <div
+      <ImageSave
         className = "ncs4-bp-topic__icon-area"
-        { ...(
-          renderSvg
-            ? {dangerouslySetInnerHTML: {
-              __html: this.svg
-            }}
-            : {}
-          )
-        }
-      >
-        {this.img && !renderSvg
-          ? <img src = { this.img.url } />
-          : null
-        }
-      </div>
+        img = { this.props.img }
+      />
     );
   }
 }
