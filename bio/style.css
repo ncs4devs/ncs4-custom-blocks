@@ -1,0 +1,63 @@
+/* These colors are kept for compatibility reasons and should not be used */
+/* These colors may be used */
+/* Colors are swapped around to be in order from darkest to lightest */
+/* Navy */
+/* Dark Blue */
+/* Yellow */
+/* Grey */
+/* Links */
+.ncs4-popup a:focus-within .ncs4-popup-overlay {
+  display: block;
+}
+.ncs4-popup__wrapper {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999999;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+.ncs4-popup-overlay {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: #000;
+  pointer-events: all;
+}
+.ncs4-popup-overlay:hover {
+  cursor: default;
+}
+.ncs4-popup-content {
+  overflow-y: auto;
+  pointer-events: all;
+  max-height: 80vh;
+  margin: 0 auto;
+  padding: 3.2rem;
+  width: 100%;
+  border: 16px solid var(--palette-bg-color, #fff);
+  border-radius: 16px;
+}
+.ncs4-popup-content.size-alert {
+  max-width: min(30ch, 80vw);
+}
+.ncs4-popup-content.size-small {
+  max-width: min(600px, 80vw);
+}
+.ncs4-popup-content.size-body {
+  max-width: min(1000px, 80vw);
+}
+.ncs4-popup-content.size-large {
+  max-width: min(1720px, 80vw);
+}
+.ncs4-popup-content__wrapper {
+  display: flex;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/*# sourceMappingURL=style.css.map */

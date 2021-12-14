@@ -35,3 +35,4 @@ include 'bp-content/index.php';
 include 'bp-subtopic/index.php';
 include 'bp-topic/index.php';
 include 'popup/index.php';
+include 'bio/index.php';
