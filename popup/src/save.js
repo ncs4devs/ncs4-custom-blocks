@@ -7,7 +7,6 @@ import { Popup } from './popup.js';
 export class PopupSave extends React.Component {
   constructor(props) {
     super(props);
-    this.blockProps = props.blockProps;
 
     this.visible = props.visible || props.attributes.showOnLoad || false;
   }
@@ -21,8 +20,8 @@ export class PopupSave extends React.Component {
 
   render() {
     return (
-      <div { ...this.blockProps }
-        className = { this.createClassName(this.blockProps.className) }
+      <div { ...this.props.blockProps }
+        className = { this.createClassName(this.props.blockProps.className) }
       >
         <Popup
           attributes = { this.props.attributes }

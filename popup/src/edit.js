@@ -9,7 +9,6 @@ export class PopupEdit extends React.Component {
   constructor(props) {
     super(props);
     this.attributes = props.attributes;
-    this.blockProps = props.blockProps;
     this.clientId = props.clientId;
     this.setAttributes = props.setAttributes;
 
@@ -80,8 +79,8 @@ export class PopupEdit extends React.Component {
 
   render() {
     return (
-      <div { ...this.blockProps }
-        className = { this.createClassName(this.blockProps.className) }
+      <div { ...this.props.blockProps }
+        className = { this.createClassName(this.props.blockProps.className) }
       >
         <Popup
           attributes = { this.state }
