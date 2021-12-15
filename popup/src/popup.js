@@ -174,11 +174,15 @@ function getUsedIds() {
 
 // short-circuiting array.contains() taking advantage of the sorted list
 function isIdAvailable(id, ids) {
-  for (let i of ids) {
-    if (i == id) {
-      return false;
+  for (let i in ids) {
+    if (ids[i] == id) {
+      if (ids[i + 1] == id) { // duplicate id
+        return false;
+      } else { // unique id already owned by us
+        return true;
+      }
     }
-    if (id < i) { // number < str, str < number is always false.
+    if (id < ids[i]) { // number < str, str < number is always false.
       return true;
     }
   }
