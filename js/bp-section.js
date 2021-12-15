@@ -14,7 +14,6 @@ export class BPSection extends React.Component {
   constructor(props) {
     super(props);
     this.attributes = props.attributes;
-    this.blockProps = props.blockProps;
   }
 
   createClassName = (classes, slug = null) => [
@@ -210,11 +209,13 @@ export class BPIndustrySectionEdit extends BPSectionEdit {
   }
 
   render() {
+    let blockProps = this.props.blockProps;
+
     return (
       <>
-        <div { ...this.blockProps }
+        <div { ...blockProps }
           className = {
-            this.createClassName(this.blockProps.className, this.slug)
+            this.createClassName(blockProps.className, this.slug)
           }
         >
           { this.state.showTitle && (
@@ -290,8 +291,10 @@ export class BPIndustrySectionSave extends BPSection {
   }
 
   render() {
+    let blockProps = this.props.blockProps;
+
     return (
-      <div className = { this.createClassName(this.blockProps.className) }>
+      <div className = { this.createClassName(blockProps.className) }>
         { this.attributes.showTitle
           ?
             <h6

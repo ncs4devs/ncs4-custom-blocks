@@ -6,7 +6,6 @@ export class BPTopicSave extends React.Component {
   constructor(props) {
     super(props);
     this.attributes = props.attributes;
-    this.blockProps = props.blockProps;
   }
 
   createClassName(classes) {
@@ -16,9 +15,11 @@ export class BPTopicSave extends React.Component {
   }
 
   render() {
+    let blockProps = this.props.blockProps;
+
     return (
-      <a { ...this.blockProps }
-        className = { this.createClassName(this.blockProps.className) }
+      <a { ...blockProps }
+        className = { this.createClassName(blockProps.className) }
         href = { this.attributes.link }
       >
         <TopicTextArea text = { this.attributes.title }/>

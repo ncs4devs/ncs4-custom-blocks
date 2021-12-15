@@ -5,7 +5,6 @@ export class BPSubtopicSave extends React.Component {
   constructor(props) {
     super(props);
     this.attributes = props.attributes;
-    this.blockProps = props.blockProps;
   }
 
   createClassName(classes) {
@@ -15,10 +14,12 @@ export class BPSubtopicSave extends React.Component {
   }
 
   render() {
+    let blockProps = this.props.blockProps;
+
     return (
-      <section { ...this.blockProps }
+      <section { ...blockProps }
         id = { "ncs4-bp-subtopic__" + this.attributes.id }
-        className = { this.createClassName(this.blockProps.className)}
+        className = { this.createClassName(blockProps.className)}
       >
         <div
           id = { this.attributes.link }

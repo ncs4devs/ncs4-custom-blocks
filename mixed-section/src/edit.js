@@ -54,11 +54,13 @@ export class SectionMixedEdit extends BPSectionEdit {
   }
 
   render() {
+    let blockProps = this.props.blockProps;
+    
     return (
       <>
-        <div { ...this.blockProps }
+        <div { ...blockProps }
           className = {
-            this.createClassName(this.blockProps.className)
+            this.createClassName(blockProps.className)
           }
         >
           { this.state.showTitle && (

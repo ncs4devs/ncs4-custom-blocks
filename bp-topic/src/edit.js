@@ -12,7 +12,6 @@ export class BPTopicEdit extends React.Component {
   constructor(props) {
     super(props);
     this.attributes = props.attributes;
-    this.blockProps = props.blockProps;
     this.clientId = props.clientId;
     this.setAttributes = props.setAttributes;
 
@@ -57,8 +56,10 @@ export class BPTopicEdit extends React.Component {
   }
 
   render() {
+    let blockProps = this.props.blockProps;
+
     return (
-      <div className = "ncs4-bp-topic__wrapper" { ...this.blockProps }>
+      <div className = "ncs4-bp-topic__wrapper" { ...blockProps }>
         { this.state.editMode
           ?
             <BPTopicEditMode
@@ -68,7 +69,7 @@ export class BPTopicEdit extends React.Component {
           :
             <BPTopicSave
               attributes = { this.state }
-              blockProps = { this.blockProps }
+              blockProps = { blockProps }
             />
         }
       </div>

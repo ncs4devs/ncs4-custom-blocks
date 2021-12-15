@@ -95,7 +95,6 @@ export class FluidLayoutEdit extends React.Component {
   constructor(props) {
     super(props);
     this.attributes = props.attributes;
-    this.blockProps = props.blockProps;
     this.setAttributes = props.setAttributes;
 
     this.setStateAttributes = this.setStateAttributes.bind(this);
@@ -130,11 +129,12 @@ export class FluidLayoutEdit extends React.Component {
   }
 
   render() {
+    let blockProps = this.props.blockProps;
 
     return (
       <>
         <FluidLayoutSave
-          blockProps = { this.blockProps }
+          blockProps = { blockProps }
           attributes = { this.state }
           backend = { true }
           allowed_inner_blocks = { allowed_inner_blocks }

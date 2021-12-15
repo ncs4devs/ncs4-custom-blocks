@@ -6,7 +6,6 @@ export class BPContentEdit extends React.Component {
   constructor(props) {
     super(props);
     this.attributes = props.attributes;
-    this.blockProps = props.blockProps;
     this.clientId = props.clientId;
     this.setAttributes = props.setAttributes;
 
@@ -83,9 +82,11 @@ export class BPContentEdit extends React.Component {
   }
 
   render() {
+    let blockProps = this.props.blockProps;
+
     return (
-      <div { ...this.blockProps }
-        className = { this.createClassName(this.blockProps.className) }
+      <div { ...blockProps }
+        className = { this.createClassName(blockProps.className) }
       >
         <SubtopicsPanel subtopics = { this.state.subtopics }/>
         <ContentArea allowed_inner_blocks = { this.allowed_inner_blocks }/>

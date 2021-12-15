@@ -37,9 +37,11 @@ export class SectionMixedSave extends BPSection {
   }
 
   render() {
+    let blockProps = this.props.blockProps;
+    
     return (
       <div className = {this.createClassName(
-          this.blockProps.className,
+          blockProps.className,
           this.attributes.isProChecked,
           this.attributes.isCollegeChecked,
           this.attributes.isHsChecked,

@@ -7,7 +7,6 @@ export class BPSubtopicEdit extends BPSectionEdit {
   constructor(props) {
     super(props);
     this.attributes = props.attributes;
-    this.blockProps = props.blockProps;
     this.clientId = props.clientId;
     this.setAttributes = props.setAttributes;
 
@@ -71,11 +70,13 @@ export class BPSubtopicEdit extends BPSectionEdit {
   }
 
   render() {
+    let blockProps = this.props.blockProps;
+
     return (
       <>
-        <section { ...this.blockProps }
+        <section { ...blockProps }
           id = { "ncs4-bp-subtopic__" + this.attributes.id }
-          className = { this.createClassName(this.blockProps.className) }
+          className = { this.createClassName(blockProps.className) }
           style = {{
             display: "block",
           }}

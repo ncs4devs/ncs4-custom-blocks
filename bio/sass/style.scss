@@ -1,75 +1,34 @@
 @use 'sass:math';
 @import '../../sass/ncs4-pro-colors';
 
-.ncs4-popup {
-  a {
+@import '../../popup/sass/style';
 
-    &:focus-within {
+.ncs4-bio {
 
-      & .ncs4-popup-overlay {
-        display: block;
-      }
+  &-header {
+    display: flex;
+    flex-direction: row-reverse;
+    column-gap: 2em;
+
+    &-seperator {
+
     }
   }
 
-  &__wrapper {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 999999;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-  }
-
-  &-overlay {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    background-color: #000;
-    pointer-events: all;
-
-    &:hover {
-      cursor: default;
+  &-img {
+    img {
+      display: block;
     }
   }
 
-  &-content {
-    $max-vw: 80vw;
+  &-position {
+    font-style: italic;
+  }
 
-    overflow-y: auto;
-    pointer-events: all;
-    max-height: 80vh;
-    margin: 0 auto;
-    padding: 3.2rem;
-    width: 100%;
-    border: 16px solid var(--palette-bg-color, #fff);
-    border-radius: 16px;
+  &-col {
 
-    &.size-alert {
-      max-width: min(30ch, #{$max-vw});
-    }
-
-    &.size-small {
-      max-width: min(600px, #{$max-vw});
-    }
-
-    &.size-body {
-      max-width: min(1000px, #{$max-vw});
-    }
-
-    &.size-large {
-      max-width: min(1720px, #{$max-vw});
-    }
-
-    &__wrapper {
-      display: flex;
-      position: absolute;
-      height: 100%;
-      width: 100%;
-      flex-direction: column;
-      justify-content: center;
+    &2 {
+      margin: auto auto 0 0;
     }
   }
 }

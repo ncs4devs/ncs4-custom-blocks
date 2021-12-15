@@ -7,7 +7,6 @@ export class BPContentSave extends React.Component {
   constructor(props) {
     super(props);
     this.attributes = props.attributes;
-    this.blockProps = props.blockProps;
   }
 
   createClassName(classes) {
@@ -17,9 +16,11 @@ export class BPContentSave extends React.Component {
   }
 
   render() {
+    let blockProps = this.props.blockProps;
+
     return (
-      <div { ...this.blockProps }
-        className = { this.createClassName(this.blockProps.className) }
+      <div { ...blockProps }
+        className = { this.createClassName(blockProps.className) }
       >
         <SubtopicsPanel attributes = { this.attributes }/>
         <ContentArea/>

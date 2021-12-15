@@ -17,7 +17,6 @@ export class MarginEdit extends React.Component {
   constructor(props) {
     super(props);
     this.attributes = props.attributes;
-    this.blockProps = props.blockProps;
     this.setAttributes = props.setAttributes;
 
     this.setStateAttributes = this.setStateAttributes.bind(this);
@@ -46,6 +45,7 @@ export class MarginEdit extends React.Component {
   }
 
   render() {
+    let blockProps = this.props.blockProps;
     let generalOptions = [
       {
         attribute: "optionSize",
@@ -102,7 +102,7 @@ export class MarginEdit extends React.Component {
     return (
       <>
         <MarginSave
-          blockProps = { this.blockProps }
+          blockProps = { blockProps }
           attributes = { this.state }
           backend = { true }
         />
