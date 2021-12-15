@@ -1251,6 +1251,8 @@ __webpack_require__.r(__webpack_exports__);
 class FluidLayoutSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
   render() {
     let attrs = this.props.attributes;
+    let customBgColor = attrs.bgColor.slug ? null : attrs.bgColor.color;
+    let customColor = attrs.textColor.slug ? null : attrs.textColor.color;
     let backend = this.props.backend || false;
     let colorStyle = Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["createColorStyle"])([{
       color: attrs.bgColor,
@@ -1259,9 +1261,24 @@ class FluidLayoutSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compo
       color: attrs.textColor,
       props: ["color", "--palette-color"]
     }]);
+    let style = { ...colorStyle,
+      ['--min-width']: attrs.minWidth.asString,
+      ['--max-width']: attrs.maxWidth.useMaxWidth ? attrs.maxWidth.asString : null,
+      ['--columns']: attrs.numColumns + ';',
+      ['--column-size']: attrs.optionColSize,
+      backgroundColor: customBgColor,
+      ["--palette-bg-color"]: customBgColor,
+      color: customColor,
+      ["--palette-color"]: customColor,
+      textAlign: attrs.alignment && attrs.alignment != "none" ? attrs.alignment : null,
+      padding: attrs.padding.join("rem ") + "rem",
+      margin: attrs.margin.join("rem ") + "rem",
+      gap: attrs.rowGap + "rem " + attrs.columnGap + "rem",
+      justifyContent: attrs.optionJustify
+    };
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.props.blockProps, {
       className: ["ncs4-fluid-layout", Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["createColorClass"])(attrs.bgColor.slug, "background-color"), Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["createColorClass"])(attrs.textColor.slug, "color"), "ncs4-fluid-layout__" + attrs.optionLayout, attrs.useMaxWidth ? "has-max-width" : null, this.props.blockProps.className].join(' '),
-      style: colorStyle
+      style: style
     }), backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"], {
       allowedBlocks: this.props.allowed_inner_blocks
     }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"].Content, null));
