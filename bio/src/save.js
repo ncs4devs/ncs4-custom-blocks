@@ -15,6 +15,7 @@ export class BioSave extends React.Component {
         className = {
           [
             "ncs4-bio",
+            Popup.classType,
             blockProps.className,
           ].join(' ')
         }
@@ -28,6 +29,7 @@ export class BioSave extends React.Component {
         />
         <Popup
           attributes = { attributes }
+          backend = { this.props.backend }
         >
           <BioHeader
             img = { attributes.img }

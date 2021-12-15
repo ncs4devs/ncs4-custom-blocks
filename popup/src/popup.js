@@ -35,9 +35,14 @@ export class Popup extends React.Component {
 
     return (
       <>
-        <a className = "ncs4-popup-button" href = { "#" + id }>
-          { attrs.buttonTitle }
-        </a>
+        { this.props.backend
+          ? <a className = "ncs4-popup-button" href="#">
+              { attrs.buttonTitle }
+            </a>
+          : <a className = "ncs4-popup-button" href= { "#" + id }>
+              { attrs.buttonTitle }
+            </a>
+        }
         <div
           id = { id }
           className = "ncs4-popup__wrapper"
@@ -152,14 +157,17 @@ function getUsedIds() {
     document.getElementsByClassName(classType);
   let ids = [];
   nl.forEach( (n) => {
-    let id =
-      select("core/block-editor").getBlock( n.getAttribute('data-block') )
-      .attributes.id
-    ids.push(
-      /^\d+$/.test(id)
-        ? parseInt(id)
-        : id
-    );
+    let blockId = n.getAttribute('data-block');
+    if (blockId) {
+      let id =
+        select("core/block-editor").getBlock(blockId)
+        .attributes.id
+      ids.push(
+        /^\d+$/.test(id)
+          ? parseInt(id)
+          : id
+      );
+    }
   })
   return ids.sort();
 }
@@ -167,7 +175,7 @@ function getUsedIds() {
 // short-circuiting array.contains() taking advantage of the sorted list
 function isIdAvailable(id, ids) {
   for (let i of ids) {
-    if (i === id) {
+    if (i == id) {
       return false;
     }
     if (id < i) { // number < str, str < number is always false.
