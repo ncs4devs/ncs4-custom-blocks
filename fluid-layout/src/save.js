@@ -25,6 +25,7 @@ export class FluidLayoutSave extends React.Component {
             createColorClass(attrs.textColor.slug, "color"),
             "ncs4-fluid-layout__" + attrs.optionLayout,
             (attrs.useMaxWidth) ? "has-max-width" : null,
+            this.props.blockProps.className,
           ].join(' ')
         }
         style = { colorStyle }
