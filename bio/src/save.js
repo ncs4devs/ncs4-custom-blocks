@@ -27,19 +27,23 @@ export class BioSave extends React.Component {
           email = { attributes.email }
         />
         <Popup
-          attributes = {{
-            ...attributes,
-            optionSize: 'size-body',
-          }}
+          attributes = { attributes }
         >
           <BioHeader
             img = { attributes.img }
             name = { attributes.fullName }
             position = { attributes.position }
+            credentials = { attributes.credentials }
             phone = { attributes.phone }
             email = { attributes.email }
           />
+          { !this.props.backend &&
+            <InnerBlocks.Content/>
+          }
         </Popup>
+        { this.props.backend &&
+          <InnerBlocks/>
+        }
       </div>
     );
   }
@@ -50,25 +54,33 @@ function BioProfile(props) {
 
   return (
     <>
-      <ImageSave
-        img = { props.img }
-      />
-      <h5 className = "ncs4-bio-name">
-        <strong>{ props.name }</strong>
-      </h5>
-      <h5 className = "ncs4-bio-position">
-        { props.position }
-      </h5>
-      { props.phone && (
-        <p className = "ncs4-bio-phone ncs4-bio-contact-info">
-          Phone: <a href={ "tel:" + props.phone }>{ props.phone }</a>
-        </p>
-      )}
-      { props.email && (
-        <p className = "ncs4-bio-email ncs4-bio-contact-info">
-          E-Mail: <a href={ "mailto:" + props.email }>{ props.email }</a>
-        </p>
-      )}
+      <div className = "ncs4-bio-col ncs4-bio-col1">
+        <ImageSave
+          className = "ncs4-bio-img"
+          img = { props.img }
+        />
+      </div>
+      <div className = "ncs4-bio-col ncs4-bio-col2">
+        <h5 className = "ncs4-bio-name">
+          <strong>{ props.name }</strong>
+          { props.credentials && (
+            <small>, { props.credentials }</small>
+          )}
+        </h5>
+        <h5 className = "ncs4-bio-position">
+          { props.position }
+        </h5>
+        { props.phone && (
+          <p className = "ncs4-bio-phone ncs4-bio-contact-info">
+            Phone: <a href={ "tel:" + props.phone }>{ props.phone }</a>
+          </p>
+        )}
+        { props.email && (
+          <p className = "ncs4-bio-email ncs4-bio-contact-info">
+            E-Mail: <a href={ "mailto:" + props.email }>{ props.email }</a>
+          </p>
+        )}
+      </div>
     </>
   );
 }
@@ -77,7 +89,9 @@ function BioHeader(props) {
 
   return (
     <>
-      <BioProfile {...props}/>
+      <div className = "ncs4-bio-header">
+        <BioProfile {...props}/>
+      </div>
       <hr class="ncs4-bio-header-seperator"/>
     </>
   );

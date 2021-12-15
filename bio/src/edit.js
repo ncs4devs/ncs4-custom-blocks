@@ -20,7 +20,6 @@ export class BioEdit extends React.Component {
   constructor(props) {
     super(props);
     this.attributes = props.attributes;
-    this.blockProps = props.blockProps;
     this.setAttributes = props.setAttributes;
 
     this.setStateAttributes = this.setStateAttributes.bind(this);
@@ -32,6 +31,7 @@ export class BioEdit extends React.Component {
       textColor: this.attributes.textColor,
       buttonTitle: this.attributes.buttonTitle,
       id: this.attributes.id,
+      optionSize: this.attributes.optionSize,
       name: this.attributes.name,
       fullName: this.attributes.fullName,
       credentials: this.attributes.credentials,
@@ -72,8 +72,9 @@ export class BioEdit extends React.Component {
     return (
       <>
         <BioSave
-          blockProps = { this.blockProps }
+          blockProps = { this.props.blockProps }
           attributes = { this.state }
+          backend = { true }
         />
         <InspectorControls>
           <PanelBody
@@ -129,7 +130,7 @@ export class BioEdit extends React.Component {
           </PanelBody>
           <PopupSettings
             attributes = { this.state }
-            callback = { (v) => { console.log(v); this.setStateAttributes(v)} }
+            callback = { this.setStateAttributes }
           />
         </InspectorControls>
       </>
