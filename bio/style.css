@@ -70,7 +70,7 @@
 
 .ncs4-bio-header {
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
   column-gap: 2em;
 }
 .ncs4-bio-img img {
