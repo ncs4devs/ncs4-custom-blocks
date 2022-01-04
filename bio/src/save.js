@@ -81,7 +81,7 @@ function BioProfile(props) {
         <h5 className = "ncs4-bio-position">
           { props.position }
         </h5>
-        { props.phone || props.email (
+        { props.phone || props.email && (
           <p className = "ncs4-bio-contact-info">
             { props.phone && (
               <a
