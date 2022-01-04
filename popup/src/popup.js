@@ -46,6 +46,9 @@ export class Popup extends React.Component {
         <div
           id = { id }
           className = "ncs4-popup__wrapper"
+          style = {{
+            textAlign: "left",
+          }}
         >
           <a
             className = "ncs4-popup-overlay"

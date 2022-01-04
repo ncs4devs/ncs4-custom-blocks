@@ -25,6 +25,11 @@ Basically, it's WP's image object + svg data (if applicable)
 stored in a "data" attribute
 */
 
+const imageStyle = (props) => ({
+  marginLeft: (props.align == "left") ? 0 : "auto",
+  marginRight: (props.align == "right") ? 0 : "auto",
+})
+
 // Edit-side image display
 export function ImageEdit(props) {
 
@@ -47,8 +52,12 @@ export function ImageEdit(props) {
               ? (props.img.mime === "image/svg+xml" && props.img.data
                   ? <Svg
                       svg = { props.img.data }
+                      style = { imageStyle(props) }
                     />
-                  : <img src = { props.img.url }/>
+                  : <img
+                      src = { props.img.url }
+                      style = { imageStyle(props) }
+                    />
                 )
               : "Choose an image"
             }
@@ -68,14 +77,18 @@ export function ImageSave(props) {
       { ...(
         isSvg
           ? { dangerouslySetInnerHTML: {
-            __html: props.img.data
+            __html: props.img.data,
+            style: imageStyle(props),
           }}
           : {}
         )
       }
     >
       { props.img && !isSvg
-        ? <img src = {props.img.url }/>
+        ? <img
+            src = { props.img.url }
+            style = { imageStyle(props) }
+          />
         : null
       }
     </div>

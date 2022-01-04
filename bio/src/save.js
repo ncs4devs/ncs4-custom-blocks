@@ -34,9 +34,6 @@ export class BioSave extends React.Component {
         <Popup
           attributes = { attributes }
           backend = { this.props.backend }
-          style = {{
-            textAlign: "left",
-          }}
         >
           <BioHeader
             img = { attributes.img }
@@ -67,6 +64,7 @@ function BioProfile(props) {
         <ImageSave
           className = "ncs4-bio-img"
           img = { props.img }
+          align = { (props.alignment == "none") ? "left" : props.alignment }
           style = {{
             marginLeft: (props.alignment == "left" || props.alignment == "none")
               ? 0 : "auto",

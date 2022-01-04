@@ -230,7 +230,12 @@ img: {
 Basically, it's WP's image object + svg data (if applicable)
 stored in a "data" attribute
 */
-// Edit-side image display
+
+const imageStyle = props => ({
+  marginLeft: props.align == "left" ? 0 : "auto",
+  marginRight: props.align == "right" ? 0 : "auto"
+}); // Edit-side image display
+
 
 function ImageEdit(props) {
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["MediaUploadCheck"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["MediaUpload"], {
@@ -243,9 +248,11 @@ function ImageEdit(props) {
       className: props.img ? 'editor-post-featured-image__preview' : 'editor-post-featured-image__toggle',
       onClick: open
     }, props.img ? props.img.mime === "image/svg+xml" && props.img.data ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Svg, {
-      svg: props.img.data
+      svg: props.img.data,
+      style: imageStyle(props)
     }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("img", {
-      src: props.img.url
+      src: props.img.url,
+      style: imageStyle(props)
     }) : "Choose an image")
   }));
 } // Front-end image display
@@ -254,10 +261,12 @@ function ImageSave(props) {
   let isSvg = props.img && props.img.mime === "image/svg+xml" && props.img.data;
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, isSvg ? {
     dangerouslySetInnerHTML: {
-      __html: props.img.data
+      __html: props.img.data,
+      style: imageStyle(props)
     }
   } : {}), props.img && !isSvg ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("img", {
-    src: props.img.url
+    src: props.img.url,
+    style: imageStyle(props)
   }) : null);
 } // Generic image change handler
 
@@ -966,7 +975,10 @@ class Popup extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
       href: "#" + id
     }, attrs.buttonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
       id: id,
-      className: "ncs4-popup__wrapper"
+      className: "ncs4-popup__wrapper",
+      style: {
+        textAlign: "left"
+      }
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
       className: "ncs4-popup-overlay",
       href: "#!",
@@ -1439,10 +1451,7 @@ class BioSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
       alignment: attributes.alignment
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_5__["Popup"], {
       attributes: attributes,
-      backend: this.props.backend,
-      style: {
-        textAlign: "left"
-      }
+      backend: this.props.backend
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(BioHeader, {
       img: attributes.img,
       name: attributes.fullName,
@@ -1461,6 +1470,7 @@ function BioProfile(props) {
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_js_ImageControl_js__WEBPACK_IMPORTED_MODULE_4__["ImageSave"], {
     className: "ncs4-bio-img",
     img: props.img,
+    align: props.alignment == "none" ? "left" : props.alignment,
     style: {
       marginLeft: props.alignment == "left" || props.alignment == "none" ? 0 : "auto",
       marginRight: props.alignment == "right" ? 0 : "auto"
