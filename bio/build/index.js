@@ -1428,7 +1428,7 @@ class BioSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, blockProps, {
       className: ["ncs4-bio", _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_5__["Popup"].classType, blockProps.className].join(' '),
       style: {
-        textAlign: attrs.alignment != "none" ? attrs.alignment : null
+        textAlign: attributes.alignment != "none" ? attributes.alignment : null
       }
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(BioProfile, {
       img: attributes.img,

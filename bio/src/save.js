@@ -20,7 +20,7 @@ export class BioSave extends React.Component {
           ].join(' ')
         }
         style = {{
-          textAlign: (attrs.alignment != "none") ? attrs.alignment : null,
+          textAlign: (attributes.alignment != "none") ? attributes.alignment : null,
         }}
       >
         <BioProfile
