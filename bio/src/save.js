@@ -29,6 +29,7 @@ export class BioSave extends React.Component {
           position = { attributes.position }
           //phone = { attributes.phone }
           //email = { attributes.email }
+          alignment = { attributes.alignment }
         />
         <Popup
           attributes = { attributes }
@@ -67,9 +68,9 @@ function BioProfile(props) {
           className = "ncs4-bio-img"
           img = { props.img }
           style = {{
-            marginLeft: (attrs.alignment == "left" || attrs.alignment == "none")
+            marginLeft: (props.alignment == "left" || props.alignment == "none")
               ? 0 : "auto",
-            marginRight: (attrs.alignment == "right") ? 0 : "auto"
+            marginRight: (props.alignment == "right") ? 0 : "auto"
           }}
         />
       </div>

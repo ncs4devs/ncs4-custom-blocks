@@ -1435,7 +1435,8 @@ class BioSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
       name: attributes.name,
       position: attributes.position //phone = { attributes.phone }
       //email = { attributes.email }
-
+      ,
+      alignment: attributes.alignment
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_5__["Popup"], {
       attributes: attributes,
       backend: this.props.backend,
@@ -1461,8 +1462,8 @@ function BioProfile(props) {
     className: "ncs4-bio-img",
     img: props.img,
     style: {
-      marginLeft: attrs.alignment == "left" || attrs.alignment == "none" ? 0 : "auto",
-      marginRight: attrs.alignment == "right" ? 0 : "auto"
+      marginLeft: props.alignment == "left" || props.alignment == "none" ? 0 : "auto",
+      marginRight: props.alignment == "right" ? 0 : "auto"
     }
   })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
     className: "ncs4-bio-col ncs4-bio-col2"
