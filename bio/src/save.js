@@ -75,7 +75,9 @@ function BioProfile(props) {
       <div className = "ncs4-bio-col ncs4-bio-col2">
         <h5 className = "ncs4-bio-name">
           <strong>{ props.name }
-            { props.credentials }
+            { props.credentials && (
+              <>, { props.credentials }</>
+            )}
           </strong>
         </h5>
         <h5 className = "ncs4-bio-position">
