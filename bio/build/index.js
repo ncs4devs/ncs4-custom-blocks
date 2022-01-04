@@ -1178,7 +1178,8 @@ class BioEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
       position: this.attributes.position,
       phone: this.attributes.phone,
       email: this.attributes.email,
-      img: this.attributes.img
+      img: this.attributes.img,
+      alignment: this.attributes.alignment
     };
   }
 
@@ -1286,6 +1287,11 @@ class BioEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
     })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["PopupSettings"], {
       attributes: this.state,
       callback: this.setStateAttributes
+    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__["BlockControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__["AlignmentToolbar"], {
+      value: this.state.alignment,
+      onChange: a => this.setStateAttributes({
+        alignment: a === undefined ? 'none' : a
+      })
     })));
   }
 
@@ -1373,6 +1379,10 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
     },
     img: {
       type: 'object'
+    },
+    alignment: {
+      type: 'string',
+      default: 'none'
     }
   },
   edit: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_edit_js__WEBPACK_IMPORTED_MODULE_4__["BioEdit"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
@@ -1416,16 +1426,22 @@ class BioSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
     let blockProps = this.props.blockProps;
     let attributes = this.props.attributes;
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, blockProps, {
-      className: ["ncs4-bio", _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_5__["Popup"].classType, blockProps.className].join(' ')
+      className: ["ncs4-bio", _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_5__["Popup"].classType, blockProps.className].join(' '),
+      style: {
+        textAlign: attrs.alignment != "none" ? attrs.alignment : null
+      }
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(BioProfile, {
       img: attributes.img,
       name: attributes.name,
-      position: attributes.position,
-      phone: attributes.phone,
-      email: attributes.email
+      position: attributes.position //phone = { attributes.phone }
+      //email = { attributes.email }
+
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_5__["Popup"], {
       attributes: attributes,
-      backend: this.props.backend
+      backend: this.props.backend,
+      style: {
+        textAlign: "left"
+      }
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(BioHeader, {
       img: attributes.img,
       name: attributes.fullName,
@@ -1443,7 +1459,11 @@ function BioProfile(props) {
     className: "ncs4-bio-col ncs4-bio-col1"
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_js_ImageControl_js__WEBPACK_IMPORTED_MODULE_4__["ImageSave"], {
     className: "ncs4-bio-img",
-    img: props.img
+    img: props.img,
+    style: {
+      marginLeft: attrs.alignment == "left" || attrs.alignment == "none" ? 0 : "auto",
+      marginRight: attrs.alignment == "right" ? 0 : "auto"
+    }
   })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
     className: "ncs4-bio-col ncs4-bio-col2"
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h5", {

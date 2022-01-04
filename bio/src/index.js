@@ -61,6 +61,10 @@ registerBlockType( 'ncs4-custom-blocks/bio', {
     img: {
       type: 'object',
     },
+    alignment: {
+      type: 'string',
+      default: 'none',
+    },
   },
 
   edit: (props) => (

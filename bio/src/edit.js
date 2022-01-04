@@ -1,6 +1,10 @@
 import React from 'react';
 
-import { InspectorControls } from '@wordpress/block-editor';
+import {
+  InspectorControls,
+  BlockControls,
+  AlignmentToolbar,
+} from '@wordpress/block-editor';
 import {
   PanelBody,
   TextControl,
@@ -39,6 +43,7 @@ export class BioEdit extends React.Component {
       phone: this.attributes.phone,
       email: this.attributes.email,
       img: this.attributes.img,
+      alignment: this.attributes.alignment,
     };
   }
 
@@ -133,6 +138,14 @@ export class BioEdit extends React.Component {
             callback = { this.setStateAttributes }
           />
         </InspectorControls>
+        <BlockControls>
+          <AlignmentToolbar
+            value = { this.state.alignment }
+            onChange = { (a) => this.setStateAttributes( {
+              alignment: (a === undefined) ? 'none' : a,
+            }) }
+          />
+        </BlockControls>
       </>
     );
   }

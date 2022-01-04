@@ -19,17 +19,23 @@ export class BioSave extends React.Component {
             blockProps.className,
           ].join(' ')
         }
+        style = {{
+          textAlign: (attrs.alignment != "none") ? attrs.alignment : null,
+        }}
       >
         <BioProfile
           img = { attributes.img }
           name = { attributes.name }
           position = { attributes.position }
-          phone = { attributes.phone }
-          email = { attributes.email }
+          //phone = { attributes.phone }
+          //email = { attributes.email }
         />
         <Popup
           attributes = { attributes }
           backend = { this.props.backend }
+          style = {{
+            textAlign: "left",
+          }}
         >
           <BioHeader
             img = { attributes.img }
@@ -60,6 +66,11 @@ function BioProfile(props) {
         <ImageSave
           className = "ncs4-bio-img"
           img = { props.img }
+          style = {{
+            marginLeft: (attrs.alignment == "left" || attrs.alignment == "none")
+              ? 0 : "auto",
+            marginRight: (attrs.alignment == "right") ? 0 : "auto"
+          }}
         />
       </div>
       <div className = "ncs4-bio-col ncs4-bio-col2">
