@@ -1412,9 +1412,93 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
   !*** ./src/save.js ***!
   \*********************/
 /*! exports provided: BioSave */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-throw new Error("Module build failed (from ../node_modules/babel-loader/lib/index.js):\nSyntaxError: C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\bio\\src\\save.js: Unexpected token, expected \",\" (79:21)\n\n\u001b[0m \u001b[90m 77 |\u001b[39m           \u001b[33m<\u001b[39m\u001b[33mstrong\u001b[39m\u001b[33m>\u001b[39m{ props\u001b[33m.\u001b[39mname }\u001b[0m\n\u001b[0m \u001b[90m 78 |\u001b[39m             { props\u001b[33m.\u001b[39mcredentials \u001b[33m&&\u001b[39m (\u001b[0m\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 79 |\u001b[39m               { props\u001b[33m.\u001b[39mcredentials }\u001b[0m\n\u001b[0m \u001b[90m    |\u001b[39m                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 80 |\u001b[39m             )}\u001b[0m\n\u001b[0m \u001b[90m 81 |\u001b[39m           \u001b[33m<\u001b[39m\u001b[33m/\u001b[39m\u001b[33mstrong\u001b[39m\u001b[33m>\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 82 |\u001b[39m         \u001b[33m<\u001b[39m\u001b[33m/\u001b[39m\u001b[33mh5\u001b[39m\u001b[33m>\u001b[39m\u001b[0m\n    at Object._raise (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:796:17)\n    at Object.raiseWithData (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:789:17)\n    at Object.raise (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:750:17)\n    at Object.unexpected (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:3257:16)\n    at Object.expect (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:3231:28)\n    at Object.parseObjectLike (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:11954:14)\n    at Object.parseExprAtom (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:11441:23)\n    at Object.parseExprAtom (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:7168:20)\n    at Object.parseExprSubscripts (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:11090:23)\n    at Object.parseUpdate (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:11070:21)\n    at Object.parseMaybeUnary (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:11048:23)\n    at Object.parseExprOps (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:10891:23)\n    at Object.parseMaybeConditional (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:10865:23)\n    at Object.parseMaybeAssign (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:10823:21)\n    at C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:10785:39\n    at Object.allowInAnd (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:12604:12)\n    at Object.parseMaybeAssignAllowIn (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:10785:17)\n    at Object.parseParenAndDistinguishExpression (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:11788:28)\n    at Object.parseExprAtom (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:11419:23)\n    at Object.parseExprAtom (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:7168:20)\n    at Object.parseExprSubscripts (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:11090:23)\n    at Object.parseUpdate (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:11070:21)\n    at Object.parseMaybeUnary (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:11048:23)\n    at Object.parseExprOpBaseRightExpr (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:10984:34)\n    at Object.parseExprOpRightExpr (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:10977:21)\n    at Object.parseExprOp (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:10935:27)\n    at Object.parseExprOps (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:10897:17)\n    at Object.parseMaybeConditional (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:10865:23)\n    at Object.parseMaybeAssign (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:10823:21)\n    at Object.parseExpressionBase (C:\\Users\\w10029145\\Sites\\www.ncs4demo.dev.cc\\wp-content\\plugins\\ncs4-custom-blocks\\node_modules\\@babel\\parser\\lib\\index.js:10763:23)");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BioSave", function() { return BioSave; });
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js");
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _js_ImageControl_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../js/ImageControl.js */ "../js/ImageControl.js");
+/* harmony import */ var _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../popup/src/popup.js */ "../popup/src/popup.js");
+
+
+
+
+
+
+class BioSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
+  render() {
+    let blockProps = this.props.blockProps;
+    let attributes = this.props.attributes;
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, blockProps, {
+      className: ["ncs4-bio", _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_5__["Popup"].classType, blockProps.className].join(' '),
+      style: {
+        textAlign: attributes.alignment != "none" ? attributes.alignment : null
+      }
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(BioProfile, {
+      img: attributes.img,
+      name: attributes.name,
+      position: attributes.position //phone = { attributes.phone }
+      //email = { attributes.email }
+      ,
+      alignment: attributes.alignment
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_5__["Popup"], {
+      attributes: attributes,
+      backend: this.props.backend
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(BioHeader, {
+      img: attributes.img,
+      name: attributes.fullName,
+      position: attributes.position,
+      credentials: attributes.credentials,
+      phone: attributes.phone,
+      email: attributes.email
+    }), !this.props.backend && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"].Content, null)), this.props.backend && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InnerBlocks"], null));
+  }
+
+}
+
+function BioProfile(props) {
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+    className: "ncs4-bio-col ncs4-bio-col1"
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_js_ImageControl_js__WEBPACK_IMPORTED_MODULE_4__["ImageSave"], {
+    className: "ncs4-bio-img",
+    img: props.img,
+    align: props.alignment == "none" ? "left" : props.alignment,
+    style: {
+      marginLeft: props.alignment == "left" || props.alignment == "none" ? 0 : "auto",
+      marginRight: props.alignment == "right" ? 0 : "auto"
+    }
+  })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+    className: "ncs4-bio-col ncs4-bio-col2"
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h5", {
+    className: "ncs4-bio-name"
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("strong", null, props.name, props.credentials)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h5", {
+    className: "ncs4-bio-position"
+  }, props.position), props.phone || props.email(Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
+    className: "ncs4-bio-contact-info"
+  }, props.phone && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
+    className: "ncs4-bio-phone",
+    href: "tel:" + props.phone
+  }, props.phone), props.phone && props.email && " | ", props.email && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
+    className: "ncs4-bio-email",
+    href: "mailto:" + props.email
+  }, props.email)))));
+}
+
+function BioHeader(props) {
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+    className: "ncs4-bio-header"
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(BioProfile, props)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("hr", {
+    class: "ncs4-bio-header-seperator"
+  }));
+}
 
 /***/ }),
 

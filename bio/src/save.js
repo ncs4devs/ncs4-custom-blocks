@@ -75,22 +75,33 @@ function BioProfile(props) {
       <div className = "ncs4-bio-col ncs4-bio-col2">
         <h5 className = "ncs4-bio-name">
           <strong>{ props.name }
-            { props.credentials && (
-              { props.credentials }
-            )}
+            { props.credentials }
           </strong>
         </h5>
         <h5 className = "ncs4-bio-position">
           { props.position }
         </h5>
-        { props.phone && (
-          <p className = "ncs4-bio-phone ncs4-bio-contact-info">
-            Phone: <a href={ "tel:" + props.phone }>{ props.phone }</a>
-          </p>
-        )}
-        { props.email && (
-          <p className = "ncs4-bio-email ncs4-bio-contact-info">
-            E-Mail: <a href={ "mailto:" + props.email }>{ props.email }</a>
+        { props.phone || props.email (
+          <p className = "ncs4-bio-contact-info">
+            { props.phone && (
+              <a
+                className = "ncs4-bio-phone"
+                href = { "tel:" + props.phone }
+              >
+                { props.phone }
+              </a>
+            )}
+            { props.phone && props.email && (
+              " | "
+            )}
+            { props.email && (
+              <a
+                className = "ncs4-bio-email"
+                href = { "mailto:" + props.email }
+              >
+                { props.email }
+              </a>
+            )}
           </p>
         )}
       </div>
