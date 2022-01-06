@@ -34,7 +34,7 @@ registerBlockType( 'ncs4-custom-blocks/bio', {
       default: 'View Bio',
     },
     id: {
-      type: 'string',
+      type: 'number',
     },
     optionSize: {
       type: 'string',

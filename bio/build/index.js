@@ -925,14 +925,16 @@ module.exports["default"] = module.exports, module.exports.__esModule = true;
 /*!*****************************!*\
   !*** ../popup/src/popup.js ***!
   \*****************************/
-/*! exports provided: Popup, PopupSettings, requestId */
+/*! exports provided: Popup, PopupSettings, POPUP_STORE, reserveId, deleteId */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Popup", function() { return Popup; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PopupSettings", function() { return PopupSettings; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "requestId", function() { return requestId; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "POPUP_STORE", function() { return POPUP_STORE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reserveId", function() { return reserveId; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteId", function() { return deleteId; });
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js");
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
@@ -945,9 +947,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../js/SelectControls.js */ "../js/SelectControls.js");
 /* harmony import */ var _js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../js/ColorSelector.js */ "../js/ColorSelector.js");
+/* harmony import */ var _popupSelectors__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./popupSelectors */ "../popup/src/popupSelectors.js");
+/* harmony import */ var _popupActions__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./popupActions */ "../popup/src/popupActions.js");
 
 
 // Library of generic popup classes
+
+
 
 
 
@@ -959,7 +965,7 @@ let classType = "ncs4-custom-blocks_popup-type"; // stateless popup component, c
 class Popup extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
   render() {
     let attrs = this.props.attributes;
-    let id = "popup-" + attrs.id;
+    let id = "popup-" + String(attrs.id);
     let customBgColor = attrs.bgColor.slug ? null : attrs.bgColor.color;
     let customColor = attrs.textColor.slug ? null : attrs.textColor.color;
     let css = `
@@ -1074,67 +1080,169 @@ class PopupSettings extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     })));
   }
 
-} // popup id functions
+} // Popup store
 
-function requestId(curId) {
-  let ids = getUsedIds();
+const POPUP_STORE = "ncs4/popup";
 
-  if (!curId || !isIdAvailable(curId, ids)) {
-    return String(getNextId(ids));
-  }
+const popupReducer = (state = {
+  ids: []
+}, {
+  id,
+  type
+}) => {
+  id = Number(id);
 
-  return curId;
-}
+  switch (type) {
+    case "CREATE":
+      let out = [];
+      let j = 0;
+      let haveAdded = false;
 
-function getUsedIds() {
-  let nl = document.getElementsByClassName(classType);
-  let ids = [];
-  nl.forEach(n => {
-    let blockId = n.getAttribute('data-block');
+      for (let i = 0; i < state.ids.length; i++) {
+        if (i > 20) {
+          break;
+        }
 
-    if (blockId) {
-      let id = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["select"])("core/block-editor").getBlock(blockId).attributes.id;
-      ids.push(/^\d+$/.test(id) ? parseInt(id) : id);
-    }
-  });
-  return ids.sort();
-} // short-circuiting array.contains() taking advantage of the sorted list
+        if (!haveAdded && state.ids[i] > id) {
+          out[j] = id;
+          haveAdded = true;
+          j++;
+        }
 
-
-function isIdAvailable(id, ids) {
-  for (let i in ids) {
-    if (ids[i] == id) {
-      if (ids[i + 1] == id) {
-        // duplicate id
-        return false;
-      } else {
-        // unique id already owned by us
-        return true;
+        out[j] = state.ids[i];
+        j++;
       }
-    }
 
-    if (id < ids[i]) {
-      // number < str, str < number is always false.
-      return true;
+      if (!haveAdded) {
+        out[out.length] = id;
+      }
+
+      return { ...state,
+        ids: out
+      };
+
+    case "DELETE":
+      console.log("Deleting");
+      return { ...state,
+        ids: state.ids.filter(x => x !== id)
+      };
+
+    default:
+      return state;
+  }
+};
+
+Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["registerStore"])(POPUP_STORE, {
+  selectors: _popupSelectors__WEBPACK_IMPORTED_MODULE_7__,
+  actions: _popupActions__WEBPACK_IMPORTED_MODULE_8__,
+  reducer: popupReducer
+}); // popup id functions
+
+function reserveId(callback, id = -1) {
+  // -1 guarantees it is unavailable
+  let popupStore = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["select"])("ncs4/popup");
+  let {
+    createId,
+    deleteId
+  } = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["dispatch"])("ncs4/popup");
+  let resp = popupStore.requestId(id);
+
+  if (resp !== -1) {
+    // current id is invalid
+    callback(resp);
+    createId(resp);
+  } else {
+    callback(id);
+    createId(id);
+  }
+}
+function deleteId(id) {
+  let {
+    deleteId
+  } = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["dispatch"])("ncs4/popup");
+  deleteId(id);
+}
+
+/***/ }),
+
+/***/ "../popup/src/popupActions.js":
+/*!************************************!*\
+  !*** ../popup/src/popupActions.js ***!
+  \************************************/
+/*! exports provided: createId, deleteId */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createId", function() { return createId; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteId", function() { return deleteId; });
+function createId(id) {
+  return {
+    type: "CREATE",
+    id: id
+  };
+}
+function deleteId(id) {
+  return {
+    type: "DELETE",
+    id: id
+  };
+}
+
+/***/ }),
+
+/***/ "../popup/src/popupSelectors.js":
+/*!**************************************!*\
+  !*** ../popup/src/popupSelectors.js ***!
+  \**************************************/
+/*! exports provided: getIds, requestId, getNextId */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getIds", function() { return getIds; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "requestId", function() { return requestId; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNextId", function() { return getNextId; });
+const getIds = state => {
+  return state.ids || [];
+}; // Returns -1 if available, getNextId if unavailable
+
+const requestId = (state, id) => {
+  id = Number(id);
+  let n = state.ids.length;
+
+  if (id < 0) {
+    return getNextId(state); // unavailable
+  }
+
+  if (n === 0) {
+    return -1;
+  }
+
+  for (let i = 0; i < n; i++) {
+    if (state.ids[i] === id) {
+      return getNextId(state); // unavailable
     }
   }
 
-  return true;
-}
+  return -1;
+};
+const getNextId = state => {
+  for (let i = 0; i < state.ids.length; i++) {
+    const id = state.ids[i];
 
-function getNextId(ids) {
-  let id = typeof ids[0] === "number" ? ids[0] : -1;
+    if (i === 0 && id !== 0) {
+      return id;
+    }
 
-  for (let i = 1; i < ids.length; i++) {
-    if (typeof ids[i] !== "number" || ids[i] - id - 1) {
-      break;
-    } else {
-      id = ids[i];
+    if (i + 1 < state.ids.length && state.ids[i + 1] - 1 > id || i + 1 >= state.ids.length // end of array
+    ) {
+      return id + 1;
     }
   }
 
-  return id + 1;
-}
+  return 0;
+};
 
 /***/ }),
 
@@ -1196,9 +1304,9 @@ class BioEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
   }
 
   componentDidMount() {
-    this.setStateAttributes({
-      id: Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["requestId"])(this.state.id)
-    });
+    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["reserveId"])(x => this.setStateAttributes({
+      id: x
+    }), this.state.id);
     this.setStateAttributes({
       bgColor: {
         color: Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_4__["verifyColor"])(this.state.bgColor),
@@ -1211,6 +1319,10 @@ class BioEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
         slug: this.state.textColor.slug
       }
     });
+  }
+
+  componentWillUnmount() {
+    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["deleteId"])(this.state.id);
   }
 
   setStateAttributes(attrs) {
@@ -1365,7 +1477,7 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
       default: 'View Bio'
     },
     id: {
-      type: 'string'
+      type: 'number'
     },
     optionSize: {
       type: 'string',

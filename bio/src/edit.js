@@ -17,7 +17,7 @@ import {
 } from '../../js/SelectControls.js';
 import { ImageEdit, onImageChange } from '../../js/ImageControl.js';
 
-import { PopupSettings, requestId } from '../../popup/src/popup.js';
+import { PopupSettings, reserveId, deleteId } from '../../popup/src/popup.js';
 import { BioSave } from './save.js';
 
 export class BioEdit extends React.Component {
@@ -48,7 +48,10 @@ export class BioEdit extends React.Component {
   }
 
   componentDidMount() {
-    this.setStateAttributes({ id: requestId(this.state.id) });
+    reserveId(
+      (x) => this.setStateAttributes({ id: x }),
+      this.state.id,
+    );
     this.setStateAttributes({ bgColor: {
         color: verifyColor(this.state.bgColor),
         slug: this.state.bgColor.slug,
@@ -59,6 +62,10 @@ export class BioEdit extends React.Component {
         slug: this.state.textColor.slug,
       }
     });
+  }
+
+  componentWillUnmount() {
+    deleteId(this.state.id);
   }
 
   setStateAttributes(attrs) {

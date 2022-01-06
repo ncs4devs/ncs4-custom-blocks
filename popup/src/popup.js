@@ -1,13 +1,16 @@
 // Library of generic popup classes
 
 import React from 'react';
-import { select } from '@wordpress/data';
+import { select, dispatch, registerStore } from '@wordpress/data';
 import {
   PanelBody,
   TextControl,
 } from '@wordpress/components';
 import { OptionsControl } from '../../js/SelectControls.js';
 import { ColorSelector, createColorClass } from '../../js/ColorSelector.js';
+
+import * as selectors from './popupSelectors';
+import * as actions from './popupActions';
 
 // Should be included by all components that use Popup
 let classType = "ncs4-custom-blocks_popup-type";
@@ -24,7 +27,7 @@ export class Popup extends React.Component {
 
   render() {
     let attrs = this.props.attributes;
-    let id = "popup-" + attrs.id;
+    let id = "popup-" + String(attrs.id);
     let customBgColor = attrs.bgColor.slug ? null : attrs.bgColor.color;
     let customColor = attrs.textColor.slug ? null : attrs.textColor.color;
     let css = `
@@ -145,61 +148,77 @@ export class PopupSettings extends React.Component {
   }
 }
 
+// Popup store
+
+export const POPUP_STORE = "ncs4/popup";
+
+const popupReducer = (
+  state = { ids: [] },
+  { id, type }
+) => {
+  id = Number(id);
+  switch (type) {
+    case "CREATE":
+      let out = [];
+      let j = 0;
+      let haveAdded = false;
+      for (let i = 0; i < state.ids.length; i++) {
+        if (i > 20) {
+          break;
+        }
+        if (!haveAdded && state.ids[i] > id) {
+          out[j] = id;
+          haveAdded = true;
+          j++;
+        }
+        out[j] = state.ids[i];
+        j++;
+      }
+      if (!haveAdded) {
+        out[out.length] = id;
+      }
+      return {
+        ...state,
+        ids: out,
+      };
+    case "DELETE":
+      console.log("Deleting");
+      return {
+        ...state,
+        ids: state.ids.filter(x => x !== id)
+      };
+    default:
+      return state;
+  }
+}
+
+registerStore(
+  POPUP_STORE,
+  {
+    selectors,
+    actions,
+    reducer: popupReducer,
+  }
+);
+
 // popup id functions
 
-export function requestId(curId) {
-  let ids = getUsedIds();
-  if (!curId || !isIdAvailable(curId, ids)) {
-    return String(getNextId(ids));
+export function reserveId(callback, id = -1) { // -1 guarantees it is unavailable
+  let popupStore = select("ncs4/popup");
+  let { createId, deleteId } = dispatch("ncs4/popup");
+  let resp = popupStore.requestId(id);
+
+  if (resp !== -1) {
+    // current id is invalid
+    callback(resp);
+    createId(resp);
+  } else {
+    callback(id);
+    createId(id);
   }
-  return curId;
 }
 
-function getUsedIds() {
-  let nl =
-    document.getElementsByClassName(classType);
-  let ids = [];
-  nl.forEach( (n) => {
-    let blockId = n.getAttribute('data-block');
-    if (blockId) {
-      let id =
-        select("core/block-editor").getBlock(blockId)
-        .attributes.id
-      ids.push(
-        /^\d+$/.test(id)
-          ? parseInt(id)
-          : id
-      );
-    }
-  })
-  return ids.sort();
-}
-
-// short-circuiting array.contains() taking advantage of the sorted list
-function isIdAvailable(id, ids) {
-  for (let i in ids) {
-    if (ids[i] == id) {
-      if (ids[i + 1] == id) { // duplicate id
-        return false;
-      } else { // unique id already owned by us
-        return true;
-      }
-    }
-    if (id < ids[i]) { // number < str, str < number is always false.
-      return true;
-    }
-  }
-  return true;
-}
-
-function getNextId(ids) {
-  let id = (typeof ids[0] === "number") ? ids[0] : -1;
-  for (let i = 1; i < ids.length; i++) {
-    if (typeof ids[i] !== "number" || ids[i] - id - 1) {
-      break;
-    } else {
-      id = ids[i];
-    }
-  }
-  return id + 1;
+export function deleteId(id) {
+  let { deleteId } = dispatch("ncs4/popup");
+  deleteId(id);
 }

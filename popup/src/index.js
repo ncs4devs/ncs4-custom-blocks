@@ -34,7 +34,7 @@ registerBlockType( 'ncs4-custom-blocks/popup', {
       default: 'Show',
     },
     id: {
-      type: 'string',
+      type: 'number',
     },
     optionSize: {
       type: 'string',

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { select } from '@wordpress/data';
 import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
-import { Popup, PopupSettings, requestId } from './popup.js';
+import { Popup, PopupSettings, reserveId, deleteId } from './popup.js';
 import { verifyColor } from '../../js/ColorSelector.js';
 
 export class PopupEdit extends React.Component {
@@ -33,7 +33,10 @@ export class PopupEdit extends React.Component {
   }
 
   componentDidMount() {
-    this.setStateAttributes({ id: requestId(this.state.id) });
+    reserveId(
+      (x) => this.setStateAttributes({ id: x }),
+      this.state.id,
+    );
     this.setStateAttributes({ bgColor: {
         color: verifyColor(this.state.bgColor),
         slug: this.state.bgColor.slug,
@@ -44,6 +47,10 @@ export class PopupEdit extends React.Component {
         slug: this.state.textColor.slug,
       }
     });
+  }
+
+  componentWillUnmount() {
+    deleteId(this.state.id);
   }
 
   createClassName(classes) {
