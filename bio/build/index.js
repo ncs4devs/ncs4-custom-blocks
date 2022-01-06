@@ -1593,12 +1593,12 @@ function BioProfile(props) {
     className: "ncs4-bio-name"
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("strong", null, props.name, props.credentials && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", props.credentials))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h5", {
     className: "ncs4-bio-position"
-  }, props.position), props.phone || props.email && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
+  }, props.position), (props.phone || props.email) && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
     className: "ncs4-bio-contact-info"
   }, props.phone && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
     className: "ncs4-bio-phone",
     href: "tel:" + props.phone
-  }, props.phone), props.phone && props.email && " | ", props.email && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
+  }, props.phone), props.phone && props.email && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, " | "), props.email && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
     className: "ncs4-bio-email",
     href: "mailto:" + props.email
   }, props.email))));
