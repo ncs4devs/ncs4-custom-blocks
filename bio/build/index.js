@@ -820,14 +820,10 @@ class PhoneControl extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Componen
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["TextControl"], {
       value: this.props.value,
       onChange: n => {
-        this.props.onChange(n); // set state
-
-        if (this.validateNumber(n)) {
-          this.props.onChangeComplete(n); // set attribute
-        }
+        this.props.onChange(n);
       },
       label: "Phone",
-      help: valid ? null : "Invalid phone number"
+      help: valid ? null : "Unrecognized phone number format (perhaps you've made a typo?)"
     });
   }
 
@@ -1394,10 +1390,7 @@ class BioEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
       initialOpen: false
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__["PhoneControl"], {
       value: this.state.phone,
-      onChange: n => this.setState({
-        phone: n.trim()
-      }),
-      onChangeComplete: n => this.setAttributes({
+      onChange: n => this.setStateAttributes({
         phone: n.trim()
       })
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__["EmailControl"], {

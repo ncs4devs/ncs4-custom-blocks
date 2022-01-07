@@ -131,8 +131,7 @@ export class BioEdit extends React.Component {
           >
             <PhoneControl
               value = { this.state.phone }
-              onChange = { (n) => this.setState({ phone: n.trim() }) }
-              onChangeComplete = { (n) => this.setAttributes({ phone: n.trim() }) }
+              onChange = { (n) => this.setStateAttributes({ phone: n.trim() }) }
             />
             <EmailControl
               value = { this.state.email }

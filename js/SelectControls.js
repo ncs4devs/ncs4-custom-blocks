@@ -617,15 +617,12 @@ export class PhoneControl extends React.Component {
       <TextControl
         value = { this.props.value }
         onChange = { (n) => {
-          this.props.onChange(n); // set state
-          if (this.validateNumber(n)) {
-            this.props.onChangeComplete(n); // set attribute
-          }
+          this.props.onChange(n);
         } }
         label = "Phone"
         help = { valid
           ? null
-          : "Invalid phone number"
+          : "Unrecognized phone number format (perhaps you've made a typo?)"
         }
       />
     );
