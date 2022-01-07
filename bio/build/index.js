@@ -1356,7 +1356,7 @@ class BioEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
       placeholder: "Willy Wonka",
       onChange: n => {
         this.setStateAttributes({
-          name: n
+          name: n.trim()
         });
       }
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["TextControl"], {
@@ -1366,7 +1366,7 @@ class BioEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
       placeholder: "Dr. Willy H. Wonka",
       onChange: n => {
         this.setStateAttributes({
-          fullName: n
+          fullName: n.trim()
         });
       }
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["TextControl"], {
@@ -1376,7 +1376,7 @@ class BioEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
       placeholder: "PhD, Doctor of Chocolatiering",
       onChange: c => {
         this.setStateAttributes({
-          credentials: c
+          credentials: c.trim()
         });
       }
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["TextControl"], {
@@ -1386,7 +1386,7 @@ class BioEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
       placeholder: "Director of Candy Research and Development",
       onChange: p => {
         this.setStateAttributes({
-          position: p
+          position: p.trim()
         });
       }
     })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["PanelBody"], {
@@ -1395,18 +1395,18 @@ class BioEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__["PhoneControl"], {
       value: this.state.phone,
       onChange: n => this.setState({
-        phone: n
+        phone: n.trim()
       }),
       onChangeComplete: n => this.setAttributes({
-        phone: n
+        phone: n.trim()
       })
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_SelectControls_js__WEBPACK_IMPORTED_MODULE_5__["EmailControl"], {
       value: this.state.email,
       onChange: e => this.setState({
-        email: e
+        email: e.trim()
       }),
       onChangeComplete: e => this.setAttributes({
-        email: e
+        email: e.trim()
       })
     })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["PopupSettings"], {
       attributes: this.state,

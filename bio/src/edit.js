@@ -101,28 +101,28 @@ export class BioEdit extends React.Component {
               label = "Name"
               help = "Name to display on page (not in popup)"
               placeholder = "Willy Wonka"
-              onChange = { (n) => { this.setStateAttributes({ name: n }) }}
+              onChange = { (n) => { this.setStateAttributes({ name: n.trim() }) }}
             />
             <TextControl
               value = { this.state.fullName }
               label = "Full name"
               help = "Name to display in bio popup header"
               placeholder = "Dr. Willy H. Wonka"
-              onChange = { (n) => { this.setStateAttributes({ fullName: n }) }}
+              onChange = { (n) => { this.setStateAttributes({ fullName: n.trim() }) }}
             />
             <TextControl
               value = { this.state.credentials }
               label = "Credentials"
               help = "Additional credentials, e.g. 'PhD.'"
               placeholder = "PhD, Doctor of Chocolatiering"
-              onChange = { (c) => { this.setStateAttributes({ credentials: c }) }}
+              onChange = { (c) => { this.setStateAttributes({ credentials: c.trim() }) }}
             />
             <TextControl
               value = { this.state.position }
               label = "Position"
               help = "The person's official job title"
               placeholder = "Director of Candy Research and Development"
-              onChange = { (p) => { this.setStateAttributes({ position: p }) }}
+              onChange = { (p) => { this.setStateAttributes({ position: p.trim() }) }}
             />
           </PanelBody>
           <PanelBody
@@ -131,13 +131,13 @@ export class BioEdit extends React.Component {
           >
             <PhoneControl
               value = { this.state.phone }
-              onChange = { (n) => this.setState({ phone: n }) }
-              onChangeComplete = { (n) => this.setAttributes({ phone: n }) }
+              onChange = { (n) => this.setState({ phone: n.trim() }) }
+              onChangeComplete = { (n) => this.setAttributes({ phone: n.trim() }) }
             />
             <EmailControl
               value = { this.state.email }
-              onChange = { (e) => this.setState({ email: e }) }
-              onChangeComplete = { (e) => this.setAttributes({ email: e }) }
+              onChange = { (e) => this.setState({ email: e.trim() }) }
+              onChangeComplete = { (e) => this.setAttributes({ email: e.trim() }) }
             />
           </PanelBody>
           <PopupSettings
