@@ -27,6 +27,7 @@ export class BioEdit extends React.Component {
     this.setAttributes = props.setAttributes;
 
     this.setStateAttributes = this.setStateAttributes.bind(this);
+    this.trimStateAttribute = this.trimStateAttribute.bind(this);
     this.imageChangeHandler = this.imageChangeHandler.bind(this);
 
     this.state = {
@@ -75,6 +76,16 @@ export class BioEdit extends React.Component {
     );
   }
 
+  // returns (x) => null
+  trimStateAttribute(attr) {
+    return (x) => {
+        this.setState(
+        { [attr]: x },
+        () => { this.setAttributes({ [attr]: x.trim() }) }
+      )
+    }
+  }
+
   imageChangeHandler(v) {
     this.setStateAttributes({ img: v });
   }
@@ -101,28 +112,28 @@ export class BioEdit extends React.Component {
               label = "Name"
               help = "Name to display on page (not in popup)"
               placeholder = "Willy Wonka"
-              onChange = { (n) => { this.setStateAttributes({ name: n.trim() }) }}
+              onChange = { this.trimStateAttribute("name") }
             />
             <TextControl
               value = { this.state.fullName }
               label = "Full name"
               help = "Name to display in bio popup header"
               placeholder = "Dr. Willy H. Wonka"
-              onChange = { (n) => { this.setStateAttributes({ fullName: n.trim() }) }}
+              onChange = { this.trimStateAttribute("fullName") }
             />
             <TextControl
               value = { this.state.credentials }
               label = "Credentials"
               help = "Additional credentials, e.g. 'PhD.'"
               placeholder = "PhD, Doctor of Chocolatiering"
-              onChange = { (c) => { this.setStateAttributes({ credentials: c.trim() }) }}
+              onChange = { this.trimStateAttribute("credentials") }
             />
             <TextControl
               value = { this.state.position }
               label = "Position"
               help = "The person's official job title"
               placeholder = "Director of Candy Research and Development"
-              onChange = { (p) => { this.setStateAttributes({ position: p.trim() }) }}
+              onChange = { this.trimStateAttribute("position") }
             />
           </PanelBody>
           <PanelBody
@@ -131,11 +142,11 @@ export class BioEdit extends React.Component {
           >
             <PhoneControl
               value = { this.state.phone }
-              onChange = { (n) => this.setStateAttributes({ phone: n.trim() }) }
+              onChange = { this.trimStateAttribute("phone") }
             />
             <EmailControl
               value = { this.state.email }
-              onChange = { (e) => this.setState({ email: e.trim() }) }
+              onChange = { (e) => this.setState({ email: e }) }
               onChangeComplete = { (e) => this.setAttributes({ email: e.trim() }) }
             />
           </PanelBody>
