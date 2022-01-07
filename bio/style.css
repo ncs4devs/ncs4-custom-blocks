@@ -73,10 +73,19 @@
   flex-direction: row;
   column-gap: 2em;
 }
+.ncs4-bio-header .ncs4-bio-position {
+  margin-bottom: 1em;
+}
 .ncs4-bio-img img {
   display: block;
 }
+.ncs4-bio-name {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+}
 .ncs4-bio-position {
+  margin-top: 0;
+  margin-bottom: 1.5em;
   font-style: italic;
 }
 .ncs4-bio-col2 {
