@@ -34,8 +34,13 @@
 
   &-col {
 
+    &1 {
+      flex: 1 0 auto;
+    }
+
     &2 {
       margin: auto auto 0 0;
+      flex: 0 1 100%;
     }
   }
 }

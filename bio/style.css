@@ -88,8 +88,12 @@
   margin-bottom: 1.5em;
   font-style: italic;
 }
+.ncs4-bio-col1 {
+  flex: 1 0 auto;
+}
 .ncs4-bio-col2 {
   margin: auto auto 0 0;
+  flex: 0 1 100%;
 }
 
 /*# sourceMappingURL=style.css.map */
