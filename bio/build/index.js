@@ -1364,7 +1364,8 @@ class BioEdit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
       label: "Name",
       help: "Name to display on page (not in popup)",
       placeholder: "Willy Wonka",
-      onChange: this.trimStateAttribute("name")
+      onChange: this.trimStateAttribute("name"),
+      disabled: true
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["TextControl"], {
       value: this.state.fullName,
       label: "Full name",
@@ -1544,9 +1545,11 @@ class BioSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
         textAlign: attributes.alignment != "none" ? attributes.alignment : null
       }
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(BioProfile, {
-      img: attributes.img,
-      name: attributes.name,
-      position: attributes.position //phone = { attributes.phone }
+      img: attributes.img //name = { attributes.name }
+      ,
+      name: attributes.fullName,
+      position: attributes.position,
+      credentials: attributes.credentials //phone = { attributes.phone }
       //email = { attributes.email }
       ,
       alignment: attributes.alignment
@@ -1580,7 +1583,7 @@ function BioProfile(props) {
     className: "ncs4-bio-col ncs4-bio-col2"
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h5", {
     className: "ncs4-bio-name"
-  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("strong", null, props.name, props.credentials && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", props.credentials))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h5", {
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("strong", null, props.name, props.credentials && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", props.credentials))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
     className: "ncs4-bio-position"
   }, props.position), (props.phone || props.email) && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
     className: "ncs4-bio-contact-info"

@@ -113,6 +113,7 @@ export class BioEdit extends React.Component {
               help = "Name to display on page (not in popup)"
               placeholder = "Willy Wonka"
               onChange = { this.trimStateAttribute("name") }
+              disabled = { true }
             />
             <TextControl
               value = { this.state.fullName }

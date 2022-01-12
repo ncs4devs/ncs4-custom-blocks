@@ -25,8 +25,10 @@ export class BioSave extends React.Component {
       >
         <BioProfile
           img = { attributes.img }
-          name = { attributes.name }
+          //name = { attributes.name }
+          name = { attributes.fullName }
           position = { attributes.position }
+          credentials = { attributes.credentials }
           //phone = { attributes.phone }
           //email = { attributes.email }
           alignment = { attributes.alignment }
@@ -80,9 +82,9 @@ function BioProfile(props) {
             )}
           </strong>
         </h5>
-        <h5 className = "ncs4-bio-position">
+        <p className = "ncs4-bio-position">
           { props.position }
-        </h5>
+        </p>
         { (props.phone || props.email) && (
           <p className = "ncs4-bio-contact-info">
             { props.phone && (
