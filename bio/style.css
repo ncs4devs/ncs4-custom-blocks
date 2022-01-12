@@ -96,4 +96,23 @@
   flex: 0 1 100%;
 }
 
+.super-secret-best-staff .ncs4-popup-overlay::before {
+  content: "";
+  display: block;
+  height: 100%;
+  opacity: 0;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/c/cc/Digital_rain_animation_medium_letters_shine.gif");
+  animation: fade-in 2s ease-in;
+  animation-delay: 600s;
+  animation-fill-mode: forwards;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /*# sourceMappingURL=style.css.map */
