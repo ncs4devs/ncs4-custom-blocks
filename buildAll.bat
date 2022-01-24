@@ -43,4 +43,7 @@ call npm run build
 cd ../bio
 call npm run build
 
+cd ../award-card
+call npm run build
+
 cd ../

@@ -36,3 +36,4 @@ include 'bp-subtopic/index.php';
 include 'bp-topic/index.php';
 include 'popup/index.php';
 include 'bio/index.php';
+include 'award-card/index.php';
