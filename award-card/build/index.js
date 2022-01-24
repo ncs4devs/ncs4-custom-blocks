@@ -1190,9 +1190,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../js/ColorSelector.js */ "../js/ColorSelector.js");
-/* harmony import */ var _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../popup/src/popup.js */ "../popup/src/popup.js");
-/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
-/* harmony import */ var _recipients__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./recipients */ "./src/recipients.js");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../popup/src/popup.js */ "../popup/src/popup.js");
+/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
+/* harmony import */ var _recipients__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./recipients */ "./src/recipients.js");
+
 
 
 
@@ -1207,6 +1210,8 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     super(props);
     this.attributes = props.attributes;
     this.setAttributes = props.setAttributes;
+    this.registry = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_6__["createRegistry"])({});
+    this.registry.register(_recipients__WEBPACK_IMPORTED_MODULE_9__["store"]);
     this.setStateAttributes = this.setStateAttributes.bind(this);
     this.trimStateAttribute = this.trimStateAttribute.bind(this);
     this.state = {
@@ -1223,7 +1228,7 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
   }
 
   componentDidMount() {
-    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_6__["reserveId"])(x => this.setStateAttributes({
+    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["reserveId"])(x => this.setStateAttributes({
       id: x
     }), this.state.id);
     this.setStateAttributes({
@@ -1241,7 +1246,7 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
   }
 
   componentWillUnmount() {
-    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_6__["deleteId"])(this.state.id);
+    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["deleteId"])(this.state.id);
   }
 
   setStateAttributes(attrs) {
@@ -1265,8 +1270,9 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
 
   render() {
     let blockProps = this.props.blockProps;
+    let registry = this.registry;
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, blockProps, {
-      className: ["ncs4-award-card", _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_6__["Popup"].classType, blockProps.className].join(' ')
+      className: ["ncs4-award-card", _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["Popup"].classType, blockProps.className].join(' ')
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h2", {
       className: "ncs4-award-card__name"
     }, this.state.name), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["RichText"], {
@@ -1280,8 +1286,10 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", null, "Recipients"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
       className: "dashicons dashicons-plus",
       title: "Add recipient",
-      onClick: _recipients__WEBPACK_IMPORTED_MODULE_8__["addRecipient"]
-    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_8__["default"], null)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelBody"], {
+      onClick: () => Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["addRecipient"])(registry)
+    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_data__WEBPACK_IMPORTED_MODULE_6__["RegistryProvider"], {
+      value: registry
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_9__["default"], null))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelBody"], {
       title: "Award info",
       initialOpen: true
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["TextControl"], {
@@ -1290,7 +1298,7 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
       help: "Name of the award",
       placeholder: "World's Best Web Dev",
       onChange: this.trimStateAttribute("name")
-    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_6__["PopupSettings"], {
+    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["PopupSettings"], {
       attributes: this.state,
       callback: this.setStateAttributes
     })));
@@ -1597,11 +1605,12 @@ const getNextId = state => {
 /*!***************************!*\
   !*** ./src/recipients.js ***!
   \***************************/
-/*! exports provided: addRecipient, default */
+/*! exports provided: store, addRecipient, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "store", function() { return store; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addRecipient", function() { return addRecipient; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Recipients; });
 /* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "./node_modules/@babel/runtime/helpers/extends.js");
@@ -1631,22 +1640,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const recipientStoreName = "ncs4/recipient-store";
-Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["registerStore"])(recipientStoreName, {
+const store = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["createReduxStore"])(recipientStoreName, {
   selectors: _recipientSelectors__WEBPACK_IMPORTED_MODULE_6__,
   actions: _recipientActions__WEBPACK_IMPORTED_MODULE_7__,
   reducer: _recipientReducers__WEBPACK_IMPORTED_MODULE_9__["default"]
-});
-const {
-  createRecipient,
-  deleteRecipient,
-  editRecipient
-} = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["dispatch"])(recipientStoreName);
-const recipientStore = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["select"])(recipientStoreName); // create a default recipient and set it to editMode
+}); // create a default recipient and set it to editMode
 
-function addRecipient() {
+function addRecipient(registry) {
+  let {
+    createRecipient
+  } = registry.dispatch(recipientStoreName);
   createRecipient({
     year: new Date().getFullYear(),
-    id: recipientStore.getNextId(),
+    id: registry.select(recipientStoreName).getNextId(),
     editMode: true,
     cancelDisabled: true
   });
@@ -1667,10 +1673,16 @@ function isRecipientValid(data) {
 
 
 function Recipients(props) {
+  const {
+    createRecipient,
+    deleteRecipient,
+    editRecipient
+  } = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName);
   let rs = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useSelect"])(select => {
     let data = select(recipientStoreName).getRecipients();
     return data.map(r => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Recipient, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, {
       key: r.id,
+      actions: Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName),
       onChange: d => editRecipient(d)
     })), _);
   });
@@ -1679,6 +1691,11 @@ function Recipients(props) {
 
 function Recipient(props) {
   let [isEditing, setEditing] = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(Boolean(props.editMode));
+  let {
+    createRecipient,
+    deleteRecipient,
+    editRecipient
+  } = props.actions;
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, isEditing ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientEditer, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
     delete: () => deleteRecipient(props.id),
     cancel: () => setEditing(false),

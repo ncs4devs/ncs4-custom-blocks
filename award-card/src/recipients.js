@@ -3,16 +3,21 @@ import {useState} from 'react';
 import { RichText } from '@wordpress/block-editor';
 import { TextControl } from '@wordpress/components';
 
-import { select, dispatch, registerStore, useSelect } from '@wordpress/data';
+import {
+  createReduxStore,
+  register,
+  useSelect,
+  useDispatch,
+  useRegistry,
+} from '@wordpress/data';
 import * as selectors from './recipientSelectors';
 import * as actions from './recipientActions';
 import * as actionTypes from './recipientActionTypes';
 import reducer from './recipientReducers';
 
 
-
 const recipientStoreName = "ncs4/recipient-store";
-registerStore(
+export const store = createReduxStore(
   recipientStoreName,
   {
     selectors,
@@ -20,19 +25,13 @@ registerStore(
     reducer,
   }
 );
-const {
-  createRecipient,
-  deleteRecipient,
-  editRecipient,
-} = dispatch(recipientStoreName);
-const recipientStore = select(recipientStoreName);
-
 
  // create a default recipient and set it to editMode
-export function addRecipient() {
+export function addRecipient(registry) {
+  let { createRecipient } = registry.dispatch(recipientStoreName);
   createRecipient({
     year: (new Date()).getFullYear(),
-    id: recipientStore.getNextId(),
+    id: registry.select(recipientStoreName).getNextId(),
     editMode: true,
     cancelDisabled: true,
   });
@@ -53,12 +52,20 @@ function isRecipientValid(data) {
 
 // wrapper component to connect recipientStore to component props
 export default function Recipients(props) {
+
+  const {
+    createRecipient,
+    deleteRecipient,
+    editRecipient,
+  } = useDispatch(recipientStoreName);
+
   let rs = useSelect( (select) => {
     let data = select(recipientStoreName).getRecipients();
     return data.map( (r) => (
       <Recipient
         { ...r }
         key = { r.id }
+        actions = { useDispatch(recipientStoreName) }
         onChange = { (d) => editRecipient(d) }
       />
     ), _);
@@ -73,6 +80,11 @@ export default function Recipients(props) {
 
 function Recipient(props) {
   let [ isEditing, setEditing ] = useState(Boolean(props.editMode));
+  let {
+    createRecipient,
+    deleteRecipient,
+    editRecipient,
+  } = props.actions;
 
   return (
     <>

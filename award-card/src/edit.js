@@ -5,6 +5,7 @@ import {
   TextControl,
 } from '@wordpress/components';
 import { verifyColor } from '../../js/ColorSelector.js';
+import { createRegistry, RegistryProvider } from '@wordpress/data';
 
 import {
   Popup,
@@ -13,13 +14,15 @@ import {
   deleteId,
 } from '../../popup/src/popup.js';
 import { AwardCardSave } from './save.js';
-import Recipients, { addRecipient }  from './recipients';
+import Recipients, { addRecipient, store }  from './recipients';
 
 export class AwardCardEdit extends React.Component {
   constructor(props) {
     super(props);
     this.attributes = props.attributes;
     this.setAttributes = props.setAttributes;
+    this.registry = createRegistry( {} );
+    this.registry.register(store);
 
     this.setStateAttributes = this.setStateAttributes.bind(this);
     this.trimStateAttribute = this.trimStateAttribute.bind(this);
@@ -77,6 +80,7 @@ export class AwardCardEdit extends React.Component {
 
   render() {
     let blockProps = this.props.blockProps;
+    let registry = this.registry;
 
     return (
       <>
@@ -104,10 +108,12 @@ export class AwardCardEdit extends React.Component {
             <span
               className = "dashicons dashicons-plus"
               title = "Add recipient"
-              onClick = { addRecipient }
+              onClick = { () => addRecipient(registry) }
             />
           </div>
-          <Recipients/>
+          <RegistryProvider value={ registry }>
+            <Recipients/>
+          </RegistryProvider>
         </div>
         <InspectorControls>
           <PanelBody
