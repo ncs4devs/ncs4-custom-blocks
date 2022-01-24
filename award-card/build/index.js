@@ -1185,19 +1185,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../js/ColorSelector.js */ "../js/ColorSelector.js");
-/* harmony import */ var _recipientSelectors__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./recipientSelectors */ "./src/recipientSelectors.js");
-/* harmony import */ var _recipientActions__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./recipientActions */ "./src/recipientActions.js");
-/* harmony import */ var _recipientActionTypes__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./recipientActionTypes */ "./src/recipientActionTypes.js");
-/* harmony import */ var _recipientReducers__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./recipientReducers */ "./src/recipientReducers.js");
-/* harmony import */ var _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../popup/src/popup.js */ "../popup/src/popup.js");
-/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../js/ColorSelector.js */ "../js/ColorSelector.js");
+/* harmony import */ var _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../popup/src/popup.js */ "../popup/src/popup.js");
+/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
+/* harmony import */ var _recipients__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./recipients */ "./src/recipients.js");
 
 
 
@@ -1206,35 +1201,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-
-
-const recipientStoreName = "ncs4/recipient-store";
-Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["registerStore"])(recipientStoreName, {
-  selectors: _recipientSelectors__WEBPACK_IMPORTED_MODULE_7__,
-  actions: _recipientActions__WEBPACK_IMPORTED_MODULE_8__,
-  reducer: _recipientReducers__WEBPACK_IMPORTED_MODULE_10__["default"]
-});
-const {
-  createRecipient,
-  deleteRecipient,
-  editRecipient
-} = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["dispatch"])(recipientStoreName);
-const recipientStore = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["select"])(recipientStoreName); // tests if the recipient can be saved
-
-function isRecipientValid(data) {
-  if (typeof data.name !== "string" || data.name === "") {
-    return false;
-  }
-
-  if (!data.year || isNaN(data.year) || data.year < 2018) {
-    return false;
-  }
-
-  return true;
-}
 
 class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
   constructor(props) {
@@ -1257,25 +1223,25 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
   }
 
   componentDidMount() {
-    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_11__["reserveId"])(x => this.setStateAttributes({
+    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_6__["reserveId"])(x => this.setStateAttributes({
       id: x
     }), this.state.id);
     this.setStateAttributes({
       bgColor: {
-        color: Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["verifyColor"])(this.state.bgColor),
+        color: Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_5__["verifyColor"])(this.state.bgColor),
         slug: this.state.bgColor.slug
       }
     });
     this.setStateAttributes({
       textColor: {
-        color: Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_6__["verifyColor"])(this.state.textColor),
+        color: Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_5__["verifyColor"])(this.state.textColor),
         slug: this.state.textColor.slug
       }
     });
   }
 
   componentWillUnmount() {
-    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_11__["deleteId"])(this.state.id);
+    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_6__["deleteId"])(this.state.id);
   }
 
   setStateAttributes(attrs) {
@@ -1295,25 +1261,15 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
         });
       });
     };
-  } // create a default recipient and set it to editMode
-
-
-  addRecipient() {
-    createRecipient({
-      year: new Date().getFullYear(),
-      id: recipientStore.getNextId(),
-      editMode: true,
-      cancelDisabled: true
-    });
   }
 
   render() {
     let blockProps = this.props.blockProps;
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, blockProps, {
-      className: ["ncs4-award-card", _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_11__["Popup"].classType, blockProps.className].join(' ')
+      className: ["ncs4-award-card", _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_6__["Popup"].classType, blockProps.className].join(' ')
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h2", {
       className: "ncs4-award-card__name"
-    }, this.state.name), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["RichText"], {
+    }, this.state.name), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["RichText"], {
       className: "ncs4-award-card__description",
       tagName: "p",
       value: this.state.desc,
@@ -1324,146 +1280,22 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", null, "Recipients"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
       className: "dashicons dashicons-plus",
       title: "Add recipient",
-      onClick: this.addRecipient
-    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Recipients, null)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["PanelBody"], {
+      onClick: _recipients__WEBPACK_IMPORTED_MODULE_8__["addRecipient"]
+    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_8__["default"], null)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelBody"], {
       title: "Award info",
       initialOpen: true
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["TextControl"], {
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["TextControl"], {
       value: this.state.name,
       label: "Award name",
       help: "Name of the award",
       placeholder: "World's Best Web Dev",
       onChange: this.trimStateAttribute("name")
-    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_11__["PopupSettings"], {
+    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_6__["PopupSettings"], {
       attributes: this.state,
       callback: this.setStateAttributes
     })));
   }
 
-} // wrapper component to connect recipientStore to component props
-
-function Recipients(props) {
-  let rs = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["useSelect"])(select => {
-    let data = select(recipientStoreName).getRecipients();
-    return data.map(r => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Recipient, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, {
-      key: r.id,
-      onChange: d => editRecipient(d)
-    })), _);
-  });
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, rs);
-}
-
-function Recipient(props) {
-  let [isEditing, setEditing] = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(Boolean(props.editMode));
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, isEditing ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientEditer, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
-    delete: () => deleteRecipient(props.id),
-    cancel: () => setEditing(false),
-    save: info => {
-      setEditing(false);
-      props.onChange(info);
-    }
-  })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
-    className: "ncs4-award-recipient"
-  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
-    className: "ncs4-award-recipient__name"
-  }, props.name), props.position && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
-    className: "ncs4-award-recipient__position"
-  }, props.position)), props.displayYear && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
-    className: "ncs4-award-recipient__year"
-  }, props.year)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
-    className: "dashicons dashicons-edit ncs4-award-recipient__edit",
-    onClick: () => setEditing(true)
-  })));
-}
-
-function RecipientEditer(props) {
-  let [dataState, setDataState] = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])({
-    id: props.id,
-    // keep constant
-    name: props.name,
-    position: props.position,
-    organization: props.organization,
-    year: props.year
-  });
-  let [uiState, setUIState] = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])({
-    deleteClicked: false,
-    cancelClicked: false,
-    saveValid: true
-  });
-
-  let changeHandler = attr => x => {
-    setDataState({ ...dataState,
-      [attr]: x
-    });
-  };
-
-  let uiHandler = attr => x => {
-    setUIState({ ...uiState,
-      [attr]: x
-    });
-  };
-
-  let deleteHandler = e => {
-    if (!uiState.deleteClicked) {
-      uiHandler("deleteClicked")(true);
-    } else {
-      props.delete();
-    }
-  };
-
-  let cancelHandler = e => {
-    if (!uiState.cancelClicked) {
-      uiHandler("cancelClicked")(true);
-    } else {
-      props.cancel();
-    }
-  };
-
-  let saveHandler = () => {
-    if (isRecipientValid(dataState)) {
-      uiHandler("saveValid")(true);
-      props.save(dataState);
-    } else {
-      // Invalid data, display error
-      uiHandler("saveValid")(false);
-    }
-  };
-
-  const deleteClass = "dashicons dashicons-trash ncs4-award-recipient__edit-delete";
-  const cancelClass = "dashicons dashicons-no ncs4-award-recipient__edit-cancel";
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-    className: "ncs4-award-card__recipient-editer"
-  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
-    className: uiState.deleteClicked ? deleteClass + " toggled" : deleteClass,
-    tabIndex: 0,
-    onClick: deleteHandler,
-    onBlur: () => uiHandler("deleteClicked")(false)
-  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
-    className: [cancelClass, uiState.cancelClicked ? "toggled" : null, props.cancelDisabled ? "disabled" : null].join(" "),
-    tabIndex: 0,
-    onClick: props.cancelDisabled ? null : cancelHandler,
-    onBlur: () => uiHandler("cancelClicked")(false)
-  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
-    className: "dashicons dashicons-yes ncs4-award-recipient__edit-save",
-    onClick: saveHandler
-  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["TextControl"], {
-    value: dataState.name,
-    label: "Recipient name",
-    placeholder: "John Deer",
-    onChange: changeHandler("name")
-  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__["TextControl"], {
-    value: dataState.position,
-    label: "Recipient position",
-    placeholder: "Super-executive-vice-president of business operations",
-    onChange: changeHandler("position")
-  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("label", {
-    className: "ncs4-award-recipient__year-label",
-    for: ""
-  }, "Award Year"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("input", {
-    type: "number",
-    value: dataState.year,
-    onChange: e => changeHandler("year")(e.target.value)
-  }));
 }
 
 /***/ }),
@@ -1758,6 +1590,205 @@ const getNextId = state => {
 
   return 0;
 };
+
+/***/ }),
+
+/***/ "./src/recipients.js":
+/*!***************************!*\
+  !*** ./src/recipients.js ***!
+  \***************************/
+/*! exports provided: addRecipient, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addRecipient", function() { return addRecipient; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Recipients; });
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "./node_modules/@babel/runtime/helpers/extends.js");
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _recipientSelectors__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./recipientSelectors */ "./src/recipientSelectors.js");
+/* harmony import */ var _recipientActions__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./recipientActions */ "./src/recipientActions.js");
+/* harmony import */ var _recipientActionTypes__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./recipientActionTypes */ "./src/recipientActionTypes.js");
+/* harmony import */ var _recipientReducers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./recipientReducers */ "./src/recipientReducers.js");
+
+
+
+
+
+
+
+
+
+
+const recipientStoreName = "ncs4/recipient-store";
+Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["registerStore"])(recipientStoreName, {
+  selectors: _recipientSelectors__WEBPACK_IMPORTED_MODULE_6__,
+  actions: _recipientActions__WEBPACK_IMPORTED_MODULE_7__,
+  reducer: _recipientReducers__WEBPACK_IMPORTED_MODULE_9__["default"]
+});
+const {
+  createRecipient,
+  deleteRecipient,
+  editRecipient
+} = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["dispatch"])(recipientStoreName);
+const recipientStore = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["select"])(recipientStoreName); // create a default recipient and set it to editMode
+
+function addRecipient() {
+  createRecipient({
+    year: new Date().getFullYear(),
+    id: recipientStore.getNextId(),
+    editMode: true,
+    cancelDisabled: true
+  });
+} // tests if the recipient can be saved
+
+function isRecipientValid(data) {
+  if (typeof data.name !== "string" || data.name === "") {
+    return false;
+  }
+
+  if (!data.year || isNaN(data.year) || data.year < 2018) {
+    return false;
+  }
+
+  return true;
+} // Components
+// wrapper component to connect recipientStore to component props
+
+
+function Recipients(props) {
+  let rs = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useSelect"])(select => {
+    let data = select(recipientStoreName).getRecipients();
+    return data.map(r => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Recipient, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, {
+      key: r.id,
+      onChange: d => editRecipient(d)
+    })), _);
+  });
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, rs);
+}
+
+function Recipient(props) {
+  let [isEditing, setEditing] = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(Boolean(props.editMode));
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, isEditing ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientEditer, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+    delete: () => deleteRecipient(props.id),
+    cancel: () => setEditing(false),
+    save: info => {
+      setEditing(false);
+      props.onChange(info);
+    }
+  })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
+    className: "ncs4-award-recipient"
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
+    className: "ncs4-award-recipient__name"
+  }, props.name), props.position && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
+    className: "ncs4-award-recipient__position"
+  }, props.position)), props.displayYear && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
+    className: "ncs4-award-recipient__year"
+  }, props.year)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
+    className: "dashicons dashicons-edit ncs4-award-recipient__edit",
+    onClick: () => setEditing(true)
+  })));
+}
+
+function RecipientEditer(props) {
+  let [dataState, setDataState] = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])({
+    id: props.id,
+    // keep constant
+    name: props.name,
+    position: props.position,
+    organization: props.organization,
+    year: props.year
+  });
+  let [uiState, setUIState] = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])({
+    deleteClicked: false,
+    cancelClicked: false,
+    saveValid: true
+  });
+
+  let changeHandler = attr => x => {
+    setDataState({ ...dataState,
+      [attr]: x
+    });
+  };
+
+  let uiHandler = attr => x => {
+    setUIState({ ...uiState,
+      [attr]: x
+    });
+  };
+
+  let deleteHandler = e => {
+    if (!uiState.deleteClicked) {
+      uiHandler("deleteClicked")(true);
+    } else {
+      props.delete();
+    }
+  };
+
+  let cancelHandler = e => {
+    if (!uiState.cancelClicked) {
+      uiHandler("cancelClicked")(true);
+    } else {
+      props.cancel();
+    }
+  };
+
+  let saveHandler = () => {
+    if (isRecipientValid(dataState)) {
+      uiHandler("saveValid")(true);
+      props.save(dataState);
+    } else {
+      // Invalid data, display error
+      uiHandler("saveValid")(false);
+    }
+  };
+
+  const deleteClass = "dashicons dashicons-trash ncs4-award-recipient__edit-delete";
+  const cancelClass = "dashicons dashicons-no ncs4-award-recipient__edit-cancel";
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+    className: "ncs4-award-card__recipient-editer"
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
+    className: uiState.deleteClicked ? deleteClass + " toggled" : deleteClass,
+    tabIndex: 0,
+    onClick: deleteHandler,
+    onBlur: () => uiHandler("deleteClicked")(false)
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
+    className: [cancelClass, uiState.cancelClicked ? "toggled" : null, props.cancelDisabled ? "disabled" : null].join(" "),
+    tabIndex: 0,
+    onClick: props.cancelDisabled ? null : cancelHandler,
+    onBlur: () => uiHandler("cancelClicked")(false)
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
+    className: "dashicons dashicons-yes ncs4-award-recipient__edit-save",
+    onClick: saveHandler
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["TextControl"], {
+    value: dataState.name,
+    label: "Recipient name",
+    placeholder: "John Deer",
+    onChange: changeHandler("name")
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["TextControl"], {
+    value: dataState.position,
+    label: "Recipient position",
+    placeholder: "Super-executive-vice-president of business operations",
+    onChange: changeHandler("position")
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("label", {
+    className: "ncs4-award-recipient__year-label",
+    for: ""
+  }, "Award Year"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("input", {
+    type: "number",
+    value: dataState.year,
+    onChange: e => changeHandler("year")(e.target.value)
+  }));
+}
 
 /***/ }),
 
