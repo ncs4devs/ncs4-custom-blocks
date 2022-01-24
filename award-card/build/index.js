@@ -1214,6 +1214,10 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     this.registry.register(_recipients__WEBPACK_IMPORTED_MODULE_9__["store"]);
     this.setStateAttributes = this.setStateAttributes.bind(this);
     this.trimStateAttribute = this.trimStateAttribute.bind(this);
+    this.onStoreUpdate = this.onStoreUpdate.bind(this); // store existing recipients
+
+    Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["initializeStore"])(this.registry, this.attributes.recipients);
+    this.registry.stores[_recipients__WEBPACK_IMPORTED_MODULE_9__["recipientStoreName"]].subscribe(this.onStoreUpdate);
     this.state = {
       overlayOpacity: this.attributes.overlayOpacity,
       bgColor: this.attributes.bgColor,
@@ -1266,6 +1270,10 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
         });
       });
     };
+  }
+
+  onStoreUpdate() {
+    this.setAttributes(Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["getRecipientData"])(this.registry));
   }
 
   render() {
@@ -1381,6 +1389,10 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
     recipients: {
       type: 'array',
       default: []
+    },
+    displayPrevious: {
+      type: 'boolean',
+      default: false
     }
   },
   edit: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_edit_js__WEBPACK_IMPORTED_MODULE_4__["AwardCardEdit"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
@@ -1605,13 +1617,16 @@ const getNextId = state => {
 /*!***************************!*\
   !*** ./src/recipients.js ***!
   \***************************/
-/*! exports provided: store, addRecipient, default */
+/*! exports provided: recipientStoreName, store, addRecipient, initializeStore, getRecipientData, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recipientStoreName", function() { return recipientStoreName; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "store", function() { return store; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addRecipient", function() { return addRecipient; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initializeStore", function() { return initializeStore; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRecipientData", function() { return getRecipientData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Recipients; });
 /* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "./node_modules/@babel/runtime/helpers/extends.js");
 /* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__);
@@ -1656,6 +1671,45 @@ function addRecipient(registry) {
     editMode: true,
     cancelDisabled: true
   });
+}
+function initializeStore(registry, recipients) {
+  let {
+    createRecipient
+  } = registry.dispatch(recipientStoreName);
+  recipients.forEach(r => {
+    createRecipient({ ...r,
+      id: registry.select(recipientStoreName).getNextId()
+    });
+  });
+} // returns all data necessary to save recipients to DB
+
+function getRecipientData(registry) {
+  let recipients = registry.select(recipientStoreName).getRecipients();
+  let fields = ["name", "position", "organization", "year"];
+  var displayPrevious = false;
+  var currentYear;
+  return {
+    recipients: recipients.reduce((arr, r) => {
+      if (isRecipientValid(r)) {
+        let data = {};
+
+        if (isNaN(currentYear)) {
+          currentYear = r.year;
+        } else if (r.year < currentYear) {
+          displayPrevious = true;
+        }
+
+        for (let attr of fields) {
+          data[attr] = r[attr];
+        }
+
+        arr.push(data);
+      }
+
+      return arr;
+    }, []),
+    displayPrevious
+  };
 } // tests if the recipient can be saved
 
 function isRecipientValid(data) {

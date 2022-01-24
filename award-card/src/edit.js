@@ -14,7 +14,13 @@ import {
   deleteId,
 } from '../../popup/src/popup.js';
 import { AwardCardSave } from './save.js';
-import Recipients, { addRecipient, store }  from './recipients';
+import Recipients, {
+  addRecipient,
+  store,
+  getRecipientData,
+  recipientStoreName,
+  initializeStore,
+}  from './recipients';
 
 export class AwardCardEdit extends React.Component {
   constructor(props) {
@@ -26,6 +32,11 @@ export class AwardCardEdit extends React.Component {
 
     this.setStateAttributes = this.setStateAttributes.bind(this);
     this.trimStateAttribute = this.trimStateAttribute.bind(this);
+    this.onStoreUpdate = this.onStoreUpdate.bind(this);
+
+    // store existing recipients
+    initializeStore(this.registry, this.attributes.recipients);
+    this.registry.stores[recipientStoreName].subscribe(this.onStoreUpdate);
 
     this.state = {
       overlayOpacity: this.attributes.overlayOpacity,
@@ -76,6 +87,10 @@ export class AwardCardEdit extends React.Component {
         () => { this.setAttributes({ [attr]: x.trim() }) }
       )
     }
+  }
+
+  onStoreUpdate() {
+    this.setAttributes( getRecipientData(this.registry) );
   }
 
   render() {

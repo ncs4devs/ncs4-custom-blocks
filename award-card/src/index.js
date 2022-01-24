@@ -54,6 +54,10 @@ registerBlockType( 'ncs4-custom-blocks/award-card', {
       type: 'array',
       default: [],
     },
+    displayPrevious: {
+      type: 'boolean',
+      default: false,
+    },
   },
 
   edit: (props) => (

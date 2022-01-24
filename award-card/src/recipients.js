@@ -16,7 +16,7 @@ import * as actionTypes from './recipientActionTypes';
 import reducer from './recipientReducers';
 
 
-const recipientStoreName = "ncs4/recipient-store";
+export const recipientStoreName = "ncs4/recipient-store";
 export const store = createReduxStore(
   recipientStoreName,
   {
@@ -35,6 +35,51 @@ export function addRecipient(registry) {
     editMode: true,
     cancelDisabled: true,
   });
+}
+
+export function initializeStore(registry, recipients) {
+  let { createRecipient } = registry.dispatch(recipientStoreName);
+  recipients.forEach( (r) => {
+    createRecipient({
+      ...r,
+      id: registry.select(recipientStoreName).getNextId(),
+    });
+  });
+}
+
+// returns all data necessary to save recipients to DB
+export function getRecipientData(registry) {
+  let recipients = registry.select(recipientStoreName).getRecipients();
+  let fields = [
+    "name",
+    "position",
+    "organization",
+    "year",
+  ]
+  var displayPrevious = false;
+  var currentYear;
+
+  return {
+    recipients: recipients.reduce(
+      (arr, r) => {
+        if (isRecipientValid(r)) {
+          let data = {};
+          if (isNaN(currentYear)) {
+            currentYear = r.year;
+          } else if(r.year < currentYear) {
+            displayPrevious = true;
+          }
+
+          for (let attr of fields) {
+            data[attr] = r[attr];
+          }
+          arr.push(data);
+        }
+        return arr;
+      }, []
+    ),
+    displayPrevious,
+  }
 }
 
 // tests if the recipient can be saved
