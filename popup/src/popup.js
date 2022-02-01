@@ -163,9 +163,6 @@ const popupReducer = (
       let j = 0;
       let haveAdded = false;
       for (let i = 0; i < state.ids.length; i++) {
-        if (i > 20) {
-          break;
-        }
         if (!haveAdded && state.ids[i] > id) {
           out[j] = id;
           haveAdded = true;
@@ -182,7 +179,6 @@ const popupReducer = (
         ids: out,
       };
     case "DELETE":
-      console.log("Deleting");
       return {
         ...state,
         ids: state.ids.filter(x => x !== id)
