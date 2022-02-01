@@ -58,6 +58,10 @@ registerBlockType( 'ncs4-custom-blocks/award-card', {
       type: 'boolean',
       default: false,
     },
+    useOrgs: {
+      type: 'boolean',
+      default: false,
+    },
   },
 
   edit: (props) => (

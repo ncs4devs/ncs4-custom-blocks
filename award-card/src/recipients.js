@@ -37,8 +37,9 @@ export function addRecipient(registry) {
   });
 }
 
-export function initializeStore(registry, recipients) {
-  let { createRecipient } = registry.dispatch(recipientStoreName);
+export function initializeStore(registry, recipients, useOrgs) {
+  let { createRecipient, setUseOrgs } = registry.dispatch(recipientStoreName);
+  setUseOrgs(useOrgs);
   recipients.forEach( (r) => {
     createRecipient({
       ...r,

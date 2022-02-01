@@ -1216,7 +1216,7 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     this.trimStateAttribute = this.trimStateAttribute.bind(this);
     this.onStoreUpdate = this.onStoreUpdate.bind(this); // store existing recipients
 
-    Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["initializeStore"])(this.registry, this.attributes.recipients);
+    Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["initializeStore"])(this.registry, this.attributes.recipients, this.attributes.useOrgs);
     this.registry.stores[_recipients__WEBPACK_IMPORTED_MODULE_9__["recipientStoreName"]].subscribe(this.onStoreUpdate);
     this.state = {
       overlayOpacity: this.attributes.overlayOpacity,
@@ -1393,6 +1393,10 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
     displayPrevious: {
       type: 'boolean',
       default: false
+    },
+    useOrgs: {
+      type: 'boolean',
+      default: false
     }
   },
   edit: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_edit_js__WEBPACK_IMPORTED_MODULE_4__["AwardCardEdit"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
@@ -1409,7 +1413,7 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
 /*!*************************************!*\
   !*** ./src/recipientActionTypes.js ***!
   \*************************************/
-/*! exports provided: Create, Delete, Edit */
+/*! exports provided: Create, Delete, Edit, SetUseOrgs */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1417,9 +1421,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Create", function() { return Create; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Delete", function() { return Delete; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Edit", function() { return Edit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SetUseOrgs", function() { return SetUseOrgs; });
 const Create = "CREATE";
 const Delete = "DELETE";
 const Edit = "EDIT";
+const SetUseOrgs = "SET_ORGS";
 
 /***/ }),
 
@@ -1427,7 +1433,7 @@ const Edit = "EDIT";
 /*!*********************************!*\
   !*** ./src/recipientActions.js ***!
   \*********************************/
-/*! exports provided: createRecipient, deleteRecipient, editRecipient */
+/*! exports provided: createRecipient, deleteRecipient, editRecipient, setUseOrgs */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1435,6 +1441,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createRecipient", function() { return createRecipient; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteRecipient", function() { return deleteRecipient; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "editRecipient", function() { return editRecipient; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setUseOrgs", function() { return setUseOrgs; });
 /* harmony import */ var _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./recipientActionTypes */ "./src/recipientActionTypes.js");
 
 function createRecipient(data) {
@@ -1453,6 +1460,12 @@ function editRecipient(data) {
   return {
     type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["Edit"],
     data
+  };
+}
+function setUseOrgs(useOrgs) {
+  return {
+    type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["SetUseOrgs"],
+    useOrgs
   };
 }
 
@@ -1476,34 +1489,18 @@ __webpack_require__.r(__webpack_exports__);
 const recipients = function () {
   let state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   let action = arguments.length > 1 ? arguments[1] : undefined;
+  let useOrgs = arguments.length > 2 ? arguments[2] : undefined;
+  let currentYear = state[0] ? state[0].year : null;
 
   switch (action.type) {
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Create"]:
-      // Implement sorting functionality
-      return [...state, action.data];
+      return sortedInsert(state, action.data, getRecipientsCompare(currentYear, useOrgs));
 
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Delete"]:
       return state.filter(x => x.id !== action.id);
 
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Edit"]:
-      let out = [];
-      let haveEdited = false;
-      let data = action.data;
-
-      for (let i = 0; i < state.length; i++) {
-        if (state[i].id === data.id) {
-          out[i] = data;
-          haveEdited = true;
-        } else {
-          out[i] = state[i];
-        }
-      }
-
-      if (!haveEdited) {
-        console.warn("recipients: Invalid id in edit action '" + data.id + "'");
-      }
-
-      return out;
+      return sortedInsert(state.filter(x => x.id !== action.data.id), action.data, getRecipientsCompare(currentYear, useOrgs));
 
     default:
       console.warn("recipients: Unrecognized action type '" + action.type + "'");
@@ -1556,10 +1553,181 @@ const ids = function () {
   }
 };
 
-/* harmony default export */ __webpack_exports__["default"] = (Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_0__["combineReducers"])({
-  recipients,
-  ids
-}));
+const useOrgs = function () {
+  let state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  let action = arguments.length > 1 ? arguments[1] : undefined;
+
+  switch (action.type) {
+    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["SetUseOrgs"]:
+      return action.useOrgs;
+
+    default:
+      console.warn("useOrgs: Unrecognized action type '" + action.type + "'");
+      return state;
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (combineReducersWithData({
+  recipients: {
+    reducer: recipients,
+    stateReducer: state => state.useOrgs
+  },
+  ids,
+  useOrgs
+})); // takes an object of {reducer: function(), stateReducer: function()} objects
+// stateReducer() should take the full store's state and return what data the
+// reducer function needs. This data will be passed to the reducer as the third
+// parameter
+
+function combineReducersWithData(reducersWithData) {
+  return function () {
+    let state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    let action = arguments.length > 1 ? arguments[1] : undefined;
+    let newState = {};
+
+    for (let field in reducersWithData) {
+      if (typeof reducersWithData[field] === "function") {
+        newState[field] = reducersWithData[field](state[field], action);
+      } else {
+        let {
+          reducer,
+          stateReducer
+        } = reducersWithData[field];
+
+        stateReducer = stateReducer || (x => null);
+
+        newState[field] = reducer(state[field], action, stateReducer(state));
+      }
+    }
+
+    return newState;
+  };
+} // *** Sorting Functions *** //
+// inserts an element into a sorted array given a comparison function
+// Returns a new, sorted array.
+// compare(x, y) should return < 0 if x is "greater", > 0 if y is "greater",
+// 0 if equal
+
+
+function sortedInsert(arr, x, compare) {
+  let out = [];
+  let i = 0;
+  let j = 0;
+  let hasAdded = false;
+
+  while (j < arr.length) {
+    if (hasAdded || compare(arr[j], x) < 0) {
+      out[i] = arr[j];
+      j++;
+    } else {
+      hasAdded = true;
+      out[i] = x;
+    }
+
+    i++;
+  }
+
+  if (!hasAdded) {
+    // reached end of array
+    out[out.length] = x;
+  }
+
+  return out;
+}
+
+function getRecipientsCompare(currentYear, useOrgs) {
+  return combineCompares(getCurrentRecipientsCompare(currentYear, useOrgs), getPreviousRecipientsCompare(currentYear, useOrgs));
+}
+
+function getCurrentRecipientsCompare(currentYear, useOrgs) {
+  return (x, y) => {
+    if (useOrgs && (x.year !== currentYear || y.year !== currentYear)) {
+      return 0; // pass sorting on to getPreviousRecipientsCompare()
+    } // sorting when not using orgs & for "current recipients" always
+
+
+    return combineCompares(compareYears, compareNames)(x, y);
+  };
+}
+
+function getPreviousRecipientsCompare(currentYear, useOrgs) {
+  if (!useOrgs) {
+    return () => 0; // fall through
+  }
+
+  return combineCompares((x, y) => {
+    if (x.year === currentYear) {
+      return -1;
+    } else if (y.year === currentYear) {
+      return 1;
+    }
+
+    return 0;
+  }, compareOrganizations, compareYears, compareNames);
+} // Applies each compare in order until a non-zero result is reached or all return 0
+
+
+function combineCompares() {
+  for (var _len = arguments.length, compares = new Array(_len), _key = 0; _key < _len; _key++) {
+    compares[_key] = arguments[_key];
+  }
+
+  return (x, y) => {
+    let result;
+
+    for (let i = 0; i < compares.length; i++) {
+      result = compares[i](x, y);
+
+      if (result !== 0) {
+        return result;
+      }
+    }
+
+    return result;
+  };
+}
+
+function compareOrganizations(x, y) {
+  if (x.organization && !y.organization) {
+    return -1;
+  } else if (!x.organization && y.organization) {
+    return 1;
+  } else if (!x.organization && !y.organization) {
+    return 0;
+  } else {
+    return 2 * Number(x.organization.toUpperCase() > y.organization.toUpperCase()) - 1;
+  }
+}
+
+function compareYears(x, y) {
+  if (x.year === y.year) {
+    return 0;
+  } else {
+    return y.year - x.year;
+  }
+}
+
+function compareNames(x, y) {
+  if (!x.name || !y.name || x.name === "" || y.name === "" || x.name === y.name) {
+    return 0;
+  }
+
+  let xName = transposeName(x.name);
+  let yName = transposeName(y.name);
+  return 2 * Number(xName.toUpperCase() > yName.toUpperCase()) - 1;
+}
+
+function transposeName(name) {
+  let lastIndex = name.search(/[\S]+$/);
+  let last = name.slice(lastIndex);
+  let rest = "";
+
+  if (lastIndex > 0) {
+    rest = name.slice(0, lastIndex - 1);
+  }
+
+  return last + ", " + rest;
+}
 
 /***/ }),
 
@@ -1567,7 +1735,7 @@ const ids = function () {
 /*!***********************************!*\
   !*** ./src/recipientSelectors.js ***!
   \***********************************/
-/*! exports provided: getRecipients, getState, getUsedIds, hasId, createRecipientData, getNextId */
+/*! exports provided: getRecipients, getState, getUsedIds, getUseOrgs, hasId, createRecipientData, getNextId */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1575,6 +1743,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRecipients", function() { return getRecipients; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getState", function() { return getState; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUsedIds", function() { return getUsedIds; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUseOrgs", function() { return getUseOrgs; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasId", function() { return hasId; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createRecipientData", function() { return createRecipientData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNextId", function() { return getNextId; });
@@ -1589,6 +1758,7 @@ const getRecipients = (state, ids) => {
 };
 const getState = state => state;
 const getUsedIds = state => state.ids;
+const getUseOrgs = state => state.useOrgs;
 const hasId = (state, id) => state.ids.includes(id);
 const createRecipientData = (state, data) => ({ ...data,
   id: !isNaN(data.id) && !hasId(data.id) ? data.id : getNextId(state)
@@ -1672,10 +1842,12 @@ function addRecipient(registry) {
     cancelDisabled: true
   });
 }
-function initializeStore(registry, recipients) {
+function initializeStore(registry, recipients, useOrgs) {
   let {
-    createRecipient
+    createRecipient,
+    setUseOrgs
   } = registry.dispatch(recipientStoreName);
+  setUseOrgs(useOrgs);
   recipients.forEach(r => {
     createRecipient({ ...r,
       id: registry.select(recipientStoreName).getNextId()

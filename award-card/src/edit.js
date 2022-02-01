@@ -35,7 +35,11 @@ export class AwardCardEdit extends React.Component {
     this.onStoreUpdate = this.onStoreUpdate.bind(this);
 
     // store existing recipients
-    initializeStore(this.registry, this.attributes.recipients);
+    initializeStore(
+      this.registry,
+      this.attributes.recipients,
+      this.attributes.useOrgs,
+    );
     this.registry.stores[recipientStoreName].subscribe(this.onStoreUpdate);
 
     this.state = {

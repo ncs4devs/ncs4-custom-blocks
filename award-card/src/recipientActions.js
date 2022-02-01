@@ -20,3 +20,10 @@ export function editRecipient(data) {
     data,
   }
 }
+
+export function setUseOrgs(useOrgs) {
+  return {
+    type: actionTypes.SetUseOrgs,
+    useOrgs,
+  }
+}
