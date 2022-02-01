@@ -2201,7 +2201,7 @@ function RecipientEditer(props) {
 
   let changeHandler = attr => x => {
     setDataState({ ...dataState,
-      [attr]: typeof x === "string" ? x.trim() : x
+      [attr]: x
     });
   };
 
