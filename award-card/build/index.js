@@ -1906,13 +1906,141 @@ function Recipients(props) {
   } = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName);
   let rs = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useSelect"])(select => {
     let data = select(recipientStoreName).getRecipients();
-    return data.map(r => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Recipient, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, {
-      key: r.id,
-      actions: Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName),
-      onChange: d => editRecipient(d)
-    })), _);
+    let useOrgs = select(recipientStoreName).getUseOrgs();
+    let currentYear = data[0].year;
+    let currentRecipients = {
+      start: 0,
+      end: null
+    };
+    let previousRecipients = {
+      start: null,
+      end: data.length - 1,
+      organizations: []
+    }; // break into current and previous recipient slices
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].year !== currentYear) {
+        if (currentRecipients.end == null) {
+          currentRecipients.end = i - 1;
+        }
+
+        if (previousRecipients.start == null) {
+          previousRecipients.start = i;
+        }
+      }
+    }
+
+    currentRecipients.end = currentRecipients.end == null ? data.length - 1 : currentRecipients.end; // break into organization sections
+
+    if (useOrgs) {
+      let org = {
+        organization: null,
+        start: null,
+        end: null
+      };
+
+      for (let i = previousRecipients.start; i <= previousRecipients.end; i++) {
+        if (org.start == null) {
+          org.start = i;
+          org.organization = data[i].organization;
+        }
+
+        if (data[i].organization === org.organization) {
+          org.end = i;
+        }
+
+        if (data[i].organization !== org.organization || i == previousRecipients.end) {
+          // finished org, start a new one
+          previousRecipients.organizations.push(org);
+          org = {
+            organization: null,
+            start: null,
+            end: null
+          };
+        }
+      }
+    }
+
+    console.log("recipients");
+    console.log(data);
+    console.log("currentRecipients");
+    console.log(currentRecipients);
+    console.log("previousRecipients");
+    console.log(previousRecipients); // create section components
+
+    let CurrentRecipientsSection = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, {
+      recipients: data,
+      startIndex: currentRecipients.start,
+      endIndex: currentRecipients.end,
+      currentYear: currentYear,
+      useOrgs: useOrgs
+    });
+    let PreviousRecipientsSections;
+
+    if (previousRecipients.start == null) {
+      PreviousRecipientsSections = null;
+    } else {
+      if (useOrgs) {
+        PreviousRecipientsSections = previousRecipients.organizations.map(org => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, {
+          recipients: data,
+          startIndex: org.start,
+          endIndex: org.end,
+          currentYear: currentYear,
+          useOrgs: useOrgs,
+          key: org.organization
+        }));
+      } else {
+        PreviousRecipientsSections = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, {
+          recipients: data,
+          startIndex: previousRecipients.start,
+          endIndex: previousRecipients.end,
+          currentYear: currentYear,
+          useOrgs: useOrgs
+        });
+      }
+    }
+
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, CurrentRecipientsSection, PreviousRecipientsSections);
   });
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, rs);
+}
+
+function RecipientsSection(props) {
+  let header; // current recipients, previous recipients
+
+  let orgHeader; // organization abbreviation
+
+  let rs = props.recipients.slice(props.startIndex, props.endIndex + 1).map(r => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Recipient, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, {
+    key: r.id,
+    actions: Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName),
+    onChange: d => editRecipient(d),
+    displayYear: r.year !== props.currentYear
+  }))); // set headers
+
+  if (props.recipients[0].year === props.currentYear && props.recipients[props.recipients.length - 1].year !== props.currentYear) {
+    // Divide into current and previous recipients
+    if (props.recipients[props.startIndex].year === props.currentYear) {
+      // current recipients section
+      header = props.currentYear + " Recipient";
+    } else if (props.useOrgs) {
+      orgHeader = props.recipients[props.startIndex].organization;
+    }
+
+    if (!header && props.recipients[props.startIndex - 1].year === props.currentYear) {
+      // recipient above is a current recipient
+      header = "Previous Recipient";
+    }
+  }
+
+  if (header && props.endIndex - props.startIndex) {
+    header = header + "s"; // make plural
+  }
+
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, header && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h2", {
+    className: "ncs4-award-card__recipient-section-header"
+  }, header), orgHeader && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h3", {
+    className: "ncs4-award-card__recipient-section-org-header"
+  }, orgHeader), rs);
 }
 
 function Recipient(props) {
