@@ -104,9 +104,63 @@ function isRecipientValid(data) {
 
 // Components
 
+function divideRecipients(recipients, useOrgs, currentYear) {
+  let currentRecipients = {
+    start: 0,
+    end: null,
+  }
+  let previousRecipients = {
+    start: null,
+    end: recipients.length - 1,
+    organizations: [],
+  }
+
+  // break into current and previous recipient slices
+  for (let i = 0; i < recipients.length; i++) {
+    if (recipients[i].year !== currentYear) {
+      if (currentRecipients.end == null) {
+        currentRecipients.end = i - 1;
+      }
+      if (previousRecipients.start == null) {
+        previousRecipients.start = i;
+      }
+    }
+  }
+  currentRecipients.end = currentRecipients.end == null
+    ? recipients.length - 1
+    : currentRecipients.end;
+
+  // break into organization sections
+  if (useOrgs) {
+    let org = {
+      organization: null,
+      start: null,
+      end: null,
+    }
+    for (let i = previousRecipients.start; i <= previousRecipients.end; i++) {
+      if (org.start == null) {
+        org.start = i;
+        org.organization = recipients[i].organization;
+      }
+      if (recipients[i].organization === org.organization) {
+        org.end = i;
+      }
+      if (recipients[i].organization !== org.organization || i == previousRecipients.end) {
+        // finished org, start a new one
+        previousRecipients.organizations.push(org);
+        org = {
+          organization: null,
+          start: null,
+          end: null,
+        }
+      }
+    }
+  }
+  return { currentRecipients, previousRecipients };
+}
+
 // wrapper component to connect recipientStore to component props
 export default function Recipients(props) {
-
   const {
     createRecipient,
     deleteRecipient,
@@ -115,68 +169,24 @@ export default function Recipients(props) {
 
   let onChange = (d) => editRecipient(d);
   let rs = useSelect( (select) => {
-    let data = select(recipientStoreName).getRecipients();
+    let recipients = select(recipientStoreName).getRecipients();
     let useOrgs = select(recipientStoreName).getUseOrgs();
-    let currentYear = data[0].year;
-    let currentRecipients = {
-      start: 0,
-      end: null,
-    }
-    let previousRecipients = {
-      start: null,
-      end: data.length - 1,
-      organizations: [],
-    }
+    let currentYear = recipients[0].year;
 
-    // break into current and previous recipient slices
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].year !== currentYear) {
-        if (currentRecipients.end == null) {
-          currentRecipients.end = i - 1;
-        }
-        if (previousRecipients.start == null) {
-          previousRecipients.start = i;
-        }
-      }
-    }
-    currentRecipients.end = currentRecipients.end == null
-      ? data.length - 1
-      : currentRecipients.end;
-
-    // break into organization sections
-    if (useOrgs) {
-      let org = {
-        organization: null,
-        start: null,
-        end: null,
-      }
-      for (let i = previousRecipients.start; i <= previousRecipients.end; i++) {
-        if (org.start == null) {
-          org.start = i;
-          org.organization = data[i].organization;
-        }
-        if (data[i].organization === org.organization) {
-          org.end = i;
-        }
-        if (data[i].organization !== org.organization || i == previousRecipients.end) {
-          // finished org, start a new one
-          previousRecipients.organizations.push(org);
-          org = {
-            organization: null,
-            start: null,
-            end: null,
-          }
-        }
-      }
-    }
+    let { currentRecipients, previousRecipients } = divideRecipients(
+      recipients,
+      useOrgs,
+      currentYear,
+    );
 
     // create section components
     let commonProps = {
-      recipients: data,
+      recipients,
       onChange,
       currentYear,
       useOrgs,
       awardId: props.awardId,
+      backend: true,
     }
     let CurrentRecipientsSection = (
       <RecipientsSection
@@ -184,7 +194,7 @@ export default function Recipients(props) {
         startIndex = { currentRecipients.start }
         endIndex = { currentRecipients.end }
       />
-    )
+    );
 
     let PreviousRecipientsSections;
     if (previousRecipients.start == null) {
@@ -226,19 +236,85 @@ export default function Recipients(props) {
   )
 }
 
+export function RecipientsSave(props) {
+  let { currentRecipients, previousRecipients } = divideRecipients(
+    props.recipients,
+    props.useOrgs,
+    props.recipients[0].year,
+  );
+
+  let commonProps = {
+    recipients: props.recipients,
+    currentYear: props.recipients[0].year,
+    useOrgs: props.useOrgs,
+    backend: false,
+  };
+
+  let CurrentRecipientsSection = (
+    <RecipientsSection
+      { ...commonProps }
+      startIndex = { currentRecipients.start }
+      endIndex = { currentRecipients.end }
+    />
+  );
+
+  let PreviousRecipientsSections;
+  if (previousRecipients.start == null) {
+    PreviousRecipientsSections = null;
+  } else {
+    if (props.useOrgs) {
+      PreviousRecipientsSections = previousRecipients.organizations.map(
+        (org) => (
+          <RecipientsSection
+            { ...commonProps }
+            startIndex = { org.start }
+            endIndex = { org.end }
+            key = { org.organization }
+          />
+        )
+      );
+    } else {
+      PreviousRecipientsSections = (
+        <RecipientsSection
+          { ...commonProps }
+          startIndex = { previousRecipients.start }
+          endIndex = { previousRecipients.end }
+        />
+      )
+    }
+  }
+  return (
+    <>
+      { CurrentRecipientsSection }
+      { PreviousRecipientsSections }
+    </>
+  )
+}
+
 function RecipientsSection(props) {
   let header; // current recipients, previous recipients
   let orgHeader; // organization abbreviation
   let rs = props.recipients.slice(props.startIndex, props.endIndex + 1).map(
     (r) => (
-      <Recipient
-        {...r}
-        key = {r.id}
-        actions = { useDispatch(recipientStoreName) }
-        onChange = { props.onChange }
-        displayYear = { r.year !== props.currentYear }
-        awardId = { props.awardId }
-      />
+      <>
+        { props.backend
+          ? <Recipient
+              {...r}
+              key = {r.id}
+              actions = { useDispatch(recipientStoreName) }
+              onChange = { props.onChange }
+              displayYear = { r.year !== props.currentYear }
+              awardId = { props.awardId }
+              backend = { props.backend }
+            />
+          : <RecipientSave
+              {...r}
+              key = {r.id}
+              displayYear = { r.year !== props.currentYear }
+              backend = { props.backend }
+            />
+        }
+      </>
     )
   );
 
@@ -312,33 +388,44 @@ function Recipient(props) {
               props.onChange(info);
             } }
           />
-        : <p className = "ncs4-award-recipient">
-            <span
-              className = "ncs4-award-recipient__name"
-            >{ props.name }</span>{
-              props.position && (
-                <>
-                  , <span
-                      className = "ncs4-award-recipient__position"
-                    >{ props.position }</span>
-                </>
-              )
-            }
-            { props.displayYear && (
-              <>
-                , <span
-                  className = "ncs4-award-recipient__year"
-                >{ props.year }</span>
-              </>
-            )}
-            <span
-              className = "dashicons dashicons-edit ncs4-award-recipient__edit"
-              onClick = { () => setEditing(true) }
-            />
-          </p>
+        : <RecipientSave
+            { ...props }
+            setEditing = { setEditing }
+          />
       }
     </>
   );
+}
+
+function RecipientSave(props) {
+  return (
+    <p className = "ncs4-award-recipient">
+      <span
+        className = "ncs4-award-recipient__name"
+      >{ props.name }</span>{
+        props.position && (
+          <>
+            , <span
+                className = "ncs4-award-recipient__position"
+              >{ props.position }</span>
+          </>
+        )
+      }
+      { props.displayYear && (
+        <>
+          , <span
+            className = "ncs4-award-recipient__year"
+          >{ props.year }</span>
+        </>
+      )}
+      { props.backend && (
+        <span
+          className = "dashicons dashicons-edit ncs4-award-recipient__edit"
+          onClick = { () => props.setEditing(true) }
+        />
+      )}
+    </p>
+  )
 }
 
 function RecipientEditer(props) {

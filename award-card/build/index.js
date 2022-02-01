@@ -1829,7 +1829,7 @@ const getNextId = state => {
 /*!***************************!*\
   !*** ./src/recipients.js ***!
   \***************************/
-/*! exports provided: recipientStoreName, store, addRecipient, initializeStore, getRecipientData, default */
+/*! exports provided: recipientStoreName, store, addRecipient, initializeStore, getRecipientData, default, RecipientsSave */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1840,6 +1840,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initializeStore", function() { return initializeStore; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRecipientData", function() { return getRecipientData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Recipients; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecipientsSave", function() { return RecipientsSave; });
 /* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "./node_modules/@babel/runtime/helpers/extends.js");
 /* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
@@ -1943,7 +1944,67 @@ function isRecipientValid(data) {
 
   return true;
 } // Components
-// wrapper component to connect recipientStore to component props
+
+
+function divideRecipients(recipients, useOrgs, currentYear) {
+  let currentRecipients = {
+    start: 0,
+    end: null
+  };
+  let previousRecipients = {
+    start: null,
+    end: recipients.length - 1,
+    organizations: []
+  }; // break into current and previous recipient slices
+
+  for (let i = 0; i < recipients.length; i++) {
+    if (recipients[i].year !== currentYear) {
+      if (currentRecipients.end == null) {
+        currentRecipients.end = i - 1;
+      }
+
+      if (previousRecipients.start == null) {
+        previousRecipients.start = i;
+      }
+    }
+  }
+
+  currentRecipients.end = currentRecipients.end == null ? recipients.length - 1 : currentRecipients.end; // break into organization sections
+
+  if (useOrgs) {
+    let org = {
+      organization: null,
+      start: null,
+      end: null
+    };
+
+    for (let i = previousRecipients.start; i <= previousRecipients.end; i++) {
+      if (org.start == null) {
+        org.start = i;
+        org.organization = recipients[i].organization;
+      }
+
+      if (recipients[i].organization === org.organization) {
+        org.end = i;
+      }
+
+      if (recipients[i].organization !== org.organization || i == previousRecipients.end) {
+        // finished org, start a new one
+        previousRecipients.organizations.push(org);
+        org = {
+          organization: null,
+          start: null,
+          end: null
+        };
+      }
+    }
+  }
+
+  return {
+    currentRecipients,
+    previousRecipients
+  };
+} // wrapper component to connect recipientStore to component props
 
 
 function Recipients(props) {
@@ -1956,69 +2017,21 @@ function Recipients(props) {
   let onChange = d => editRecipient(d);
 
   let rs = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useSelect"])(select => {
-    let data = select(recipientStoreName).getRecipients();
+    let recipients = select(recipientStoreName).getRecipients();
     let useOrgs = select(recipientStoreName).getUseOrgs();
-    let currentYear = data[0].year;
-    let currentRecipients = {
-      start: 0,
-      end: null
-    };
-    let previousRecipients = {
-      start: null,
-      end: data.length - 1,
-      organizations: []
-    }; // break into current and previous recipient slices
-
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].year !== currentYear) {
-        if (currentRecipients.end == null) {
-          currentRecipients.end = i - 1;
-        }
-
-        if (previousRecipients.start == null) {
-          previousRecipients.start = i;
-        }
-      }
-    }
-
-    currentRecipients.end = currentRecipients.end == null ? data.length - 1 : currentRecipients.end; // break into organization sections
-
-    if (useOrgs) {
-      let org = {
-        organization: null,
-        start: null,
-        end: null
-      };
-
-      for (let i = previousRecipients.start; i <= previousRecipients.end; i++) {
-        if (org.start == null) {
-          org.start = i;
-          org.organization = data[i].organization;
-        }
-
-        if (data[i].organization === org.organization) {
-          org.end = i;
-        }
-
-        if (data[i].organization !== org.organization || i == previousRecipients.end) {
-          // finished org, start a new one
-          previousRecipients.organizations.push(org);
-          org = {
-            organization: null,
-            start: null,
-            end: null
-          };
-        }
-      }
-    } // create section components
-
+    let currentYear = recipients[0].year;
+    let {
+      currentRecipients,
+      previousRecipients
+    } = divideRecipients(recipients, useOrgs, currentYear); // create section components
 
     let commonProps = {
-      recipients: data,
+      recipients,
       onChange,
       currentYear,
       useOrgs,
-      awardId: props.awardId
+      awardId: props.awardId,
+      backend: true
     };
     let CurrentRecipientsSection = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
       startIndex: currentRecipients.start,
@@ -2047,19 +2060,60 @@ function Recipients(props) {
   });
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, rs);
 }
+function RecipientsSave(props) {
+  let {
+    currentRecipients,
+    previousRecipients
+  } = divideRecipients(props.recipients, props.useOrgs, props.recipients[0].year);
+  let commonProps = {
+    recipients: props.recipients,
+    currentYear: props.recipients[0].year,
+    useOrgs: props.useOrgs,
+    backend: false
+  };
+  let CurrentRecipientsSection = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
+    startIndex: currentRecipients.start,
+    endIndex: currentRecipients.end
+  }));
+  let PreviousRecipientsSections;
+
+  if (previousRecipients.start == null) {
+    PreviousRecipientsSections = null;
+  } else {
+    if (props.useOrgs) {
+      PreviousRecipientsSections = previousRecipients.organizations.map(org => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
+        startIndex: org.start,
+        endIndex: org.end,
+        key: org.organization
+      })));
+    } else {
+      PreviousRecipientsSections = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
+        startIndex: previousRecipients.start,
+        endIndex: previousRecipients.end
+      }));
+    }
+  }
+
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, CurrentRecipientsSection, PreviousRecipientsSections);
+}
 
 function RecipientsSection(props) {
   let header; // current recipients, previous recipients
 
   let orgHeader; // organization abbreviation
 
-  let rs = props.recipients.slice(props.startIndex, props.endIndex + 1).map(r => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Recipient, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, {
+  let rs = props.recipients.slice(props.startIndex, props.endIndex + 1).map(r => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, props.backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Recipient, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, {
     key: r.id,
     actions: Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName),
     onChange: props.onChange,
     displayYear: r.year !== props.currentYear,
-    awardId: props.awardId
-  }))); // set headers
+    awardId: props.awardId,
+    backend: props.backend
+  })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientSave, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, {
+    key: r.id,
+    displayYear: r.year !== props.currentYear,
+    backend: props.backend
+  })))); // set headers
 
   if (props.recipients[0].year === props.currentYear && props.recipients[props.recipients.length - 1].year !== props.currentYear) {
     // Divide into current and previous recipients
@@ -2110,7 +2164,13 @@ function Recipient(props) {
 
       props.onChange(info);
     }
-  })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
+  })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientSave, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+    setEditing: setEditing
+  })));
+}
+
+function RecipientSave(props) {
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
     className: "ncs4-award-recipient"
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
     className: "ncs4-award-recipient__name"
@@ -2118,10 +2178,10 @@ function Recipient(props) {
     className: "ncs4-award-recipient__position"
   }, props.position)), props.displayYear && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
     className: "ncs4-award-recipient__year"
-  }, props.year)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
+  }, props.year)), props.backend && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
     className: "dashicons dashicons-edit ncs4-award-recipient__edit",
-    onClick: () => setEditing(true)
-  })));
+    onClick: () => props.setEditing(true)
+  }));
 }
 
 function RecipientEditer(props) {
@@ -2250,6 +2310,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../popup/src/popup.js */ "../popup/src/popup.js");
+/* harmony import */ var _recipients__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./recipients */ "./src/recipients.js");
+
 
 
 
@@ -2276,7 +2338,7 @@ class AwardCardSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
       className: "ncs4-award-card__popup-description",
       tagName: "p",
       value: attributes.desc
-    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", null, "Award recipients go here")));
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_5__["RecipientsSave"], attributes)));
   }
 
 }

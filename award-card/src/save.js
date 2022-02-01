@@ -3,6 +3,8 @@ import { InnerBlocks, RichText } from '@wordpress/block-editor';
 
 import { Popup } from '../../popup/src/popup.js';
 
+import { RecipientsSave } from './recipients';
+
 export class AwardCardSave extends React.Component {
 
   render() {
@@ -39,7 +41,7 @@ export class AwardCardSave extends React.Component {
             tagName = "p"
             value = { attributes.desc }
           />
-          <p>Award recipients go here</p>
+          <RecipientsSave {...attributes}/>
         </Popup>
       </div>
     );
