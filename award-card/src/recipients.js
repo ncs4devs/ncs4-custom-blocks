@@ -88,7 +88,7 @@ function isRecipientValid(data) {
   if (typeof data.name !== "string" || data.name === "") {
     return false;
   }
-  if (!data.year || isNaN(data.year) || data.year < 2018) {
+  if (!data.year || isNaN(data.year) || data.year < 2000) {
     return false;
   }
   return true;
