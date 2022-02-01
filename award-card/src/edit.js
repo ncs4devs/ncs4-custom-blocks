@@ -3,6 +3,7 @@ import { InspectorControls, RichText } from '@wordpress/block-editor';
 import {
   PanelBody,
   TextControl,
+  CheckboxControl,
 } from '@wordpress/components';
 import { verifyColor } from '../../js/ColorSelector.js';
 import { createRegistry, RegistryProvider } from '@wordpress/data';
@@ -100,7 +101,6 @@ export class AwardCardEdit extends React.Component {
   render() {
     let blockProps = this.props.blockProps;
     let registry = this.registry;
-
     return (
       <>
         <div {...blockProps }
@@ -131,7 +131,7 @@ export class AwardCardEdit extends React.Component {
             />
           </div>
           <RegistryProvider value={ registry }>
-            <Recipients/>
+            <Recipients awardId={ blockProps.id }/>
           </RegistryProvider>
         </div>
         <InspectorControls>
@@ -145,6 +145,16 @@ export class AwardCardEdit extends React.Component {
               help = "Name of the award"
               placeholder = "World's Best Web Dev"
               onChange = { this.trimStateAttribute("name") }
+            />
+            <CheckboxControl
+              label = "Split past recipients by organization"
+              help = "Leave checked to organize past recipients by their organization"
+              checked = { this.registry.select(recipientStoreName).getUseOrgs() }
+              onChange = { (b) => {
+                let { setUseOrgs } = this.registry.dispatch(recipientStoreName);
+                setUseOrgs(b);
+                this.setAttributes({useOrgs: b});
+              }}
             />
           </PanelBody>
           <PopupSettings

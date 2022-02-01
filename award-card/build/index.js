@@ -1297,7 +1297,9 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
       onClick: () => Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["addRecipient"])(registry)
     })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_data__WEBPACK_IMPORTED_MODULE_6__["RegistryProvider"], {
       value: registry
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_9__["default"], null))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelBody"], {
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_9__["default"], {
+      awardId: blockProps.id
+    }))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelBody"], {
       title: "Award info",
       initialOpen: true
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["TextControl"], {
@@ -1306,6 +1308,19 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
       help: "Name of the award",
       placeholder: "World's Best Web Dev",
       onChange: this.trimStateAttribute("name")
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["CheckboxControl"], {
+      label: "Split past recipients by organization",
+      help: "Leave checked to organize past recipients by their organization",
+      checked: this.registry.select(_recipients__WEBPACK_IMPORTED_MODULE_9__["recipientStoreName"]).getUseOrgs(),
+      onChange: b => {
+        let {
+          setUseOrgs
+        } = this.registry.dispatch(_recipients__WEBPACK_IMPORTED_MODULE_9__["recipientStoreName"]);
+        setUseOrgs(b);
+        this.setAttributes({
+          useOrgs: b
+        });
+      }
     })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["PopupSettings"], {
       attributes: this.state,
       callback: this.setStateAttributes
@@ -1413,7 +1428,7 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
 /*!*************************************!*\
   !*** ./src/recipientActionTypes.js ***!
   \*************************************/
-/*! exports provided: Create, Delete, Edit, SetUseOrgs */
+/*! exports provided: Create, Delete, Edit, SetUseOrgs, AddOrganization */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1422,10 +1437,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Delete", function() { return Delete; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Edit", function() { return Edit; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SetUseOrgs", function() { return SetUseOrgs; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddOrganization", function() { return AddOrganization; });
 const Create = "CREATE";
 const Delete = "DELETE";
 const Edit = "EDIT";
 const SetUseOrgs = "SET_ORGS";
+const AddOrganization = "ADD_ORG";
 
 /***/ }),
 
@@ -1433,7 +1450,7 @@ const SetUseOrgs = "SET_ORGS";
 /*!*********************************!*\
   !*** ./src/recipientActions.js ***!
   \*********************************/
-/*! exports provided: createRecipient, deleteRecipient, editRecipient, setUseOrgs */
+/*! exports provided: createRecipient, deleteRecipient, editRecipient, setUseOrgs, addOrganization */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1442,6 +1459,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteRecipient", function() { return deleteRecipient; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "editRecipient", function() { return editRecipient; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setUseOrgs", function() { return setUseOrgs; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addOrganization", function() { return addOrganization; });
 /* harmony import */ var _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./recipientActionTypes */ "./src/recipientActionTypes.js");
 
 function createRecipient(data) {
@@ -1466,6 +1484,12 @@ function setUseOrgs(useOrgs) {
   return {
     type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["SetUseOrgs"],
     useOrgs
+  };
+}
+function addOrganization(organization) {
+  return {
+    type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["AddOrganization"],
+    organization
   };
 }
 
@@ -1567,13 +1591,29 @@ const useOrgs = function () {
   }
 };
 
+const organizations = function () {
+  let state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  let action = arguments.length > 1 ? arguments[1] : undefined;
+
+  switch (action.type) {
+    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["AddOrganization"]:
+      return [...state, action.organization];
+
+    default:
+      console.warn("organizations: Unrecognized action type '" + action.type + "'");
+      return state;
+  }
+}; // Higher-order reducers
+
+
 /* harmony default export */ __webpack_exports__["default"] = (combineReducersWithData({
   recipients: {
     reducer: recipients,
     stateReducer: state => state.useOrgs
   },
   ids,
-  useOrgs
+  useOrgs,
+  organizations
 })); // takes an object of {reducer: function(), stateReducer: function()} objects
 // stateReducer() should take the full store's state and return what data the
 // reducer function needs. This data will be passed to the reducer as the third
@@ -1735,7 +1775,7 @@ function transposeName(name) {
 /*!***********************************!*\
   !*** ./src/recipientSelectors.js ***!
   \***********************************/
-/*! exports provided: getRecipients, getState, getUsedIds, getUseOrgs, hasId, createRecipientData, getNextId */
+/*! exports provided: getRecipients, getState, getUsedIds, getUseOrgs, getOrganizations, hasId, createRecipientData, getNextId */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1744,6 +1784,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getState", function() { return getState; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUsedIds", function() { return getUsedIds; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUseOrgs", function() { return getUseOrgs; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getOrganizations", function() { return getOrganizations; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasId", function() { return hasId; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createRecipientData", function() { return createRecipientData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNextId", function() { return getNextId; });
@@ -1759,6 +1800,7 @@ const getRecipients = (state, ids) => {
 const getState = state => state;
 const getUsedIds = state => state.ids;
 const getUseOrgs = state => state.useOrgs;
+const getOrganizations = state => state.organizations;
 const hasId = (state, id) => state.ids.includes(id);
 const createRecipientData = (state, data) => ({ ...data,
   id: !isNaN(data.id) && !hasId(data.id) ? data.id : getNextId(state)
@@ -1845,13 +1887,19 @@ function addRecipient(registry) {
 function initializeStore(registry, recipients, useOrgs) {
   let {
     createRecipient,
-    setUseOrgs
+    setUseOrgs,
+    addOrganization
   } = registry.dispatch(recipientStoreName);
+  let organizations = registry.select(recipientStoreName).getOrganizations();
   setUseOrgs(useOrgs);
   recipients.forEach(r => {
     createRecipient({ ...r,
       id: registry.select(recipientStoreName).getNextId()
     });
+
+    if (r.organization && !organizations.includes(r.organization)) {
+      addOrganization(r.organization);
+    }
   });
 } // returns all data necessary to save recipients to DB
 
@@ -1904,6 +1952,9 @@ function Recipients(props) {
     deleteRecipient,
     editRecipient
   } = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName);
+
+  let onChange = d => editRecipient(d);
+
   let rs = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useSelect"])(select => {
     let data = select(recipientStoreName).getRecipients();
     let useOrgs = select(recipientStoreName).getUseOrgs();
@@ -1959,44 +2010,36 @@ function Recipients(props) {
           };
         }
       }
-    }
+    } // create section components
 
-    console.log("recipients");
-    console.log(data);
-    console.log("currentRecipients");
-    console.log(currentRecipients);
-    console.log("previousRecipients");
-    console.log(previousRecipients); // create section components
 
-    let CurrentRecipientsSection = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, {
+    let commonProps = {
       recipients: data,
+      onChange,
+      currentYear,
+      useOrgs,
+      awardId: props.awardId
+    };
+    let CurrentRecipientsSection = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
       startIndex: currentRecipients.start,
-      endIndex: currentRecipients.end,
-      currentYear: currentYear,
-      useOrgs: useOrgs
-    });
+      endIndex: currentRecipients.end
+    }));
     let PreviousRecipientsSections;
 
     if (previousRecipients.start == null) {
       PreviousRecipientsSections = null;
     } else {
       if (useOrgs) {
-        PreviousRecipientsSections = previousRecipients.organizations.map(org => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, {
-          recipients: data,
+        PreviousRecipientsSections = previousRecipients.organizations.map(org => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
           startIndex: org.start,
           endIndex: org.end,
-          currentYear: currentYear,
-          useOrgs: useOrgs,
           key: org.organization
-        }));
+        })));
       } else {
-        PreviousRecipientsSections = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, {
-          recipients: data,
+        PreviousRecipientsSections = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
           startIndex: previousRecipients.start,
-          endIndex: previousRecipients.end,
-          currentYear: currentYear,
-          useOrgs: useOrgs
-        });
+          endIndex: previousRecipients.end
+        }));
       }
     }
 
@@ -2013,8 +2056,9 @@ function RecipientsSection(props) {
   let rs = props.recipients.slice(props.startIndex, props.endIndex + 1).map(r => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Recipient, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, {
     key: r.id,
     actions: Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName),
-    onChange: d => editRecipient(d),
-    displayYear: r.year !== props.currentYear
+    onChange: props.onChange,
+    displayYear: r.year !== props.currentYear,
+    awardId: props.awardId
   }))); // set headers
 
   if (props.recipients[0].year === props.currentYear && props.recipients[props.recipients.length - 1].year !== props.currentYear) {
@@ -2050,11 +2094,20 @@ function Recipient(props) {
     deleteRecipient,
     editRecipient
   } = props.actions;
+  let orgs = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useSelect"])(select => select(recipientStoreName).getOrganizations());
+  let {
+    addOrganization
+  } = props.actions;
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, isEditing ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientEditer, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
     delete: () => deleteRecipient(props.id),
     cancel: () => setEditing(false),
     save: info => {
       setEditing(false);
+
+      if (info.organization && !orgs.includes(info.organization)) {
+        addOrganization(info.organization);
+      }
+
       props.onChange(info);
     }
   })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
@@ -2088,7 +2141,7 @@ function RecipientEditer(props) {
 
   let changeHandler = attr => x => {
     setDataState({ ...dataState,
-      [attr]: x
+      [attr]: typeof x === "string" ? x.trim() : x
     });
   };
 
@@ -2124,6 +2177,7 @@ function RecipientEditer(props) {
     }
   };
 
+  let organizations = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useSelect"])(select => select(recipientStoreName).getOrganizations());
   const deleteClass = "dashicons dashicons-trash ncs4-award-recipient__edit-delete";
   const cancelClass = "dashicons dashicons-no ncs4-award-recipient__edit-cancel";
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
@@ -2151,7 +2205,21 @@ function RecipientEditer(props) {
     label: "Recipient position",
     placeholder: "Super-executive-vice-president of business operations",
     onChange: changeHandler("position")
-  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("label", {
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("input", {
+    type: "text",
+    list: "organizations_" + props.awardId + "_" + props.id,
+    value: dataState.organization,
+    label: "Recipient organization",
+    placeholder: "NCS\u2074",
+    onChange: e => {
+      changeHandler("organization")(e.target.value);
+    }
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("datalist", {
+    id: "organizations_" + props.awardId + "_" + props.id
+  }, organizations.map(org => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("option", {
+    value: org,
+    key: org
+  }))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("label", {
     className: "ncs4-award-recipient__year-label",
     for: ""
   }, "Award Year"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("input", {

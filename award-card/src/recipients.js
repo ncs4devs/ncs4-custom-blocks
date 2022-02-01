@@ -38,13 +38,21 @@ export function addRecipient(registry) {
 }
 
 export function initializeStore(registry, recipients, useOrgs) {
-  let { createRecipient, setUseOrgs } = registry.dispatch(recipientStoreName);
+  let {
+    createRecipient,
+    setUseOrgs,
+    addOrganization
+  } = registry.dispatch(recipientStoreName);
+  let organizations = registry.select(recipientStoreName).getOrganizations();
   setUseOrgs(useOrgs);
   recipients.forEach( (r) => {
     createRecipient({
       ...r,
       id: registry.select(recipientStoreName).getNextId(),
     });
+    if (r.organization && !organizations.includes(r.organization)) {
+      addOrganization(r.organization);
+    }
   });
 }
 
@@ -105,6 +113,7 @@ export default function Recipients(props) {
     editRecipient,
   } = useDispatch(recipientStoreName);
 
+  let onChange = (d) => editRecipient(d);
   let rs = useSelect( (select) => {
     let data = select(recipientStoreName).getRecipients();
     let useOrgs = select(recipientStoreName).getUseOrgs();
@@ -160,21 +169,20 @@ export default function Recipients(props) {
         }
       }
     }
-    console.log("recipients");
-    console.log(data);
-    console.log("currentRecipients");
-    console.log(currentRecipients);
-    console.log("previousRecipients");
-    console.log(previousRecipients);
 
     // create section components
+    let commonProps = {
+      recipients: data,
+      onChange,
+      currentYear,
+      useOrgs,
+      awardId: props.awardId,
+    }
     let CurrentRecipientsSection = (
       <RecipientsSection
-        recipients = { data }
+        { ...commonProps }
         startIndex = { currentRecipients.start }
         endIndex = { currentRecipients.end }
-        currentYear = { currentYear }
-        useOrgs = { useOrgs }
       />
     )
 
@@ -186,11 +194,9 @@ export default function Recipients(props) {
         PreviousRecipientsSections = previousRecipients.organizations.map(
           (org) => (
             <RecipientsSection
-              recipients = { data }
+              { ...commonProps }
               startIndex = { org.start }
               endIndex = { org.end }
-              currentYear = { currentYear }
-              useOrgs = { useOrgs }
               key = { org.organization }
             />
           )
@@ -198,11 +204,9 @@ export default function Recipients(props) {
       } else {
         PreviousRecipientsSections = (
           <RecipientsSection
-            recipients = { data }
+            { ...commonProps }
             startIndex = { previousRecipients.start }
             endIndex = { previousRecipients.end }
-            currentYear = { currentYear }
-            useOrgs = { useOrgs }
           />
         )
       }
@@ -231,8 +235,9 @@ function RecipientsSection(props) {
         {...r}
         key = {r.id}
         actions = { useDispatch(recipientStoreName) }
-        onChange = { (d) => editRecipient(d) }
+        onChange = { props.onChange }
         displayYear = { r.year !== props.currentYear }
+        awardId = { props.awardId }
       />
     )
   );
@@ -287,6 +292,11 @@ function Recipient(props) {
     editRecipient,
   } = props.actions;
 
+  let orgs = useSelect( (select) => (
+    select(recipientStoreName).getOrganizations()
+  ));
+  let { addOrganization } = props.actions;
+
   return (
     <>
       { isEditing
@@ -296,6 +306,9 @@ function Recipient(props) {
             cancel = { () => setEditing(false) }
             save = { (info) => {
               setEditing(false);
+              if (info.organization && !orgs.includes(info.organization)) {
+                addOrganization(info.organization);
+              }
               props.onChange(info);
             } }
           />
@@ -347,7 +360,7 @@ function RecipientEditer(props) {
   let changeHandler = (attr) => (x) => {
     setDataState({
       ...dataState,
-      [attr]: x,
+      [attr]: typeof x === "string" ? x.trim() : x,
     });
   };
 
@@ -383,6 +396,10 @@ function RecipientEditer(props) {
       uiHandler("saveValid")(false);
     }
   }
+
+  let organizations = useSelect( (select) => (
+    select(recipientStoreName).getOrganizations()
+  ));
 
   const deleteClass = "dashicons dashicons-trash ncs4-award-recipient__edit-delete";
   const cancelClass = "dashicons dashicons-no ncs4-award-recipient__edit-cancel";
@@ -425,6 +442,26 @@ function RecipientEditer(props) {
         placeholder = "Super-executive-vice-president of business operations"
         onChange = { changeHandler("position") }
       />
+      <input
+        type = "text"
+        list = { "organizations_" + props.awardId + "_" + props.id }
+        value = { dataState.organization }
+        label = "Recipient organization"
+        placeholder = "NCS⁴"
+        onChange = { (e) => {
+          changeHandler("organization")(e.target.value);
+        }}
+      />
+      <datalist
+        id = { "organizations_" + props.awardId + "_" + props.id }
+      >
+        {organizations.map( (org) => (
+          <option
+            value = { org }
+            key = { org }
+          />
+        ))}
+      </datalist>
       <label
         className = "ncs4-award-recipient__year-label"
         for = ""

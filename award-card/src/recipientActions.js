@@ -27,3 +27,10 @@ export function setUseOrgs(useOrgs) {
     useOrgs,
   }
 }
+
+export function addOrganization(organization) {
+  return {
+    type: actionTypes.AddOrganization,
+    organization,
+  }
+}

@@ -75,10 +75,23 @@ const useOrgs = (state = false, action) => {
   }
 }
 
+const organizations = (state = [], action) => {
+  switch(action.type) {
+    case actionTypes.AddOrganization:
+      return [...state, action.organization];
+    default:
+      console.warn("organizations: Unrecognized action type '" + action.type + "'");
+      return state;
+  }
+}
+
+// Higher-order reducers
+
 export default combineReducersWithData({
   recipients: { reducer: recipients, stateReducer: (state) => state.useOrgs },
   ids,
   useOrgs,
+  organizations,
 });
 
 // takes an object of {reducer: function(), stateReducer: function()} objects
