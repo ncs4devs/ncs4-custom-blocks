@@ -194,6 +194,7 @@ export default function Recipients(props) {
       recipients,
       onChange,
       currentYear,
+      displayYear: previousRecipients.start === null,
       useOrgs,
       awardId: props.awardId,
       backend: true,
@@ -256,6 +257,7 @@ export function RecipientsSave(props) {
   let commonProps = {
     recipients: props.recipients,
     currentYear: props.recipients[0].year,
+    displayYear: previousRecipients.start === null,
     useOrgs: props.useOrgs,
     backend: false,
   };
@@ -315,7 +317,7 @@ function RecipientsSection(props) {
               actions = { useDispatch(recipientStoreName) }
               onChange = { props.onChange }
               useOrgs = { props.useOrgs }
-              displayYear = { r.year !== props.currentYear }
+              displayYear = { props.displayYear || r.year !== props.currentYear }
               awardId = { props.awardId }
               backend = { props.backend }
             />
@@ -323,7 +325,7 @@ function RecipientsSection(props) {
               {...r}
               key = {r.id}
               useOrgs = { props.useOrgs }
-              displayYear = { r.year !== props.currentYear }
+              displayYear = { props.displayYear ||  r.year !== props.currentYear }
               backend = { props.backend }
             />
         }

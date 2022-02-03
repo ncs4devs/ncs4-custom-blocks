@@ -2043,6 +2043,7 @@ function Recipients(props) {
       recipients,
       onChange,
       currentYear,
+      displayYear: previousRecipients.start === null,
       useOrgs,
       awardId: props.awardId,
       backend: true
@@ -2082,6 +2083,7 @@ function RecipientsSave(props) {
   let commonProps = {
     recipients: props.recipients,
     currentYear: props.recipients[0].year,
+    displayYear: previousRecipients.start === null,
     useOrgs: props.useOrgs,
     backend: false
   };
@@ -2122,13 +2124,13 @@ function RecipientsSection(props) {
     actions: Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName),
     onChange: props.onChange,
     useOrgs: props.useOrgs,
-    displayYear: r.year !== props.currentYear,
+    displayYear: props.displayYear || r.year !== props.currentYear,
     awardId: props.awardId,
     backend: props.backend
   })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientSave, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, {
     key: r.id,
     useOrgs: props.useOrgs,
-    displayYear: r.year !== props.currentYear,
+    displayYear: props.displayYear || r.year !== props.currentYear,
     backend: props.backend
   })))); // set headers
 
