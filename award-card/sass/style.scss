@@ -1,65 +1,24 @@
 @use 'sass:math';
 @import '../../sass/ncs4-pro-colors';
 
-@import '../../popup/sass/style';
+.ncs4-award-card {
 
-.ncs4-bio {
-
-  &-header {
-    display: flex;
-    flex-direction: row;
-    column-gap: 2em;
-
-    .ncs4-bio-position {
-      margin-bottom: 1em;
-    }
+  &__popup-name {
+    color: $color_link-1;
   }
 
-  &-img {
-    img {
-      display: block;
-    }
-  }
-
-  &-name {
-    margin-top: 0.5em;
-    margin-bottom: 0;
-  }
-
-  &-position {
-    margin-top: 0;
-    margin-bottom: 1.5em;
-    font-style: italic;
-  }
-
-  &-col {
-
-    &1 {
-      flex: 1 0 auto;
-    }
-
-    &2 {
-      margin: auto auto 0 0;
-      flex: 0 1 100%;
-    }
+  &__recipient-section-header {
+    color: $color_secondary-2;
   }
 }
 
-.super-secret-best-staff {
-  .ncs4-popup-overlay::before {
-    content: "";
-    display: block;
-    height: 100%;
-    opacity: 0;
-    background-image: url("https://upload.wikimedia.org/wikipedia/commons/c/cc/Digital_rain_animation_medium_letters_shine.gif");
-    animation:
-      fade-in 2s ease-in;
-    animation-delay: 600s;
-    animation-fill-mode: forwards;
+.ncs4-award-recipient {
 
-    @keyframes fade-in {
-      from { opacity: 0 }
-      to { opacity: 1 }
-    }
+  &__name {
+    font-weight: bold;
+  }
+
+  &__position, &__year {
+    font-style: italic;
   }
 }

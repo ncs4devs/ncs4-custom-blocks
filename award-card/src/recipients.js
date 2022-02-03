@@ -145,9 +145,12 @@ function divideRecipients(recipients, useOrgs, currentYear) {
       if (recipients[i].organization === org.organization) {
         org.end = i;
       }
-      if (recipients[i].organization !== org.organization || i == previousRecipients.end) {
+      if (recipients[i].organization !== org.organization || i === previousRecipients.end) {
         // finished org, start a new one
         previousRecipients.organizations.push(org);
+        if (org.end !== previousRecipients.end) {
+          i--; // There are more organizations
+        }
         org = {
           organization: null,
           start: null,
@@ -170,6 +173,9 @@ export default function Recipients(props) {
   let onChange = (d) => editRecipient(d);
   let rs = useSelect( (select) => {
     let recipients = select(recipientStoreName).getRecipients();
+    if (!recipients || !recipients[0]) {
+      return null;
+    }
     let useOrgs = select(recipientStoreName).getUseOrgs();
     let currentYear = recipients[0].year;
 

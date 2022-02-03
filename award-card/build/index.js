@@ -1527,7 +1527,7 @@ const recipients = function () {
       return sortedInsert(state.filter(x => x.id !== action.data.id), action.data, getRecipientsCompare(currentYear, useOrgs));
 
     default:
-      console.warn("recipients: Unrecognized action type '" + action.type + "'");
+      //console.warn("recipients: Unrecognized action type '" + action.type + "'");
       return state;
   }
 };
@@ -1572,7 +1572,7 @@ const ids = function () {
       return state;
 
     default:
-      console.warn("ids: Unrecognized action type '" + action.type + "'");
+      //console.warn("ids: Unrecognized action type '" + action.type + "'");
       return state;
   }
 };
@@ -1586,7 +1586,7 @@ const useOrgs = function () {
       return action.useOrgs;
 
     default:
-      console.warn("useOrgs: Unrecognized action type '" + action.type + "'");
+      //console.warn("useOrgs: Unrecognized action type '" + action.type + "'");
       return state;
   }
 };
@@ -1600,7 +1600,7 @@ const organizations = function () {
       return [...state, action.organization];
 
     default:
-      console.warn("organizations: Unrecognized action type '" + action.type + "'");
+      //console.warn("organizations: Unrecognized action type '" + action.type + "'");
       return state;
   }
 }; // Higher-order reducers
@@ -1988,9 +1988,14 @@ function divideRecipients(recipients, useOrgs, currentYear) {
         org.end = i;
       }
 
-      if (recipients[i].organization !== org.organization || i == previousRecipients.end) {
+      if (recipients[i].organization !== org.organization || i === previousRecipients.end) {
         // finished org, start a new one
         previousRecipients.organizations.push(org);
+
+        if (org.end !== previousRecipients.end) {
+          i--; // There are more organizations
+        }
+
         org = {
           organization: null,
           start: null,
@@ -2018,6 +2023,11 @@ function Recipients(props) {
 
   let rs = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useSelect"])(select => {
     let recipients = select(recipientStoreName).getRecipients();
+
+    if (!recipients || !recipients[0]) {
+      return null;
+    }
+
     let useOrgs = select(recipientStoreName).getUseOrgs();
     let currentYear = recipients[0].year;
     let {

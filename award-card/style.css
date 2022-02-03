@@ -6,113 +6,18 @@
 /* Yellow */
 /* Grey */
 /* Links */
-/* These colors are kept for compatibility reasons and should not be used */
-/* These colors may be used */
-/* Colors are swapped around to be in order from darkest to lightest */
-/* Navy */
-/* Dark Blue */
-/* Yellow */
-/* Grey */
-/* Links */
-.ncs4-popup a:focus-within .ncs4-popup-overlay {
-  display: block;
+.ncs4-award-card__popup-name {
+  color: #037fff;
 }
-.ncs4-popup__wrapper {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 999999;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-}
-.ncs4-popup-overlay {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  background-color: #000;
-  pointer-events: all;
-}
-.ncs4-popup-overlay:hover {
-  cursor: default;
-}
-.ncs4-popup-content {
-  overflow-y: auto;
-  pointer-events: all;
-  max-height: 80vh;
-  margin: 0 auto;
-  padding: 3.2rem;
-  width: 100%;
-  border: 16px solid var(--palette-bg-color, #fff);
-  border-radius: 16px;
-}
-.ncs4-popup-content.size-alert {
-  max-width: min(30ch, 80vw);
-}
-.ncs4-popup-content.size-small {
-  max-width: min(600px, 80vw);
-}
-.ncs4-popup-content.size-body {
-  max-width: min(1000px, 80vw);
-}
-.ncs4-popup-content.size-large {
-  max-width: min(1720px, 80vw);
-}
-.ncs4-popup-content__wrapper {
-  display: flex;
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  flex-direction: column;
-  justify-content: center;
+.ncs4-award-card__recipient-section-header {
+  color: #00499A;
 }
 
-.ncs4-bio-header {
-  display: flex;
-  flex-direction: row;
-  column-gap: 2em;
+.ncs4-award-recipient__name {
+  font-weight: bold;
 }
-.ncs4-bio-header .ncs4-bio-position {
-  margin-bottom: 1em;
-}
-.ncs4-bio-img img {
-  display: block;
-}
-.ncs4-bio-name {
-  margin-top: 0.5em;
-  margin-bottom: 0;
-}
-.ncs4-bio-position {
-  margin-top: 0;
-  margin-bottom: 1.5em;
+.ncs4-award-recipient__position, .ncs4-award-recipient__year {
   font-style: italic;
-}
-.ncs4-bio-col1 {
-  flex: 1 0 auto;
-}
-.ncs4-bio-col2 {
-  margin: auto auto 0 0;
-  flex: 0 1 100%;
-}
-
-.super-secret-best-staff .ncs4-popup-overlay::before {
-  content: "";
-  display: block;
-  height: 100%;
-  opacity: 0;
-  background-image: url("https://upload.wikimedia.org/wikipedia/commons/c/cc/Digital_rain_animation_medium_letters_shine.gif");
-  animation: fade-in 2s ease-in;
-  animation-delay: 600s;
-  animation-fill-mode: forwards;
-}
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 /*# sourceMappingURL=style.css.map */

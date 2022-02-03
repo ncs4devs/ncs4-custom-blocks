@@ -23,7 +23,7 @@ const recipients = (state = [], action, useOrgs) => {
       );
 
     default:
-      console.warn("recipients: Unrecognized action type '" + action.type + "'");
+      //console.warn("recipients: Unrecognized action type '" + action.type + "'");
       return state;
   }
 }
@@ -60,7 +60,7 @@ const ids = (state = [], action) => {
       return state;
 
     default:
-      console.warn("ids: Unrecognized action type '" + action.type + "'");
+      //console.warn("ids: Unrecognized action type '" + action.type + "'");
       return state;
   }
 }
@@ -70,7 +70,7 @@ const useOrgs = (state = false, action) => {
     case actionTypes.SetUseOrgs:
       return action.useOrgs;
     default:
-      console.warn("useOrgs: Unrecognized action type '" + action.type + "'");
+      //console.warn("useOrgs: Unrecognized action type '" + action.type + "'");
       return state;
   }
 }
@@ -80,7 +80,7 @@ const organizations = (state = [], action) => {
     case actionTypes.AddOrganization:
       return [...state, action.organization];
     default:
-      console.warn("organizations: Unrecognized action type '" + action.type + "'");
+      //console.warn("organizations: Unrecognized action type '" + action.type + "'");
       return state;
   }
 }
