@@ -1,7 +1,39 @@
 import { combineReducers } from '@wordpress/data';
 import * as actionTypes from './recipientActionTypes';
+import { getRecipientsCompare } from './sort';
 
 // action.data includes id
+const recipients = (state = [], action, useOrgs) => {
+  let currentYear = state[0] ? state[0].year: null;
+  let newState = ( () => {
+    switch (action.type) {
+      case actionTypes.Create:
+        return [...state, action.data];
+
+      case actionTypes.Delete:
+        return state.filter( (x) => x.id !== action.id );
+
+      case actionTypes.Edit:
+        let newState = [
+          ...state.filter( (x) => x.id !== action.data.id ),
+          action.data,
+        ];
+        console.log(newState);
+        return newState;
+
+      case actionTypes.Sort:
+        return state;
+
+      default:
+        //console.warn("recipients: Unrecognized action type '" + action.type + "'");
+        return state;
+    }
+  } )();
+  return newState.sort(getRecipientsCompare(currentYear, useOrgs));
+}
+
+/* Original
+
 const recipients = (state = [], action, useOrgs) => {
   let currentYear = state[0] ? state[0].year: null;
   switch (action.type) {
@@ -32,6 +64,7 @@ const recipients = (state = [], action, useOrgs) => {
       return state;
   }
 }
+*/
 
 const ids = (state = [], action) => {
   switch (action.type) {
@@ -121,143 +154,4 @@ function combineReducersWithData(reducersWithData) {
     }
     return newState;
   }
-}
-
-
-// *** Sorting Functions *** //
-
-
-// inserts an element into a sorted array given a comparison function
-// Returns a new, sorted array.
-// compare(x, y) should return < 0 if x is "greater", > 0 if y is "greater",
-// 0 if equal
-function sortedInsert(arr, x, compare) {
-  let out = [];
-  let i = 0;
-  let j = 0;
-  let hasAdded = false;
-  while (j < arr.length) {
-    if (hasAdded || compare(arr[j], x) < 0) {
-      out[i] = arr[j];
-      j++;
-    } else {
-      hasAdded = true;
-      out[i] = x;
-    }
-    i++;
-  }
-  if (!hasAdded) { // reached end of array
-    out[out.length] = x;
-  }
-  return out;
-}
-
-function getRecipientsCompare(currentYear, useOrgs) {
-  return combineCompares(
-    compareIsEmptyRecipient,
-    getCurrentRecipientsCompare(currentYear, useOrgs),
-    getPreviousRecipientsCompare(currentYear, useOrgs),
-  );
-}
-
-function getCurrentRecipientsCompare(currentYear, useOrgs) {
-  return (x, y) => {
-    if (useOrgs && ( x.year !== currentYear || y.year !== currentYear )) {
-      return 0; // pass sorting on to getPreviousRecipientsCompare()
-    }
-    // sorting when not using orgs & for "current recipients" always
-    return combineCompares(
-      compareYears,
-      compareNames,
-    )(x, y);
-  }
-}
-
-function getPreviousRecipientsCompare(currentYear, useOrgs) {
-  if (!useOrgs) {
-    return ( () => 0 ); // fall through
-  }
-  return combineCompares(
-    (x, y) => {
-      if (x.year === currentYear) {
-        return -1;
-      } else if (y.year === currentYear) {
-        return 1;
-      }
-      return 0;
-    },
-    compareOrganizations,
-    compareYears,
-    compareNames,
-  );
-}
-
-// Applies each compare in order until a non-zero result is reached or all return 0
-function combineCompares(...compares) {
-  return (x, y) => {
-    let result;
-    for (let i = 0; i < compares.length; i++) {
-      result = compares[i](x, y);
-      if (result !== 0) {
-        return result;
-      }
-    }
-    return result;
-  }
-}
-
-// Used to put new, blank recipients in edit mode at the top of the list
-function compareIsEmptyRecipient(x, y) {
-  if (x.editMode && x.name == null && (!y.editMode || y.name != null)) {
-    return -1;
-  } else if ((!x.editMode || x.name !=null) && y.editMode && y.name == null) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-function compareOrganizations(x, y) {
-  if (x.organization && !y.organization) {
-    return -1;
-  } else if (!x.organization && y.organization) {
-    return 1;
-  } else if (!x.organization && !y.organization) {
-    return 0;
-  } else {
-    return 2 * Number(
-      x.organization.toUpperCase() > y.organization.toUpperCase()
-    ) - 1;
-  }
-}
-
-function compareYears(x, y) {
-  if (x.year === y.year) {
-    return 0;
-  } else {
-    return y.year - x.year;
-  }
-}
-
-function compareNames(x, y) {
-  if (
-        !x.name || !y.name
-      || x.name === "" || y.name === ""
-      || x.name === y.name
-    ) {
-    return 0;
-  }
-  let xName = transposeName(x.name);
-  let yName = transposeName(y.name);
-  return 2 * Number(xName.toUpperCase() > yName.toUpperCase()) - 1;
-}
-
-function transposeName(name) {
-  let lastIndex = name.search(/[\S]+$/);
-  let last = name.slice(lastIndex);
-  let rest = "";
-  if (lastIndex > 0) {
-    rest = name.slice(0, lastIndex - 1);
-  }
-  return last + ", " + rest;
 }

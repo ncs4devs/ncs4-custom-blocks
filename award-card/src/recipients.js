@@ -14,6 +14,7 @@ import * as selectors from './recipientSelectors';
 import * as actions from './recipientActions';
 import * as actionTypes from './recipientActionTypes';
 import reducer from './recipientReducers';
+import { compareOrganizations } from './sort';
 
 
 export const recipientStoreName = "ncs4/recipient-store";
@@ -25,6 +26,8 @@ export const store = createReduxStore(
     reducer,
   }
 );
+
+const defaultOrg = "Unaffiliated";
 
  // create a default recipient and set it to editMode
 export function addRecipient(registry) {
@@ -105,65 +108,33 @@ function isRecipientValid(data) {
 // Components
 
 function divideRecipients(recipients, useOrgs, currentYear) {
-  let currentRecipients = {
-    start: 0,
-    end: null,
-  }
-  let previousRecipients = {
-    start: null,
-    end: recipients.length - 1,
-    organizations: [],
-  }
+  let currentRecipients = [];
+  let previousRecipients = {};
 
-  // break into current and previous recipient slices
   for (let i = 0; i < recipients.length; i++) {
-    if (recipients[i].year !== currentYear) {
-      if (currentRecipients.end == null) {
-        currentRecipients.end = i - 1;
+    if (recipients[i].year === currentYear) {
+      // current recipient
+      currentRecipients.push(i);
+    } else {
+      // previous recipient
+      let org = recipients[i].organization || defaultOrg;
+      if (!previousRecipients[org]) {
+        previousRecipients[org] = [];
       }
-      if (previousRecipients.start == null) {
-        previousRecipients.start = i;
-      }
+      previousRecipients[org].push(i);
     }
   }
-  currentRecipients.end = currentRecipients.end == null
-    ? recipients.length - 1
-    : currentRecipients.end;
-
-  // break into organization sections
-  if (useOrgs) {
-    let org = {
-      organization: null,
-      start: null,
-      end: null,
-    }
-    for (let i = previousRecipients.start; i <= previousRecipients.end; i++) {
-      if (previousRecipients.start == null) {
-        break; // no previousRecipients
-      }
-
-      if (org.start == null) {
-        org.start = i;
-        org.organization = recipients[i].organization;
-      }
-      if (recipients[i].organization === org.organization) {
-        org.end = i;
-      }
-      if (recipients[i].organization !== org.organization || i === previousRecipients.end) {
-        // finished org, start a new one
-        previousRecipients.organizations.push(org);
-        if (org.end !== previousRecipients.end) {
-          i--; // There are more organizations
-        }
-        org = {
-          organization: null,
-          start: null,
-          end: null,
-        }
-      }
-    }
+  let previousRecipientsArray = [];
+  for (let organization in previousRecipients) {
+    previousRecipientsArray.push({
+      organization,
+      indices: previousRecipients[organization],
+    });
   }
-  return { currentRecipients, previousRecipients };
+  return {
+    currentRecipients,
+    previousRecipients: previousRecipientsArray.sort(compareOrganizations),
+  };
 }
 
 // wrapper component to connect recipientStore to component props
@@ -188,13 +159,14 @@ export default function Recipients(props) {
       useOrgs,
       currentYear,
     );
+    let hasPreviousRecipients = previousRecipients.length > 0;
 
     // create section components
     let commonProps = {
       recipients,
       onChange,
       currentYear,
-      displayYear: previousRecipients.start === null,
+      displayYear: !hasPreviousRecipients,
       useOrgs,
       awardId: props.awardId,
       backend: true,
@@ -202,35 +174,24 @@ export default function Recipients(props) {
     let CurrentRecipientsSection = (
       <RecipientsSection
         { ...commonProps }
-        startIndex = { currentRecipients.start }
-        endIndex = { currentRecipients.end }
+        indices = { currentRecipients }
       />
     );
 
     let PreviousRecipientsSections;
-    if (previousRecipients.start == null) {
+    if (!hasPreviousRecipients) {
       PreviousRecipientsSections = null;
     } else {
-      if (useOrgs) {
-        PreviousRecipientsSections = previousRecipients.organizations.map(
-          (org) => (
-            <RecipientsSection
-              { ...commonProps }
-              startIndex = { org.start }
-              endIndex = { org.end }
-              key = { org.organization }
-            />
-          )
-        );
-      } else {
-        PreviousRecipientsSections = (
+      PreviousRecipientsSections = previousRecipients.map(
+        (section, i) => (
           <RecipientsSection
             { ...commonProps }
-            startIndex = { previousRecipients.start }
-            endIndex = { previousRecipients.end }
+            indices = { section.indices }
+            key = { section.organization }
+            displayPreviousRecipientsHeader = { i === 0 }
           />
         )
-      }
+      );
     }
     return (
       <>
@@ -253,11 +214,12 @@ export function RecipientsSave(props) {
     props.useOrgs,
     props.recipients[0].year,
   );
+  let hasPreviousRecipients = previousRecipients.length > 0;
 
   let commonProps = {
     recipients: props.recipients,
     currentYear: props.recipients[0].year,
-    displayYear: previousRecipients.start === null,
+    displayYear: !hasPreviousRecipients,
     useOrgs: props.useOrgs,
     backend: false,
   };
@@ -265,35 +227,24 @@ export function RecipientsSave(props) {
   let CurrentRecipientsSection = (
     <RecipientsSection
       { ...commonProps }
-      startIndex = { currentRecipients.start }
-      endIndex = { currentRecipients.end }
+      indices = { currentRecipients }
     />
   );
 
   let PreviousRecipientsSections;
-  if (previousRecipients.start == null) {
+  if (!hasPreviousRecipients) {
     PreviousRecipientsSections = null;
   } else {
-    if (props.useOrgs) {
-      PreviousRecipientsSections = previousRecipients.organizations.map(
-        (org) => (
-          <RecipientsSection
-            { ...commonProps }
-            startIndex = { org.start }
-            endIndex = { org.end }
-            key = { org.organization }
-          />
-        )
-      );
-    } else {
-      PreviousRecipientsSections = (
+    PreviousRecipientsSections = previousRecipients.map(
+      (section, i) => (
         <RecipientsSection
           { ...commonProps }
-          startIndex = { previousRecipients.start }
-          endIndex = { previousRecipients.end }
+          indices = { section.indices }
+          key = { section.organization }
+          displayPreviousRecipientsHeader = { i === 0 }
         />
       )
-    }
+    );
   }
   return (
     <>
@@ -304,33 +255,42 @@ export function RecipientsSave(props) {
 }
 
 function RecipientsSection(props) {
-  const defaultOrg = "Unaffiliated";
   let header; // current recipients, previous recipients
   let orgHeader; // organization abbreviation
-  let rs = props.recipients.slice(props.startIndex, props.endIndex + 1).map(
-    (r) => (
-      <>
-        { props.backend
-          ? <Recipient
-              {...r}
-              key = {r.id}
-              actions = { useDispatch(recipientStoreName) }
-              onChange = { props.onChange }
-              useOrgs = { props.useOrgs }
-              displayYear = { props.displayYear || r.year !== props.currentYear }
-              awardId = { props.awardId }
-              backend = { props.backend }
-            />
-          : <RecipientSave
-              {...r}
-              key = {r.id}
-              useOrgs = { props.useOrgs }
-              displayYear = { props.displayYear ||  r.year !== props.currentYear }
-              backend = { props.backend }
-            />
-        }
-      </>
-    )
+  let commonProps = {
+    useOrgs: props.useOrgs,
+    currentYear: props.currentYear,
+    awardId: props.awardId,
+    backend: props.backend,
+  }
+
+  let rs = props.recipients.reduce(
+    (arr, r, index) => {
+      if (props.indices.includes(index)) {
+        arr.push(
+          <>
+            { props.backend
+              ? <Recipient
+                  {...r}
+                  {...commonProps}
+                  key = {r.id}
+                  actions = { useDispatch(recipientStoreName) }
+                  onChange = { props.onChange }
+                  displayYear = { props.displayYear || r.year !== props.currentYear }
+                />
+              : <RecipientSave
+                  {...r}
+                  {...commonProps}
+                  key = {r.id}
+                  displayYear = { props.displayYear ||  r.year !== props.currentYear }
+                />
+            }
+          </>
+        );
+      }
+      return arr;
+    },
+    [],
   );
 
   // set headers
@@ -339,18 +299,17 @@ function RecipientsSection(props) {
     && props.recipients[props.recipients.length - 1].year !== props.currentYear
   ) {
     // Divide into current and previous recipients
-    if (props.recipients[props.startIndex].year === props.currentYear) {
+    if (props.recipients[props.indices[0]].year === props.currentYear) {
       // current recipients section
       header = props.currentYear + " Recipient";
     } else if (props.useOrgs) {
-      orgHeader = props.recipients[props.startIndex].organization || defaultOrg;
+      orgHeader = props.recipients[props.indices[0]].organization || defaultOrg;
     }
-    if (!header && props.recipients[props.startIndex - 1].year === props.currentYear) {
-      // recipient above is a current recipient
+    if (props.displayPreviousRecipientsHeader) {
       header = "Previous Recipient";
     }
   }
-  if (header && props.endIndex - props.startIndex) {
+  if (header && props.indices[props.indices.length - 1] - props.indices[0]) {
     header = header + "s"; // make plural
   }
 
@@ -413,9 +372,6 @@ function Recipient(props) {
 }
 
 function RecipientSave(props) {
-  if (props.useOrgs && props.organization && !props.displayYear) {
-    console.log(props.organization);
-  }
   return (
     <p className = "ncs4-award-recipient">
       <span

@@ -1517,6 +1517,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./recipientActionTypes */ "./src/recipientActionTypes.js");
+/* harmony import */ var _sort__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./sort */ "./src/sort.js");
+
 
  // action.data includes id
 
@@ -1526,24 +1528,64 @@ const recipients = function () {
   let useOrgs = arguments.length > 2 ? arguments[2] : undefined;
   let currentYear = state[0] ? state[0].year : null;
 
+  let newState = (() => {
+    switch (action.type) {
+      case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Create"]:
+        return [...state, action.data];
+
+      case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Delete"]:
+        return state.filter(x => x.id !== action.id);
+
+      case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Edit"]:
+        let newState = [...state.filter(x => x.id !== action.data.id), action.data];
+        console.log(newState);
+        return newState;
+
+      case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Sort"]:
+        return state;
+
+      default:
+        //console.warn("recipients: Unrecognized action type '" + action.type + "'");
+        return state;
+    }
+  })();
+
+  return newState.sort(Object(_sort__WEBPACK_IMPORTED_MODULE_2__["getRecipientsCompare"])(currentYear, useOrgs));
+};
+/* Original
+
+const recipients = (state = [], action, useOrgs) => {
+  let currentYear = state[0] ? state[0].year: null;
   switch (action.type) {
-    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Create"]:
-      return sortedInsert(state, action.data, getRecipientsCompare(currentYear, useOrgs));
+    case actionTypes.Create:
+      return sortedInsert(
+        state,
+        action.data,
+        getRecipientsCompare(currentYear, useOrgs),
+      );
 
-    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Delete"]:
-      return state.sort(getRecipientsCompare(currentYear, useOrgs)).filter(x => x.id !== action.id);
+    case actionTypes.Delete:
+      return state
+        .sort(getRecipientsCompare(currentYear, useOrgs))
+        .filter( (x) => x.id !== action.id );
 
-    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Edit"]:
-      return sortedInsert(state.filter(x => x.id !== action.data.id), action.data, getRecipientsCompare(currentYear, useOrgs));
+    case actionTypes.Edit:
+      return sortedInsert(
+        state.filter( (x) => x.id !== action.data.id ),
+        action.data,
+        getRecipientsCompare(currentYear, useOrgs),
+      );
 
-    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Sort"]:
+    case actionTypes.Sort:
       return state.sort(getRecipientsCompare(currentYear, useOrgs));
 
     default:
       //console.warn("recipients: Unrecognized action type '" + action.type + "'");
       return state;
   }
-};
+}
+*/
+
 
 const ids = function () {
   let state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
@@ -1659,142 +1701,6 @@ function combineReducersWithData(reducersWithData) {
 
     return newState;
   };
-} // *** Sorting Functions *** //
-// inserts an element into a sorted array given a comparison function
-// Returns a new, sorted array.
-// compare(x, y) should return < 0 if x is "greater", > 0 if y is "greater",
-// 0 if equal
-
-
-function sortedInsert(arr, x, compare) {
-  let out = [];
-  let i = 0;
-  let j = 0;
-  let hasAdded = false;
-
-  while (j < arr.length) {
-    if (hasAdded || compare(arr[j], x) < 0) {
-      out[i] = arr[j];
-      j++;
-    } else {
-      hasAdded = true;
-      out[i] = x;
-    }
-
-    i++;
-  }
-
-  if (!hasAdded) {
-    // reached end of array
-    out[out.length] = x;
-  }
-
-  return out;
-}
-
-function getRecipientsCompare(currentYear, useOrgs) {
-  return combineCompares(compareIsEmptyRecipient, getCurrentRecipientsCompare(currentYear, useOrgs), getPreviousRecipientsCompare(currentYear, useOrgs));
-}
-
-function getCurrentRecipientsCompare(currentYear, useOrgs) {
-  return (x, y) => {
-    if (useOrgs && (x.year !== currentYear || y.year !== currentYear)) {
-      return 0; // pass sorting on to getPreviousRecipientsCompare()
-    } // sorting when not using orgs & for "current recipients" always
-
-
-    return combineCompares(compareYears, compareNames)(x, y);
-  };
-}
-
-function getPreviousRecipientsCompare(currentYear, useOrgs) {
-  if (!useOrgs) {
-    return () => 0; // fall through
-  }
-
-  return combineCompares((x, y) => {
-    if (x.year === currentYear) {
-      return -1;
-    } else if (y.year === currentYear) {
-      return 1;
-    }
-
-    return 0;
-  }, compareOrganizations, compareYears, compareNames);
-} // Applies each compare in order until a non-zero result is reached or all return 0
-
-
-function combineCompares() {
-  for (var _len = arguments.length, compares = new Array(_len), _key = 0; _key < _len; _key++) {
-    compares[_key] = arguments[_key];
-  }
-
-  return (x, y) => {
-    let result;
-
-    for (let i = 0; i < compares.length; i++) {
-      result = compares[i](x, y);
-
-      if (result !== 0) {
-        return result;
-      }
-    }
-
-    return result;
-  };
-} // Used to put new, blank recipients in edit mode at the top of the list
-
-
-function compareIsEmptyRecipient(x, y) {
-  if (x.editMode && x.name == null && (!y.editMode || y.name != null)) {
-    return -1;
-  } else if ((!x.editMode || x.name != null) && y.editMode && y.name == null) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-function compareOrganizations(x, y) {
-  if (x.organization && !y.organization) {
-    return -1;
-  } else if (!x.organization && y.organization) {
-    return 1;
-  } else if (!x.organization && !y.organization) {
-    return 0;
-  } else {
-    return 2 * Number(x.organization.toUpperCase() > y.organization.toUpperCase()) - 1;
-  }
-}
-
-function compareYears(x, y) {
-  if (x.year === y.year) {
-    return 0;
-  } else {
-    return y.year - x.year;
-  }
-}
-
-function compareNames(x, y) {
-  if (!x.name || !y.name || x.name === "" || y.name === "" || x.name === y.name) {
-    return 0;
-  }
-
-  let xName = transposeName(x.name);
-  let yName = transposeName(y.name);
-  return 2 * Number(xName.toUpperCase() > yName.toUpperCase()) - 1;
-}
-
-function transposeName(name) {
-  let lastIndex = name.search(/[\S]+$/);
-  let last = name.slice(lastIndex);
-  let rest = "";
-
-  if (lastIndex > 0) {
-    rest = name.slice(0, lastIndex - 1);
-  }
-
-  return last + ", " + rest;
 }
 
 /***/ }),
@@ -1885,6 +1791,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _recipientActions__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./recipientActions */ "./src/recipientActions.js");
 /* harmony import */ var _recipientActionTypes__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./recipientActionTypes */ "./src/recipientActionTypes.js");
 /* harmony import */ var _recipientReducers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./recipientReducers */ "./src/recipientReducers.js");
+/* harmony import */ var _sort__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./sort */ "./src/sort.js");
+
 
 
 
@@ -1900,7 +1808,8 @@ const store = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["createReduxSt
   selectors: _recipientSelectors__WEBPACK_IMPORTED_MODULE_6__,
   actions: _recipientActions__WEBPACK_IMPORTED_MODULE_7__,
   reducer: _recipientReducers__WEBPACK_IMPORTED_MODULE_9__["default"]
-}); // create a default recipient and set it to editMode
+});
+const defaultOrg = "Unaffiliated"; // create a default recipient and set it to editMode
 
 function addRecipient(registry) {
   let {
@@ -1975,71 +1884,37 @@ function isRecipientValid(data) {
 
 
 function divideRecipients(recipients, useOrgs, currentYear) {
-  let currentRecipients = {
-    start: 0,
-    end: null
-  };
-  let previousRecipients = {
-    start: null,
-    end: recipients.length - 1,
-    organizations: []
-  }; // break into current and previous recipient slices
+  let currentRecipients = [];
+  let previousRecipients = {};
 
   for (let i = 0; i < recipients.length; i++) {
-    if (recipients[i].year !== currentYear) {
-      if (currentRecipients.end == null) {
-        currentRecipients.end = i - 1;
+    if (recipients[i].year === currentYear) {
+      // current recipient
+      currentRecipients.push(i);
+    } else {
+      // previous recipient
+      let org = recipients[i].organization || defaultOrg;
+
+      if (!previousRecipients[org]) {
+        previousRecipients[org] = [];
       }
 
-      if (previousRecipients.start == null) {
-        previousRecipients.start = i;
-      }
+      previousRecipients[org].push(i);
     }
   }
 
-  currentRecipients.end = currentRecipients.end == null ? recipients.length - 1 : currentRecipients.end; // break into organization sections
+  let previousRecipientsArray = [];
 
-  if (useOrgs) {
-    let org = {
-      organization: null,
-      start: null,
-      end: null
-    };
-
-    for (let i = previousRecipients.start; i <= previousRecipients.end; i++) {
-      if (previousRecipients.start == null) {
-        break; // no previousRecipients
-      }
-
-      if (org.start == null) {
-        org.start = i;
-        org.organization = recipients[i].organization;
-      }
-
-      if (recipients[i].organization === org.organization) {
-        org.end = i;
-      }
-
-      if (recipients[i].organization !== org.organization || i === previousRecipients.end) {
-        // finished org, start a new one
-        previousRecipients.organizations.push(org);
-
-        if (org.end !== previousRecipients.end) {
-          i--; // There are more organizations
-        }
-
-        org = {
-          organization: null,
-          start: null,
-          end: null
-        };
-      }
-    }
+  for (let organization in previousRecipients) {
+    previousRecipientsArray.push({
+      organization,
+      indices: previousRecipients[organization]
+    });
   }
 
   return {
     currentRecipients,
-    previousRecipients
+    previousRecipients: previousRecipientsArray.sort(_sort__WEBPACK_IMPORTED_MODULE_10__["compareOrganizations"])
   };
 } // wrapper component to connect recipientStore to component props
 
@@ -2065,38 +1940,31 @@ function Recipients(props) {
     let {
       currentRecipients,
       previousRecipients
-    } = divideRecipients(recipients, useOrgs, currentYear); // create section components
+    } = divideRecipients(recipients, useOrgs, currentYear);
+    let hasPreviousRecipients = previousRecipients.length > 0; // create section components
 
     let commonProps = {
       recipients,
       onChange,
       currentYear,
-      displayYear: previousRecipients.start === null,
+      displayYear: !hasPreviousRecipients,
       useOrgs,
       awardId: props.awardId,
       backend: true
     };
     let CurrentRecipientsSection = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
-      startIndex: currentRecipients.start,
-      endIndex: currentRecipients.end
+      indices: currentRecipients
     }));
     let PreviousRecipientsSections;
 
-    if (previousRecipients.start == null) {
+    if (!hasPreviousRecipients) {
       PreviousRecipientsSections = null;
     } else {
-      if (useOrgs) {
-        PreviousRecipientsSections = previousRecipients.organizations.map(org => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
-          startIndex: org.start,
-          endIndex: org.end,
-          key: org.organization
-        })));
-      } else {
-        PreviousRecipientsSections = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
-          startIndex: previousRecipients.start,
-          endIndex: previousRecipients.end
-        }));
-      }
+      PreviousRecipientsSections = previousRecipients.map((section, i) => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
+        indices: section.indices,
+        key: section.organization,
+        displayPreviousRecipientsHeader: i === 0
+      })));
     }
 
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, CurrentRecipientsSection, PreviousRecipientsSections);
@@ -2108,76 +1976,74 @@ function RecipientsSave(props) {
     currentRecipients,
     previousRecipients
   } = divideRecipients(props.recipients, props.useOrgs, props.recipients[0].year);
+  let hasPreviousRecipients = previousRecipients.length > 0;
   let commonProps = {
     recipients: props.recipients,
     currentYear: props.recipients[0].year,
-    displayYear: previousRecipients.start === null,
+    displayYear: !hasPreviousRecipients,
     useOrgs: props.useOrgs,
     backend: false
   };
   let CurrentRecipientsSection = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
-    startIndex: currentRecipients.start,
-    endIndex: currentRecipients.end
+    indices: currentRecipients
   }));
   let PreviousRecipientsSections;
 
-  if (previousRecipients.start == null) {
+  if (!hasPreviousRecipients) {
     PreviousRecipientsSections = null;
   } else {
-    if (props.useOrgs) {
-      PreviousRecipientsSections = previousRecipients.organizations.map(org => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
-        startIndex: org.start,
-        endIndex: org.end,
-        key: org.organization
-      })));
-    } else {
-      PreviousRecipientsSections = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
-        startIndex: previousRecipients.start,
-        endIndex: previousRecipients.end
-      }));
-    }
+    PreviousRecipientsSections = previousRecipients.map((section, i) => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
+      indices: section.indices,
+      key: section.organization,
+      displayPreviousRecipientsHeader: i === 0
+    })));
   }
 
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, CurrentRecipientsSection, PreviousRecipientsSections);
 }
 
 function RecipientsSection(props) {
-  const defaultOrg = "Unaffiliated";
   let header; // current recipients, previous recipients
 
   let orgHeader; // organization abbreviation
 
-  let rs = props.recipients.slice(props.startIndex, props.endIndex + 1).map(r => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, props.backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Recipient, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, {
-    key: r.id,
-    actions: Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName),
-    onChange: props.onChange,
+  let commonProps = {
     useOrgs: props.useOrgs,
-    displayYear: props.displayYear || r.year !== props.currentYear,
+    currentYear: props.currentYear,
     awardId: props.awardId,
     backend: props.backend
-  })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientSave, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, {
-    key: r.id,
-    useOrgs: props.useOrgs,
-    displayYear: props.displayYear || r.year !== props.currentYear,
-    backend: props.backend
-  })))); // set headers
+  };
+  let rs = props.recipients.reduce((arr, r, index) => {
+    if (props.indices.includes(index)) {
+      arr.push(Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, props.backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Recipient, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, commonProps, {
+        key: r.id,
+        actions: Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName),
+        onChange: props.onChange,
+        displayYear: props.displayYear || r.year !== props.currentYear
+      })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientSave, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, commonProps, {
+        key: r.id,
+        displayYear: props.displayYear || r.year !== props.currentYear
+      }))));
+    }
+
+    return arr;
+  }, []); // set headers
 
   if (props.recipients[0].year === props.currentYear && props.recipients[props.recipients.length - 1].year !== props.currentYear) {
     // Divide into current and previous recipients
-    if (props.recipients[props.startIndex].year === props.currentYear) {
+    if (props.recipients[props.indices[0]].year === props.currentYear) {
       // current recipients section
       header = props.currentYear + " Recipient";
     } else if (props.useOrgs) {
-      orgHeader = props.recipients[props.startIndex].organization || defaultOrg;
+      orgHeader = props.recipients[props.indices[0]].organization || defaultOrg;
     }
 
-    if (!header && props.recipients[props.startIndex - 1].year === props.currentYear) {
-      // recipient above is a current recipient
+    if (props.displayPreviousRecipientsHeader) {
       header = "Previous Recipient";
     }
   }
 
-  if (header && props.endIndex - props.startIndex) {
+  if (header && props.indices[props.indices.length - 1] - props.indices[0]) {
     header = header + "s"; // make plural
   }
 
@@ -2217,10 +2083,6 @@ function Recipient(props) {
 }
 
 function RecipientSave(props) {
-  if (props.useOrgs && props.organization && !props.displayYear) {
-    console.log(props.organization);
-  }
-
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
     className: "ncs4-award-recipient"
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
@@ -2392,6 +2254,154 @@ class AwardCardSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_5__["RecipientsSave"], attributes)));
   }
 
+}
+
+/***/ }),
+
+/***/ "./src/sort.js":
+/*!*********************!*\
+  !*** ./src/sort.js ***!
+  \*********************/
+/*! exports provided: sortedInsert, getRecipientsCompare, compareIsEmptyRecipient, compareOrganizations, compareYears, compareNames, transposeName */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sortedInsert", function() { return sortedInsert; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRecipientsCompare", function() { return getRecipientsCompare; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareIsEmptyRecipient", function() { return compareIsEmptyRecipient; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareOrganizations", function() { return compareOrganizations; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareYears", function() { return compareYears; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareNames", function() { return compareNames; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "transposeName", function() { return transposeName; });
+// inserts an element into a sorted array given a comparison function
+// Returns a new, sorted array.
+// compare(x, y) should return < 0 if x is "greater", > 0 if y is "greater",
+// 0 if equal
+function sortedInsert(arr, x, compare) {
+  let out = [];
+  let i = 0;
+  let j = 0;
+  let hasAdded = false;
+
+  while (j < arr.length) {
+    if (hasAdded || compare(arr[j], x) < 0) {
+      out[i] = arr[j];
+      j++;
+    } else {
+      hasAdded = true;
+      out[i] = x;
+    }
+
+    i++;
+  }
+
+  if (!hasAdded) {
+    // reached end of array
+    out[out.length] = x;
+  }
+
+  return out;
+}
+function getRecipientsCompare(currentYear, useOrgs) {
+  return combineCompares(compareIsEmptyRecipient, getCurrentRecipientsCompare(currentYear, useOrgs), getPreviousRecipientsCompare(currentYear, useOrgs));
+}
+
+function getCurrentRecipientsCompare(currentYear, useOrgs) {
+  return (x, y) => {
+    if (useOrgs && (x.year !== currentYear || y.year !== currentYear)) {
+      return 0; // pass sorting on to getPreviousRecipientsCompare()
+    } // sorting when not using orgs & for "current recipients" always
+
+
+    return combineCompares(compareYears, compareNames)(x, y);
+  };
+}
+
+function getPreviousRecipientsCompare(currentYear, useOrgs) {
+  if (!useOrgs) {
+    return () => 0; // fall through
+  }
+
+  return combineCompares((x, y) => {
+    if (x.year === currentYear) {
+      return -1;
+    } else if (y.year === currentYear) {
+      return 1;
+    }
+
+    return 0;
+  }, compareOrganizations, compareYears, compareNames);
+} // Applies each compare in order until a non-zero result is reached or all return 0
+
+
+function combineCompares() {
+  for (var _len = arguments.length, compares = new Array(_len), _key = 0; _key < _len; _key++) {
+    compares[_key] = arguments[_key];
+  }
+
+  return (x, y) => {
+    let result;
+
+    for (let i = 0; i < compares.length; i++) {
+      result = compares[i](x, y);
+
+      if (result !== 0) {
+        return result;
+      }
+    }
+
+    return result;
+  };
+} // Used to put new, blank recipients in edit mode at the top of the list
+
+
+function compareIsEmptyRecipient(x, y) {
+  if (x.editMode && x.name == null && (!y.editMode || y.name != null)) {
+    return -1;
+  } else if ((!x.editMode || x.name != null) && y.editMode && y.name == null) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+function compareOrganizations(x, y) {
+  if (x.organization && !y.organization) {
+    return -1;
+  } else if (!x.organization && y.organization) {
+    return 1;
+  } else if (!x.organization && !y.organization || x.organization === y.organization) {
+    return 0;
+  } else {
+    return 2 * Number(x.organization.toUpperCase() > y.organization.toUpperCase()) - 1;
+  }
+}
+function compareYears(x, y) {
+  if (x.year === y.year) {
+    return 0;
+  } else {
+    return y.year - x.year;
+  }
+}
+function compareNames(x, y) {
+  if (!x.name || !y.name || x.name === "" || y.name === "" || x.name === y.name) {
+    return 0;
+  }
+
+  let xName = transposeName(x.name);
+  let yName = transposeName(y.name);
+  return 2 * Number(xName.toUpperCase() > yName.toUpperCase()) - 1;
+}
+function transposeName(name) {
+  let lastIndex = name.search(/[\S]+$/);
+  let last = name.slice(lastIndex);
+  let rest = "";
+
+  if (lastIndex > 0) {
+    rest = name.slice(0, lastIndex - 1);
+  }
+
+  return last + ", " + rest;
 }
 
 /***/ }),
