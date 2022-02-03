@@ -2112,6 +2112,7 @@ function RecipientsSave(props) {
 }
 
 function RecipientsSection(props) {
+  const defaultOrg = "Unaffiliated";
   let header; // current recipients, previous recipients
 
   let orgHeader; // organization abbreviation
@@ -2135,7 +2136,7 @@ function RecipientsSection(props) {
       // current recipients section
       header = props.currentYear + " Recipient";
     } else if (props.useOrgs) {
-      orgHeader = props.recipients[props.startIndex].organization;
+      orgHeader = props.recipients[props.startIndex].organization || defaultOrg;
     }
 
     if (!header && props.recipients[props.startIndex - 1].year === props.currentYear) {

@@ -141,7 +141,7 @@ function divideRecipients(recipients, useOrgs, currentYear) {
       if (previousRecipients.start == null) {
         break; // no previousRecipients
       }
-      
+
       if (org.start == null) {
         org.start = i;
         org.organization = recipients[i].organization;
@@ -302,6 +302,7 @@ export function RecipientsSave(props) {
 }
 
 function RecipientsSection(props) {
+  const defaultOrg = "Unaffiliated";
   let header; // current recipients, previous recipients
   let orgHeader; // organization abbreviation
   let rs = props.recipients.slice(props.startIndex, props.endIndex + 1).map(
@@ -338,7 +339,7 @@ function RecipientsSection(props) {
       // current recipients section
       header = props.currentYear + " Recipient";
     } else if (props.useOrgs) {
-      orgHeader = props.recipients[props.startIndex].organization;
+      orgHeader = props.recipients[props.startIndex].organization || defaultOrg;
     }
     if (!header && props.recipients[props.startIndex - 1].year === props.currentYear) {
       // recipient above is a current recipient
