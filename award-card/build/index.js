@@ -1314,9 +1314,11 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
       checked: this.registry.select(_recipients__WEBPACK_IMPORTED_MODULE_9__["recipientStoreName"]).getUseOrgs(),
       onChange: b => {
         let {
-          setUseOrgs
+          setUseOrgs,
+          sortRecipients
         } = this.registry.dispatch(_recipients__WEBPACK_IMPORTED_MODULE_9__["recipientStoreName"]);
         setUseOrgs(b);
+        sortRecipients();
         this.setAttributes({
           useOrgs: b
         });
@@ -1428,7 +1430,7 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
 /*!*************************************!*\
   !*** ./src/recipientActionTypes.js ***!
   \*************************************/
-/*! exports provided: Create, Delete, Edit, SetUseOrgs, AddOrganization */
+/*! exports provided: Create, Delete, Edit, SetUseOrgs, AddOrganization, Sort */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1438,11 +1440,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Edit", function() { return Edit; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SetUseOrgs", function() { return SetUseOrgs; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddOrganization", function() { return AddOrganization; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Sort", function() { return Sort; });
 const Create = "CREATE";
 const Delete = "DELETE";
 const Edit = "EDIT";
 const SetUseOrgs = "SET_ORGS";
 const AddOrganization = "ADD_ORG";
+const Sort = "SORT";
 
 /***/ }),
 
@@ -1450,7 +1454,7 @@ const AddOrganization = "ADD_ORG";
 /*!*********************************!*\
   !*** ./src/recipientActions.js ***!
   \*********************************/
-/*! exports provided: createRecipient, deleteRecipient, editRecipient, setUseOrgs, addOrganization */
+/*! exports provided: createRecipient, deleteRecipient, editRecipient, setUseOrgs, addOrganization, sortRecipients */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1460,6 +1464,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "editRecipient", function() { return editRecipient; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setUseOrgs", function() { return setUseOrgs; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addOrganization", function() { return addOrganization; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sortRecipients", function() { return sortRecipients; });
 /* harmony import */ var _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./recipientActionTypes */ "./src/recipientActionTypes.js");
 
 function createRecipient(data) {
@@ -1490,6 +1495,11 @@ function addOrganization(organization) {
   return {
     type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["AddOrganization"],
     organization
+  };
+}
+function sortRecipients() {
+  return {
+    type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["Sort"]
   };
 }
 
@@ -1525,6 +1535,9 @@ const recipients = function () {
 
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Edit"]:
       return sortedInsert(state.filter(x => x.id !== action.data.id), action.data, getRecipientsCompare(currentYear, useOrgs));
+
+    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Sort"]:
+      return state.sort(getRecipientsCompare(currentYear, useOrgs));
 
     default:
       //console.warn("recipients: Unrecognized action type '" + action.type + "'");

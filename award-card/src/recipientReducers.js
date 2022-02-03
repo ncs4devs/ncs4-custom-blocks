@@ -22,6 +22,9 @@ const recipients = (state = [], action, useOrgs) => {
         getRecipientsCompare(currentYear, useOrgs),
       );
 
+    case actionTypes.Sort:
+      return state.sort(getRecipientsCompare(currentYear, useOrgs));
+
     default:
       //console.warn("recipients: Unrecognized action type '" + action.type + "'");
       return state;

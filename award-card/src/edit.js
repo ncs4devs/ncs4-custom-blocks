@@ -151,8 +151,12 @@ export class AwardCardEdit extends React.Component {
               help = "Leave checked to organize past recipients by their organization"
               checked = { this.registry.select(recipientStoreName).getUseOrgs() }
               onChange = { (b) => {
-                let { setUseOrgs } = this.registry.dispatch(recipientStoreName);
+                let {
+                  setUseOrgs,
+                  sortRecipients,
+                } = this.registry.dispatch(recipientStoreName);
                 setUseOrgs(b);
+                sortRecipients();
                 this.setAttributes({useOrgs: b});
               }}
             />

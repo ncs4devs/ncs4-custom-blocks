@@ -34,3 +34,9 @@ export function addOrganization(organization) {
     organization,
   }
 }
+
+export function sortRecipients() {
+  return {
+    type: actionTypes.Sort,
+  }
+}
