@@ -314,6 +314,7 @@ function RecipientsSection(props) {
               key = {r.id}
               actions = { useDispatch(recipientStoreName) }
               onChange = { props.onChange }
+              useOrgs = { props.useOrgs }
               displayYear = { r.year !== props.currentYear }
               awardId = { props.awardId }
               backend = { props.backend }
@@ -321,6 +322,7 @@ function RecipientsSection(props) {
           : <RecipientSave
               {...r}
               key = {r.id}
+              useOrgs = { props.useOrgs }
               displayYear = { r.year !== props.currentYear }
               backend = { props.backend }
             />
@@ -409,6 +411,9 @@ function Recipient(props) {
 }
 
 function RecipientSave(props) {
+  if (props.useOrgs && props.organization && !props.displayYear) {
+    console.log(props.organization);
+  }
   return (
     <p className = "ncs4-award-recipient">
       <span
@@ -428,6 +433,9 @@ function RecipientSave(props) {
             className = "ncs4-award-recipient__year"
           >{ props.year }</span>
         </>
+      )}
+      { (props.useOrgs && props.organization && !props.displayYear) && (
+        <> ({ props.organization })</>
       )}
       { props.backend && (
         <span

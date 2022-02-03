@@ -2121,11 +2121,13 @@ function RecipientsSection(props) {
     key: r.id,
     actions: Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName),
     onChange: props.onChange,
+    useOrgs: props.useOrgs,
     displayYear: r.year !== props.currentYear,
     awardId: props.awardId,
     backend: props.backend
   })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientSave, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, {
     key: r.id,
+    useOrgs: props.useOrgs,
     displayYear: r.year !== props.currentYear,
     backend: props.backend
   })))); // set headers
@@ -2185,6 +2187,10 @@ function Recipient(props) {
 }
 
 function RecipientSave(props) {
+  if (props.useOrgs && props.organization && !props.displayYear) {
+    console.log(props.organization);
+  }
+
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
     className: "ncs4-award-recipient"
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
@@ -2193,7 +2199,7 @@ function RecipientSave(props) {
     className: "ncs4-award-recipient__position"
   }, props.position)), props.displayYear && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
     className: "ncs4-award-recipient__year"
-  }, props.year)), props.backend && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
+  }, props.year)), props.useOrgs && props.organization && !props.displayYear && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, " (", props.organization, ")"), props.backend && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
     className: "dashicons dashicons-edit ncs4-award-recipient__edit",
     onClick: () => props.setEditing(true)
   }));
