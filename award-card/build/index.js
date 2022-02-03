@@ -1531,7 +1531,7 @@ const recipients = function () {
       return sortedInsert(state, action.data, getRecipientsCompare(currentYear, useOrgs));
 
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Delete"]:
-      return state.filter(x => x.id !== action.id);
+      return state.sort(getRecipientsCompare(currentYear, useOrgs)).filter(x => x.id !== action.id);
 
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Edit"]:
       return sortedInsert(state.filter(x => x.id !== action.data.id), action.data, getRecipientsCompare(currentYear, useOrgs));

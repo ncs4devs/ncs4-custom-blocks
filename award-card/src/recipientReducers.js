@@ -13,7 +13,9 @@ const recipients = (state = [], action, useOrgs) => {
       );
 
     case actionTypes.Delete:
-      return state.filter( (x) => x.id !== action.id );
+      return state
+        .sort(getRecipientsCompare(currentYear, useOrgs))
+        .filter( (x) => x.id !== action.id );
 
     case actionTypes.Edit:
       return sortedInsert(
