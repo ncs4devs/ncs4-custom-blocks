@@ -138,6 +138,10 @@ function divideRecipients(recipients, useOrgs, currentYear) {
       end: null,
     }
     for (let i = previousRecipients.start; i <= previousRecipients.end; i++) {
+      if (previousRecipients.start == null) {
+        break; // no previousRecipients
+      }
+      
       if (org.start == null) {
         org.start = i;
         org.organization = recipients[i].organization;
