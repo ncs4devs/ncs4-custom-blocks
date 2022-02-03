@@ -1693,7 +1693,7 @@ function sortedInsert(arr, x, compare) {
 }
 
 function getRecipientsCompare(currentYear, useOrgs) {
-  return combineCompares(getCurrentRecipientsCompare(currentYear, useOrgs), getPreviousRecipientsCompare(currentYear, useOrgs));
+  return combineCompares(compareIsEmptyRecipient, getCurrentRecipientsCompare(currentYear, useOrgs), getPreviousRecipientsCompare(currentYear, useOrgs));
 }
 
 function getCurrentRecipientsCompare(currentYear, useOrgs) {
@@ -1742,6 +1742,17 @@ function combineCompares() {
 
     return result;
   };
+} // Used to put new, blank recipients in edit mode at the top of the list
+
+
+function compareIsEmptyRecipient(x, y) {
+  if (x.editMode && x.name == null && (!y.editMode || y.name != null)) {
+    return -1;
+  } else if ((!x.editMode || x.name != null) && y.editMode && y.name == null) {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 function compareOrganizations(x, y) {
