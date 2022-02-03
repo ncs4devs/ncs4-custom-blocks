@@ -81,7 +81,11 @@ const useOrgs = (state = false, action) => {
 const organizations = (state = [], action) => {
   switch(action.type) {
     case actionTypes.AddOrganization:
-      return [...state, action.organization];
+      if (!state.includes(action.organization)) {
+        return [...state, action.organization];
+      } else {
+        return state;
+      }
     default:
       //console.warn("organizations: Unrecognized action type '" + action.type + "'");
       return state;

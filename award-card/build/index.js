@@ -1610,7 +1610,11 @@ const organizations = function () {
 
   switch (action.type) {
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["AddOrganization"]:
-      return [...state, action.organization];
+      if (!state.includes(action.organization)) {
+        return [...state, action.organization];
+      } else {
+        return state;
+      }
 
     default:
       //console.warn("organizations: Unrecognized action type '" + action.type + "'");
