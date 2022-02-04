@@ -6,4 +6,37 @@
   color: red;
 }
 
+.ncs4-award-recipient__edit-cancel,
+.ncs4-award-recipient__edit-delete,
+.ncs4-award-recipient__edit-save {
+  font-size: 2em;
+  width: auto;
+  height: auto;
+  margin-bottom: 0.4em;
+}
+
+.ncs4-award-recipient__input-fields-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.ncs4-award-recipient__organization-container label, .ncs4-award-recipient__organization-container input,
+.ncs4-award-recipient__year-container label,
+.ncs4-award-recipient__year-container input {
+  width: 100%;
+}
+
+.ncs4-award-recipient__field-row {
+  display: flex;
+  gap: 0.8em;
+}
+
+.ncs4-award-recipient__organization-container {
+  max-width: 40%;
+}
+
+.ncs4-award-recipient__year-container {
+  max-width: 20%;
+}
+
 /*# sourceMappingURL=editor.css.map */

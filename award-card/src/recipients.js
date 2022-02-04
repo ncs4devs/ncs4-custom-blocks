@@ -467,6 +467,7 @@ function RecipientEditer(props) {
 
   const deleteClass = "dashicons dashicons-trash ncs4-award-recipient__edit-delete";
   const cancelClass = "dashicons dashicons-no ncs4-award-recipient__edit-cancel";
+  const labelClasses = "css-1wzzj1a css-4dk55l e1puf3u1";
 
   return (
     <div className = "ncs4-award-card__recipient-editer">
@@ -494,47 +495,62 @@ function RecipientEditer(props) {
         className = "dashicons dashicons-yes ncs4-award-recipient__edit-save"
         onClick = { saveHandler }
       />
-      <TextControl
-        value = { dataState.name }
-        label = "Recipient name"
-        placeholder = "John Deer"
-        onChange = { changeHandler("name") }
-      />
-      <TextControl
-        value = { dataState.position }
-        label = { "Recipient position" }
-        placeholder = "Super-executive-vice-president of business operations"
-        onChange = { changeHandler("position") }
-      />
-      <input
-        type = "text"
-        list = { "organizations_" + props.awardId + "_" + props.id }
-        value = { dataState.organization }
-        label = "Recipient organization"
-        placeholder = "NCS⁴"
-        onChange = { (e) => {
-          changeHandler("organization")(e.target.value);
-        }}
-      />
-      <datalist
-        id = { "organizations_" + props.awardId + "_" + props.id }
-      >
-        {organizations.map( (org) => (
-          <option
-            value = { org }
-            key = { org }
-          />
-        ))}
-      </datalist>
-      <label
-        className = "ncs4-award-recipient__year-label"
-        for = ""
-      >Award Year</label>
-      <input
-        type = "number"
-        value = { dataState.year }
-        onChange = { (e) => changeHandler("year")(e.target.value) }
-      />
+      <div className = "ncs4-award-recipient__input-fields-area">
+        <TextControl
+          value = { dataState.name }
+          label = "Recipient name"
+          placeholder = "John Deer"
+          onChange = { changeHandler("name") }
+        />
+        <TextControl
+          value = { dataState.position }
+          label = { "Recipient position" }
+          placeholder = "Super-executive-vice-president of business operations"
+          onChange = { changeHandler("position") }
+        />
+        <div className = "ncs4-award-recipient__field-row">
+          <div className = "ncs4-award-recipient__organization-container">
+            <label
+              className = { "ncs4-award-recipient__organization-label " + labelClasses }
+              for = { "organization_award-" + props.awardId + "_recipient-" + props.id }
+            >Organization</label>
+            <input
+              type = "text"
+              className = "css-1kyqli5"
+              list = { "organizations_award-" + props.awardId + "_recipient-" + props.id }
+              id = { "organization_award-" + props.awardId + "_recipient-" + props.id }
+              value = { dataState.organization }
+              placeholder = "NCS⁴"
+              onChange = { (e) => {
+                changeHandler("organization")(e.target.value);
+              }}
+            />
+            <datalist
+              id = { "organizations_award-" + props.awardId + "_recipient-" + props.id }
+            >
+              {organizations.map( (org) => (
+                <option
+                  value = { org }
+                  key = { org }
+                />
+              ))}
+            </datalist>
+          </div>
+          <div className = "ncs4-award-recipient__year-container">
+            <label
+              className = { "ncs4-award-recipient__year-label " + labelClasses }
+              for = { "award-year_award-" + props.awardId + "_recipient-" + props.id }
+            >Award Year</label>
+            <input
+              type = "number"
+              id = { "award-year_award-" + props.awardId + "_recipient-" + props.id }
+              className = "css-1kyqli5"
+              value = { dataState.year }
+              onChange = { (e) => changeHandler("year")(e.target.value) }
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

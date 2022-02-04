@@ -2227,6 +2227,7 @@ function RecipientEditer(props) {
   let organizations = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useSelect"])(select => select(recipientStoreName).getOrganizations());
   const deleteClass = "dashicons dashicons-trash ncs4-award-recipient__edit-delete";
   const cancelClass = "dashicons dashicons-no ncs4-award-recipient__edit-cancel";
+  const labelClasses = "css-1wzzj1a css-4dk55l e1puf3u1";
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
     className: "ncs4-award-card__recipient-editer"
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
@@ -2242,7 +2243,9 @@ function RecipientEditer(props) {
   }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
     className: "dashicons dashicons-yes ncs4-award-recipient__edit-save",
     onClick: saveHandler
-  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["TextControl"], {
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+    className: "ncs4-award-recipient__input-fields-area"
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["TextControl"], {
     value: dataState.name,
     label: "Recipient name",
     placeholder: "John Deer",
@@ -2252,28 +2255,40 @@ function RecipientEditer(props) {
     label: "Recipient position",
     placeholder: "Super-executive-vice-president of business operations",
     onChange: changeHandler("position")
-  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("input", {
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+    className: "ncs4-award-recipient__field-row"
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+    className: "ncs4-award-recipient__organization-container"
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("label", {
+    className: "ncs4-award-recipient__organization-label " + labelClasses,
+    for: "organization_award-" + props.awardId + "_recipient-" + props.id
+  }, "Organization"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("input", {
     type: "text",
-    list: "organizations_" + props.awardId + "_" + props.id,
+    className: "css-1kyqli5",
+    list: "organizations_award-" + props.awardId + "_recipient-" + props.id,
+    id: "organization_award-" + props.awardId + "_recipient-" + props.id,
     value: dataState.organization,
-    label: "Recipient organization",
     placeholder: "NCS\u2074",
     onChange: e => {
       changeHandler("organization")(e.target.value);
     }
   }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("datalist", {
-    id: "organizations_" + props.awardId + "_" + props.id
+    id: "organizations_award-" + props.awardId + "_recipient-" + props.id
   }, organizations.map(org => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("option", {
     value: org,
     key: org
-  }))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("label", {
-    className: "ncs4-award-recipient__year-label",
-    for: ""
+  })))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+    className: "ncs4-award-recipient__year-container"
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("label", {
+    className: "ncs4-award-recipient__year-label " + labelClasses,
+    for: "award-year_award-" + props.awardId + "_recipient-" + props.id
   }, "Award Year"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("input", {
     type: "number",
+    id: "award-year_award-" + props.awardId + "_recipient-" + props.id,
+    className: "css-1kyqli5",
     value: dataState.year,
     onChange: e => changeHandler("year")(e.target.value)
-  }));
+  })))));
 }
 
 /***/ }),
