@@ -14,12 +14,10 @@ const recipients = (state = [], action, useOrgs) => {
         return state.filter( (x) => x.id !== action.id );
 
       case actionTypes.Edit:
-        let newState = [
+        return [
           ...state.filter( (x) => x.id !== action.data.id ),
           action.data,
         ];
-        console.log(newState);
-        return newState;
 
       case actionTypes.Sort:
         return state;

@@ -41,13 +41,16 @@ registerBlockType( 'ncs4-custom-blocks/award-card', {
     },
     buttonTitle: {
       type: 'string',
-      default: 'View Recipients',
+      default: 'Read More',
     },
     name: {
       type: 'string',
       default: 'Award',
     },
     desc: {
+      type: 'string',
+    },
+    normalizedDesc: {
       type: 'string',
     },
     recipients: {

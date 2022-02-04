@@ -23,6 +23,8 @@ import Recipients, {
   initializeStore,
 }  from './recipients';
 
+const normalizedDescLength = 400; // Number of chars for the short description
+
 export class AwardCardEdit extends React.Component {
   constructor(props) {
     super(props);
@@ -34,6 +36,16 @@ export class AwardCardEdit extends React.Component {
     this.setStateAttributes = this.setStateAttributes.bind(this);
     this.trimStateAttribute = this.trimStateAttribute.bind(this);
     this.onStoreUpdate = this.onStoreUpdate.bind(this);
+    this.handleDescription = this.handleDescription.bind(this);
+
+    // normalize description if length is wrong or it doesn't exist
+    if (
+           this.attributes.desc
+        && ( !this.attributes.normalizedDesc
+        || this.attributes.normalizedDesc.length !== normalizedDescLength )
+    ) {
+      this.handleDescription(this.attributes.desc);
+    }
 
     // store existing recipients
     initializeStore(
@@ -98,6 +110,20 @@ export class AwardCardEdit extends React.Component {
     this.setAttributes( getRecipientData(this.registry) );
   }
 
+  handleDescription(str) {
+    str = str.trim();
+    let paddingChars = normalizedDescLength - str.length;
+    let normalizedDesc = str;
+
+    if (paddingChars > 0) {
+      normalizedDesc += " " + "&nbsp;".repeat(paddingChars - 1);
+    } else if (paddingChars < 0) {
+      normalizedDesc = normalizedDesc.slice(0, normalizedDescLength - 3) + "...";
+    }
+    this.setStateAttributes({ "desc": str });
+    this.setAttributes({ "normalizedDesc": normalizedDesc });
+  }
+
   render() {
     let blockProps = this.props.blockProps;
     let registry = this.registry;
@@ -119,7 +145,7 @@ export class AwardCardEdit extends React.Component {
             className = "ncs4-award-card__description"
             tagName = "p"
             value = { this.state.desc }
-            onChange = { this.trimStateAttribute("desc") }
+            onChange = { this.handleDescription }
             placeholder = "Award description..."
           />
           <div className = "ncs4-award-card__edit-recipients">

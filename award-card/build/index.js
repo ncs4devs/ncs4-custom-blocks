@@ -86,6 +86,52 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "../img/dismiss.svg":
+/*!**************************!*\
+  !*** ../img/dismiss.svg ***!
+  \**************************/
+/*! exports provided: default, ReactComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReactComponent", function() { return SvgDismiss; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+var _defs, _path, _path2, _path3, _path4;
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+
+
+function SvgDismiss(props) {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("svg", _extends({
+    id: "dismiss_svg__Layer_1",
+    "data-name": "Layer 1",
+    xmlns: "http://www.w3.org/2000/svg",
+    viewBox: "0 0 43 95.17"
+  }, props), _defs || (_defs = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("defs", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("style", null, ".dismiss_svg__cls-2,.dismiss_svg__cls-4{fill:none;stroke-width:3px;stroke-miterlimit:10}"))), _path || (_path = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("path", {
+    className: "dismiss_svg__cls-1",
+    d: "M21.5 42.5a21 21 0 1121-21 21 21 0 01-21 21",
+    transform: "translate(0 52.67)"
+  })), _path2 || (_path2 = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("path", {
+    className: "dismiss_svg__cls-2",
+    d: "M10.91 84.76l21.18-21.19M10.91 63.57l21.18 21.19"
+  })), _path3 || (_path3 = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("path", {
+    d: "M21.5-10.17a21 21 0 01-21-21 21 21 0 0121-21 21 21 0 0121 21 21 21 0 01-21 21m0-40a19 19 0 00-19 19 19 19 0 0019 19 19 19 0 0019-19 19 19 0 00-19-19z",
+    transform: "translate(0 52.67)",
+    strokeMiterlimit: 10
+  })), _path4 || (_path4 = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("path", {
+    className: "dismiss_svg__cls-4",
+    d: "M10.91 32.09l21.18-21.18M10.91 10.91l21.18 21.18"
+  })));
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ("data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MyA5NS4xNyI+DQogIDxkZWZzPg0KICAgIDxzdHlsZT4NCiAgICAgIC5jbHMtMiwgLmNscy00IHsNCiAgICAgICAgZmlsbDogbm9uZTsNCiAgICAgICAgc3Ryb2tlLXdpZHRoOiAzcHg7DQogICAgICB9DQogICAgICAuY2xzLTIsIC5jbHMtMywgLmNscy00IHsNCiAgICAgICAgc3Ryb2tlLW1pdGVybGltaXQ6IDEwOw0KICAgICAgfQ0KICAgIDwvc3R5bGU+DQogIDwvZGVmcz4NCiAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMjEuNSw0Mi41YTIxLDIxLDAsMSwxLDIxLTIxLDIxLDIxLDAsMCwxLTIxLDIxIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIDUyLjY3KSIvPg0KICA8bGluZSBjbGFzcz0iY2xzLTIiIHgxPSIxMC45MSIgeTE9Ijg0Ljc2IiB4Mj0iMzIuMDkiIHkyPSI2My41NyIvPg0KICA8bGluZSBjbGFzcz0iY2xzLTIiIHgxPSIxMC45MSIgeTE9IjYzLjU3IiB4Mj0iMzIuMDkiIHkyPSI4NC43NiIvPg0KICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yMS41LTEwLjE3YTIxLDIxLDAsMCwxLTIxLTIxLDIxLDIxLDAsMCwxLDIxLTIxLDIxLDIxLDAsMCwxLDIxLDIxLDIxLDIxLDAsMCwxLTIxLDIxbTAtNDBhMTksMTksMCwwLDAtMTksMTksMTksMTksMCwwLDAsMTksMTksMTksMTksMCwwLDAsMTktMTlBMTksMTksMCwwLDAsMjEuNS01MC4xN1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgNTIuNjcpIi8+DQogIDxsaW5lIGNsYXNzPSJjbHMtNCIgeDE9IjEwLjkxIiB5MT0iMzIuMDkiIHgyPSIzMi4wOSIgeTI9IjEwLjkxIi8+DQogIDxsaW5lIGNsYXNzPSJjbHMtNCIgeDE9IjEwLjkxIiB5MT0iMTAuOTEiIHgyPSIzMi4wOSIgeTI9IjMyLjA5Ii8+DQo8L3N2Zz4NCg==");
+
+
+/***/ }),
+
 /***/ "../js/ColorSelector.js":
 /*!******************************!*\
   !*** ../js/ColorSelector.js ***!
@@ -1205,6 +1251,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const normalizedDescLength = 400; // Number of chars for the short description
+
 class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Component {
   constructor(props) {
     super(props);
@@ -1214,7 +1262,13 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     this.registry.register(_recipients__WEBPACK_IMPORTED_MODULE_9__["store"]);
     this.setStateAttributes = this.setStateAttributes.bind(this);
     this.trimStateAttribute = this.trimStateAttribute.bind(this);
-    this.onStoreUpdate = this.onStoreUpdate.bind(this); // store existing recipients
+    this.onStoreUpdate = this.onStoreUpdate.bind(this);
+    this.handleDescription = this.handleDescription.bind(this); // normalize description if length is wrong or it doesn't exist
+
+    if (this.attributes.desc && (!this.attributes.normalizedDesc || this.attributes.normalizedDesc.length !== normalizedDescLength)) {
+      this.handleDescription(this.attributes.desc);
+    } // store existing recipients
+
 
     Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["initializeStore"])(this.registry, this.attributes.recipients, this.attributes.useOrgs);
     this.registry.stores[_recipients__WEBPACK_IMPORTED_MODULE_9__["recipientStoreName"]].subscribe(this.onStoreUpdate);
@@ -1276,6 +1330,25 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     this.setAttributes(Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["getRecipientData"])(this.registry));
   }
 
+  handleDescription(str) {
+    str = str.trim();
+    let paddingChars = normalizedDescLength - str.length;
+    let normalizedDesc = str;
+
+    if (paddingChars > 0) {
+      normalizedDesc += " " + "&nbsp;".repeat(paddingChars - 1);
+    } else if (paddingChars < 0) {
+      normalizedDesc = normalizedDesc.slice(0, normalizedDescLength - 3) + "...";
+    }
+
+    this.setStateAttributes({
+      "desc": str
+    });
+    this.setAttributes({
+      "normalizedDesc": normalizedDesc
+    });
+  }
+
   render() {
     let blockProps = this.props.blockProps;
     let registry = this.registry;
@@ -1287,7 +1360,7 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
       className: "ncs4-award-card__description",
       tagName: "p",
       value: this.state.desc,
-      onChange: this.trimStateAttribute("desc"),
+      onChange: this.handleDescription,
       placeholder: "Award description..."
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
       className: "ncs4-award-card__edit-recipients"
@@ -1394,13 +1467,16 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
     },
     buttonTitle: {
       type: 'string',
-      default: 'View Recipients'
+      default: 'Read More'
     },
     name: {
       type: 'string',
       default: 'Award'
     },
     desc: {
+      type: 'string'
+    },
+    normalizedDesc: {
       type: 'string'
     },
     recipients: {
@@ -1537,9 +1613,7 @@ const recipients = function () {
         return state.filter(x => x.id !== action.id);
 
       case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Edit"]:
-        let newState = [...state.filter(x => x.id !== action.data.id), action.data];
-        console.log(newState);
-        return newState;
+        return [...state.filter(x => x.id !== action.data.id), action.data];
 
       case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Sort"]:
         return state;
@@ -2047,9 +2121,9 @@ function RecipientsSection(props) {
     header = header + "s"; // make plural
   }
 
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, header && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h2", {
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, header && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
     className: "ncs4-award-card__recipient-section-header"
-  }, header), orgHeader && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h3", {
+  }, header), orgHeader && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
     className: "ncs4-award-card__recipient-section-org-header"
   }, orgHeader), rs);
 }
@@ -2223,7 +2297,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../popup/src/popup.js */ "../popup/src/popup.js");
-/* harmony import */ var _recipients__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./recipients */ "./src/recipients.js");
+/* harmony import */ var _img_dismiss_svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../img/dismiss.svg */ "../img/dismiss.svg");
+/* harmony import */ var _recipients__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./recipients */ "./src/recipients.js");
+
 
 
 
@@ -2241,17 +2317,28 @@ class AwardCardSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     }, attributes.name), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["RichText"].Content, {
       className: "ncs4-award-card__description",
       tagName: "p",
-      value: attributes.desc
+      value: attributes.normalizedDesc
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["Popup"], {
       attributes: attributes,
       backend: this.props.backend
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h2", {
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+      className: "ncs4-award-card__popup-header"
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h1", {
       className: "ncs4-award-card__popup-name"
-    }, attributes.name), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["RichText"].Content, {
+    }, attributes.name), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
+      href: "#!",
+      className: "ncs4-award-card__popup-dismiss-link",
+      title: "Dismiss"
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_img_dismiss_svg__WEBPACK_IMPORTED_MODULE_5__["ReactComponent"], {
+      className: "ncs4-award-card__popup-dismiss",
+      viewBox: "0 52.67 43 43"
+    }))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+      className: "ncs4-award-card__popup-content"
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["RichText"].Content, {
       className: "ncs4-award-card__popup-description",
       tagName: "p",
       value: attributes.desc
-    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_5__["RecipientsSave"], attributes)));
+    }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_6__["RecipientsSave"], attributes))));
   }
 
 }

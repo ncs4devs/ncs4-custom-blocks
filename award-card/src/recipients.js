@@ -316,18 +316,18 @@ function RecipientsSection(props) {
   return (
     <>
       { header && (
-        <h2
+        <p
           className = "ncs4-award-card__recipient-section-header"
         >
           { header }
-        </h2>
+        </p>
       )}
       { orgHeader && (
-        <h3
+        <p
           className = "ncs4-award-card__recipient-section-org-header"
         >
           { orgHeader }
-        </h3>
+        </p>
       )}
       { rs }
     </>
