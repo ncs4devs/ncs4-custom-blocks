@@ -46,4 +46,7 @@ call npm run build
 cd ../award-card
 call npm run build
 
+cd ../style-block
+call npm run build
+
 cd ../

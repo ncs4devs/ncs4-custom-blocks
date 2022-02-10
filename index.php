@@ -37,3 +37,4 @@ include 'bp-topic/index.php';
 include 'popup/index.php';
 include 'bio/index.php';
 include 'award-card/index.php';
+include 'style-block/index.php';
