@@ -55,7 +55,11 @@ export default class Edit extends React.Component {
     this.setAttributes = props.setAttributes;
 
     this.setStateAttributes = this.setStateAttributes.bind(this);
+    this.handleSelect = this.handleSelect.bind(this);
     this.appendRule = this.appendRule.bind(this);
+    this.moveUp = this.moveUp.bind(this);
+    this.moveDown = this.moveDown.bind(this);
+    this.deleteRule = this.deleteRule.bind(this);
     this.changeRules = this.changeRules.bind(this);
 
     this.id = this.props.blockProps.id;
@@ -71,6 +75,7 @@ export default class Edit extends React.Component {
     this.state = {
       rules: initialRules,
       selectedRule: initialRules && initialRules[0] ? initialRules[0].id : null,
+      selectedRuleIndex: initialRules.length,
     }
     this.setAttributes({
       id: this.id,
@@ -147,6 +152,19 @@ export default class Edit extends React.Component {
     return out;
   }
 
+  handleSelect(selectedRule) {
+    this.setState({
+      selectedRule,
+      selectedRuleIndex: ( () => {
+        for (let i in this.state.rules) {
+          if (this.state.rules[i].id === selectedRule) {
+            return this.state.rules.length - 1 - i;
+          }
+        }
+      })(),
+    })
+  }
+
   appendRule() {
     let newRuleId = this.getRuleId();
     this.setStateAttributes({
@@ -159,6 +177,74 @@ export default class Edit extends React.Component {
     });
     this.setState({
       selectedRule: newRuleId,
+      selectedRuleIndex: 0,
+    });
+  }
+
+  moveUp(index) {
+    if (index < 1) {
+      return;
+    }
+    this.moveDown(index - 1);
+  }
+
+  moveDown(index) {
+    let newIndex;
+
+    if (index >= this.state.rules.length - 1) {
+      return;
+    }
+    let newRules = this.state.rules.map(
+      (rule, i, rules) => {
+        if (i === index) {
+          newIndex = i + 1;
+          return rules[newIndex];
+        }
+        if (i === index + 1) {
+          return rules[i - 1];
+        }
+        return rule;
+      }
+    );
+    this.changeRules(newRules);
+    this.setState({
+      selectedRuleIndex: this.state.selectedRuleIndex === index
+        ? newIndex
+        : index
+    })
+  }
+
+  deleteRule() {
+    if (!this.state.selectedRule) {
+      console.log("Short circuiting");
+      return;
+    }
+    this.setStateAttributes({
+      rules: this.state.rules.filter(
+        (rule) => rule.id !== this.state.selectedRule
+      ),
+    });
+
+    let newIndex = this.state.selectedRuleIndex;
+    let newRule;
+
+    if (this.state.rules.length < 2) { // list is now empty
+      this.setState({
+        selectedRule: null,
+        selectedRuleIndex: null,
+      });
+      return;
+    }
+
+    if (newIndex === 0) {
+      newRule = this.state.rules[1];
+    } else {
+      newRule = this.state.rules[newIndex];
+      newIndex--;
+    }
+    this.setState({
+      selectedRule: newRule,
+      selectedRuleIndex: newIndex,
     });
   }
 
@@ -184,15 +270,45 @@ export default class Edit extends React.Component {
             title = "Style rules"
             initialOpen = { true }
           >
-            <RulesListControl
-              onAppend = { this.appendRule }
+            <ButtonControl
+              className = "ncs4-style-block__append-rule"
+              onClick = { this.appendRule }
+              dashicon = "plus"
+              label = "Add rule"
+            />
+            <ButtonControl
+              className = "ncs4-style-block__delete-rule"
+              onClick = { this.deleteRule }
+              dashicon = "trash"
+              label = "Delete rule"
+              disabled = { this.state.selectedRule == null }
             />
             <RulesList
               rules = { this.state.rules }
               selected = { this.state.selectedRule }
               blockId = { this.id }
-              onSelect = { (v) => this.setState({ selectedRule: v }) }
+              onSelect = { this.handleSelect }
+              disabled = { this.state.rules.length < 1 }
             />
+            <ButtonControl
+              className = "ncs4-style-block__move-up"
+              onClick = { () => this.moveUp(this.state.selectedRuleIndex) }
+              dashicon = "arrow-up"
+              title = "Move rule up"
+              iconSize = "45px"
+              iconTranslation = "-18px, -15px"
+              disabled = { this.state.selectedRule == null }
+            />
+            <ButtonControl
+              className = "ncs4-style-block__move-down"
+              onClick = { () => this.moveDown(this.state.selectedRuleIndex) }
+              dashicon = "arrow-down"
+              title = "Move rule down"
+              iconSize = "45px"
+              iconTranslation = "-18px, -15px"
+              disabled = { this.state.selectedRule == null }
+            />
+            <hr style = {{ borderColor: "black" }}/>
             <RuleSettings
               rules = { this.state.rules }
               selected = { this.state.selectedRule }
@@ -205,23 +321,7 @@ export default class Edit extends React.Component {
   }
 }
 
-// controls to display above RulesList; e.g. add rule
-function RulesListControl(props) {
-  return (
-    <div
-      className = "ncs4-style-block__list-controls"
-    >
-      <ButtonControl
-        className = "ncs4-style-block__list-controller ncs4-style-block__append-rule"
-        onClick = { props.onAppend }
-        dashicon = "plus"
-        label = "Add rule"
-      />
-    </div>
-  );
-}
-
-// displays all rules in a radio list, sends selected into onSelectChange()
+// displays all rules in a radio list, sends selected into onSelect()
 function RulesList(props) {
   return (
     <ListControl
@@ -230,6 +330,7 @@ function RulesList(props) {
       options = { props.rules }
       reverse = { true }
       selected = { props.selected }
+      disabled = { props.disabled }
       getKey = { (rule) => rule.id }
       getValue = { (rule) => {
         let chars = 15;
@@ -312,16 +413,17 @@ function RuleSettings(props) {
       <div className = "ncs4-style-block__rule-settings-panes">
         {
           panes.map( ({ value, text }) => (
-            <button
+            <ButtonControl
               className = {
                 [
                   "ncs4-style-block__rule-settings-pane-selector",
                   value === selectedPane ? "is-selected" : null,
                 ].join(" ")
               }
+              label = { text }
               onClick = { () => selectPane(value) }
               key = { props.selected + "__" + value }
-            >{ text }</button>
+            />
           ))
         }
       </div>
@@ -394,7 +496,7 @@ function SelectorsSettingsPane(props) {
     }
   }
 
-  let selectorData = selectors[currentSelector];
+  let selectorData = selectors[currentSelector] || {};
 
   let handleSelect = (index) => {
     if (selectors[index].type === "custom") {
@@ -527,7 +629,7 @@ function PropertiesSettingsPane(props) {
     }
   }
 
-  let propertyData = properties[currentProperty];
+  let propertyData = properties[currentProperty] || {};
 
   let handleSelect = (index) => {
     if (properties[index].type === "custom") {

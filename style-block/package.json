@@ -11,5 +11,8 @@
   "license": "GPL-2.0+",
   "devDependencies": {
     "@wordpress/scripts": "17.1.0"
+  },
+  "dependencies": {
+    "styled-components": "^5.3.3"
   }
 }
