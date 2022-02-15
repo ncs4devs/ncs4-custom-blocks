@@ -1996,12 +1996,8 @@ class Edit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
     this.attributes = props.attributes;
     this.setAttributes = props.setAttributes;
     this.setStateAttributes = this.setStateAttributes.bind(this);
-    this.handleSelect = this.handleSelect.bind(this);
-    this.appendRule = this.appendRule.bind(this);
-    this.moveUp = this.moveUp.bind(this);
-    this.moveDown = this.moveDown.bind(this);
-    this.deleteRule = this.deleteRule.bind(this);
-    this.changeRules = this.changeRules.bind(this);
+    this.updateSelected = this.updateSelected.bind(this);
+    this.reduceAction = this.reduceAction.bind(this);
     this.id = this.props.blockProps.id;
 
     this.getRuleId = (() => {
@@ -2013,10 +2009,16 @@ class Edit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
     })();
 
     let initialRules = this.addIdsToRules(this.attributes.rules);
+    let selectedRuleIndex = initialRules.length > 0 ? initialRules.length - 1 : null;
+    let rule = selectedRuleIndex != null ? initialRules[selectedRuleIndex] : null;
+    let selectors = rule ? rule.selectors : null;
+    let properties = rule ? rule.properties : null;
     this.state = {
       rules: initialRules,
-      selectedRule: initialRules && initialRules[0] ? initialRules[0].id : null,
-      selectedRuleIndex: initialRules.length
+      selectedRule: rule ? rule.id : null,
+      selectedRuleIndex,
+      selectedSelector: selectors ? selectors[0] : null,
+      selectedProperty: properties ? properties[0] : null
     };
     this.setAttributes({
       id: this.id,
@@ -2096,104 +2098,148 @@ class Edit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
     return out;
   }
 
-  handleSelect(selectedRule) {
+  updateSelected(index, rules = this.state.rules) {
+    let rule = rules[index] || {};
     this.setState({
-      selectedRule,
-      selectedRuleIndex: (() => {
-        for (let i in this.state.rules) {
-          if (this.state.rules[i].id === selectedRule) {
-            return this.state.rules.length - 1 - i;
-          }
+      selectedRuleIndex: rule.id ? index : null,
+      selectedRule: rule.id ? rule.id : null,
+      selectedSelector: rule.selectors ? rule.selectors[0] : null,
+      selectedProperty: rule.properties ? rule.properties[0] : null
+    });
+  }
+
+  reduceAction(action) {
+    switch (action.type) {
+      case "select":
+        {
+          let selectedRuleIndex = (() => {
+            for (let i = 0; i < this.state.rules.length; i++) {
+              if (this.state.rules[i].id === action.id) {
+                return i;
+              }
+            }
+          })();
+
+          this.updateSelected(selectedRuleIndex);
+          break;
         }
-      })()
-    });
-  }
 
-  appendRule() {
-    let newRuleId = this.getRuleId();
-    this.setStateAttributes({
-      rules: [...this.state.rules, {
-        id: newRuleId
-      }]
-    });
-    this.setState({
-      selectedRule: newRuleId,
-      selectedRuleIndex: 0
-    });
-  }
+      case "append":
+        {
+          let newRuleId = this.getRuleId();
+          this.setStateAttributes({
+            rules: [...this.state.rules, {
+              id: newRuleId
+            }]
+          });
+          this.setState({
+            selectedRule: newRuleId,
+            selectedRuleIndex: this.state.rules.length,
+            selectedSelector: null,
+            selectedProperty: null
+          });
+          break;
+        }
 
-  moveUp(index) {
-    if (index < 1) {
-      return;
+      case "edit":
+        {
+          this.setStateAttributes({
+            rules: action.rules,
+            style: this.createStyleFromRules(action.rules)
+          });
+          break;
+        }
+
+      case "delete":
+        {
+          let deletedIndex;
+          let rules = this.state.rules.reduce(({
+            arr,
+            index
+          }, rule) => {
+            if (rule.id === action.id) {
+              deletedIndex = index;
+              return {
+                arr,
+                index: index + 1
+              };
+            } else {
+              return {
+                arr: [...arr, rule],
+                index: index + 1
+              };
+            }
+          }, {
+            arr: [],
+            index: 0
+          }).arr;
+          this.reduceAction({
+            type: "edit",
+            rules
+          }); // update currently selected rule
+
+          if (this.state.selectedRuleIndex > deletedIndex) {
+            this.updateSelected(this.state.selectedRuleIndex - 1, rules);
+          } else if (this.state.selectedRule === action.id) {
+            // selectedRule was deleted
+            let selectedRuleIndex = null;
+
+            if (this.state.selectedRuleIndex < rules.length) {
+              selectedRuleIndex = this.state.selectedRuleIndex;
+            } else if (rules.length > 0) {
+              selectedRuleIndex = rules.length - 1;
+            }
+
+            this.updateSelected(selectedRuleIndex, rules);
+          }
+
+          break;
+        }
+
+      case "moveIndexUp":
+        {
+          if (action.index >= this.state.rules.length - 1) {
+            return;
+          }
+
+          this.reduceAction({
+            type: "moveIndexDown",
+            index: action.index + 1,
+            swapIndexes: true
+          });
+          break;
+        }
+
+      case "moveIndexDown":
+        {
+          if (action.index <= 0) {
+            return;
+          }
+
+          let newIndex;
+          let rules = this.state.rules.map((rule, i, arr) => {
+            if (i === action.index) {
+              newIndex = i - 1;
+              return arr[newIndex];
+            }
+
+            if (i === action.index - 1) {
+              return arr[i + 1];
+            }
+
+            return rule;
+          });
+          this.reduceAction({
+            type: "edit",
+            rules
+          });
+          this.updateSelected(action.swapIndexes ? action.index : newIndex, rules);
+          break;
+        }
+
+      default:
+        console.warn("Rule reduceAction: unrecognized action type '" + action.type + "'");
     }
-
-    this.moveDown(index - 1);
-  }
-
-  moveDown(index) {
-    let newIndex;
-
-    if (index >= this.state.rules.length - 1) {
-      return;
-    }
-
-    let newRules = this.state.rules.map((rule, i, rules) => {
-      if (i === index) {
-        newIndex = i + 1;
-        return rules[newIndex];
-      }
-
-      if (i === index + 1) {
-        return rules[i - 1];
-      }
-
-      return rule;
-    });
-    this.changeRules(newRules);
-    this.setState({
-      selectedRuleIndex: this.state.selectedRuleIndex === index ? newIndex : index
-    });
-  }
-
-  deleteRule() {
-    if (!this.state.selectedRule) {
-      console.log("Short circuiting");
-      return;
-    }
-
-    this.setStateAttributes({
-      rules: this.state.rules.filter(rule => rule.id !== this.state.selectedRule)
-    });
-    let newIndex = this.state.selectedRuleIndex;
-    let newRule;
-
-    if (this.state.rules.length < 2) {
-      // list is now empty
-      this.setState({
-        selectedRule: null,
-        selectedRuleIndex: null
-      });
-      return;
-    }
-
-    if (newIndex === 0) {
-      newRule = this.state.rules[1];
-    } else {
-      newRule = this.state.rules[newIndex];
-      newIndex--;
-    }
-
-    this.setState({
-      selectedRule: newRule,
-      selectedRuleIndex: newIndex
-    });
-  }
-
-  changeRules(rules) {
-    this.setStateAttributes({
-      rules,
-      style: this.createStyleFromRules(rules)
-    });
   }
 
   render() {
@@ -2207,12 +2253,17 @@ class Edit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
       initialOpen: true
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_UIControls__WEBPACK_IMPORTED_MODULE_5__["ButtonControl"], {
       className: "ncs4-style-block__append-rule",
-      onClick: this.appendRule,
+      onClick: () => this.reduceAction({
+        type: "append"
+      }),
       dashicon: "plus",
       label: "Add rule"
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_UIControls__WEBPACK_IMPORTED_MODULE_5__["ButtonControl"], {
       className: "ncs4-style-block__delete-rule",
-      onClick: this.deleteRule,
+      onClick: () => this.reduceAction({
+        type: "delete",
+        id: this.state.selectedRule
+      }),
       dashicon: "trash",
       label: "Delete rule",
       disabled: this.state.selectedRule == null
@@ -2220,24 +2271,33 @@ class Edit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
       rules: this.state.rules,
       selected: this.state.selectedRule,
       blockId: this.id,
-      onSelect: this.handleSelect,
+      onSelect: id => this.reduceAction({
+        type: "select",
+        id
+      }),
       disabled: this.state.rules.length < 1
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_UIControls__WEBPACK_IMPORTED_MODULE_5__["ButtonControl"], {
       className: "ncs4-style-block__move-up",
-      onClick: () => this.moveUp(this.state.selectedRuleIndex),
+      onClick: () => this.reduceAction({
+        type: "moveIndexUp",
+        index: this.state.selectedRuleIndex
+      }),
       dashicon: "arrow-up",
       title: "Move rule up",
       iconSize: "45px",
       iconTranslation: "-18px, -15px",
-      disabled: this.state.selectedRule == null
+      disabled: this.state.selectedRule == null || this.state.rules.length - this.state.selectedRuleIndex < 2
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_UIControls__WEBPACK_IMPORTED_MODULE_5__["ButtonControl"], {
       className: "ncs4-style-block__move-down",
-      onClick: () => this.moveDown(this.state.selectedRuleIndex),
+      onClick: () => this.reduceAction({
+        type: "moveIndexDown",
+        index: this.state.selectedRuleIndex
+      }),
       dashicon: "arrow-down",
       title: "Move rule down",
       iconSize: "45px",
       iconTranslation: "-18px, -15px",
-      disabled: this.state.selectedRule == null
+      disabled: this.state.selectedRule == null || this.state.selectedRuleIndex < 1
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("hr", {
       style: {
         borderColor: "black"
@@ -2245,7 +2305,10 @@ class Edit extends react__WEBPACK_IMPORTED_MODULE_1___default.a.Component {
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(RuleSettings, {
       rules: this.state.rules,
       selected: this.state.selectedRule,
-      onChange: this.changeRules
+      onChange: rules => this.reduceAction({
+        type: "edit",
+        rules
+      })
     }))));
   }
 
@@ -2262,9 +2325,9 @@ function RulesList(props) {
     getKey: rule => rule.id,
     getValue: rule => {
       let chars = 15;
-      let out = rule.selectors ? Object(_js_utils__WEBPACK_IMPORTED_MODULE_6__["normalizeStringLength"])(rule.selectors.reduce((str, sel) => str + capitalize(sel.type) + ", ", "").slice(0, -2), chars, false) : Object(_js_utils__WEBPACK_IMPORTED_MODULE_6__["normalizeStringLength"])("<No Selectors>", chars, false);
+      let out = rule.selectors && rule.selectors.length ? Object(_js_utils__WEBPACK_IMPORTED_MODULE_6__["normalizeStringLength"])(rule.selectors.reduce((str, sel) => str + capitalize(sel.type) + ", ", "").slice(0, -2), chars, false) : Object(_js_utils__WEBPACK_IMPORTED_MODULE_6__["normalizeStringLength"])("<No Selectors>", chars, false);
       out += " | ";
-      out += rule.properties ? Object(_js_utils__WEBPACK_IMPORTED_MODULE_6__["normalizeStringLength"])(rule.properties.reduce((str, prop) => str + capitalize(prop.type) + ", ", "").slice(0, -2), chars, false) : Object(_js_utils__WEBPACK_IMPORTED_MODULE_6__["normalizeStringLength"])("<No Properties>", chars, false);
+      out += rule.properties && rule.properties.length ? Object(_js_utils__WEBPACK_IMPORTED_MODULE_6__["normalizeStringLength"])(rule.properties.reduce((str, prop) => str + capitalize(prop.type) + ", ", "").slice(0, -2), chars, false) : Object(_js_utils__WEBPACK_IMPORTED_MODULE_6__["normalizeStringLength"])("<No Properties>", chars, false);
       return out;
     },
     onSelect: props.onSelect
@@ -2300,15 +2363,14 @@ function RuleSettings(props) {
     props.onChange(newRules);
   }
 
-  let currentRule = (() => {
-    for (let rule of props.rules) {
-      if (rule.id === props.selected) {
-        return rule;
-      }
-    }
+  let currentRule = null;
 
-    return {};
-  })();
+  for (let rule of props.rules) {
+    if (rule.id === props.selected) {
+      currentRule = rule;
+      break;
+    }
+  }
 
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
     className: "ncs4-style-block__rule-settings-panes"
@@ -2344,22 +2406,48 @@ function SelectorsSettingsPane(props) {
   let reduceAction = action => {
     switch (action.type) {
       case "append":
-        props.onChange([...selectors, {
-          type: selectorTypes[0],
-          onlyDirectChildren: false,
-          value: selectorValues[selectorTypes[0]]
-        }]);
-        setSelector(selectors.length);
-        break;
+        {
+          props.onChange([...selectors, {
+            type: selectorTypes[0],
+            onlyDirectChildren: false,
+            value: selectorValues[selectorTypes[0]]
+          }]);
+          setSelector(selectors.length);
+          break;
+        }
 
       case "delete":
-        props.onChange(selectors.map((val, index) => index !== action.index ? val : null));
-        setSelector(null);
-        break;
+        {
+          props.onChange(selectors.filter((_, index) => index !== action.index));
+
+          if (action.index < currentSelector || currentSelector > 0) {
+            setSelector(currentSelector - 1);
+          } else if (action.index === currentSelector) {
+            if (selectors.length - currentSelector > 2) {
+              setSelector(currentSelector + 1);
+            } else {
+              setSelector(null);
+            }
+          }
+
+          break;
+        }
 
       case "edit":
-        props.onChange(selectors.map((val, index) => index !== action.index ? val : action.value));
-        break;
+        {
+          props.onChange(selectors.map((val, index) => index !== action.index ? val : action.value));
+          break;
+        }
+
+      case "select":
+        {
+          if (selectors[action.index].type === "custom") {
+            setCustomCss(selectors[action.index].value);
+          }
+
+          setSelector(index);
+          break;
+        }
 
       default:
         console.warn("SelectorsSettingsPane: unrecognized action '" + action.type + "'");
@@ -2367,14 +2455,6 @@ function SelectorsSettingsPane(props) {
   };
 
   let selectorData = selectors[currentSelector] || {};
-
-  let handleSelect = index => {
-    if (selectors[index].type === "custom") {
-      setCustomCss(selectors[index].value);
-    }
-
-    setSelector(index);
-  };
 
   let handleEdit = field => value => reduceAction({
     type: "edit",
@@ -2384,12 +2464,12 @@ function SelectorsSettingsPane(props) {
     }
   });
 
-  let handleTypeChange = value => reduceAction({
+  let handleTypeChange = type => reduceAction({
     type: "edit",
     index: currentSelector,
     value: { ...selectorData,
-      type: value,
-      value: selectorValues[value] || customCss
+      type,
+      value: selectorValues[type] || customCss
     }
   });
 
@@ -2402,12 +2482,25 @@ function SelectorsSettingsPane(props) {
     }),
     dashicon: "plus",
     label: "Add selector"
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_UIControls__WEBPACK_IMPORTED_MODULE_5__["ButtonControl"], {
+    className: "ncs4-style-block__remove-selector",
+    onClick: () => reduceAction({
+      type: "delete",
+      index: currentSelector
+    }),
+    dashicon: "trash",
+    label: "Delete selector",
+    disabled: currentSelector == null
   }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_UIControls__WEBPACK_IMPORTED_MODULE_5__["ListControl"], {
     className: "ncs4-style-block__selectors-list",
     label: "Selector",
     options: selectors,
     getValue: sel => capitalize(sel.type),
-    onSelect: handleSelect
+    onSelect: index => reduceAction({
+      type: "select",
+      index: Number(index)
+    }),
+    disabled: selectors.length < 1
   }), currentSelector != null && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
     className: "ncs4-style-block__selector-settings"
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["SelectControl"], {
@@ -2418,7 +2511,8 @@ function SelectorsSettingsPane(props) {
       value: v
     })),
     value: selectorData.type,
-    onChange: handleTypeChange
+    onChange: handleTypeChange,
+    disabled: selectors.length < 1
   }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["TextControl"], {
     disabled: !selectorData || selectorData.type !== "custom",
     value: customCss,
@@ -2452,21 +2546,46 @@ function PropertiesSettingsPane(props) {
   let reduceAction = action => {
     switch (action.type) {
       case "append":
-        props.onChange([...properties, {
-          type: propertyTypes[0],
-          value: propertyValues[propertyTypes[0]]
-        }]);
-        setProperty(properties.length);
-        break;
+        {
+          props.onChange([...properties, {
+            type: propertyTypes[0],
+            value: propertyValues[propertyTypes[0]]
+          }]);
+          setProperty(properties.length);
+          break;
+        }
 
       case "delete":
-        props.onChange(properties.map((val, index) => index !== action.index ? val : null));
-        setProperty(null);
-        break;
+        {
+          props.onChange(properties.filter((_, index) => index !== action.index));
+
+          if (action.index < currentProperty || currentProperty > 0) {
+            setProperty(currentProperty - 1);
+          } else if (action.index === currentProperty) {
+            if (properties.length - currentProperty > 2) {
+              setProperty(currentProperty + 1);
+            } else {
+              setProperty(null);
+            }
+          }
+
+          break;
+        }
 
       case "edit":
-        props.onChange(properties.map((val, index) => index !== action.index ? val : action.value));
-        break;
+        {
+          props.onChange(properties.map((val, index) => index !== action.index ? val : action.value));
+          break;
+        }
+
+      case "select":
+        {
+          if (properties[action.index].type === "custom") {
+            setCustomCss(properties[action.index].value);
+          }
+
+          setProperty(action.index);
+        }
 
       default:
         console.warn("PropertiesSettingsPane: unrecognized action '" + action.type + "'");
@@ -2474,14 +2593,6 @@ function PropertiesSettingsPane(props) {
   };
 
   let propertyData = properties[currentProperty] || {};
-
-  let handleSelect = index => {
-    if (properties[index].type === "custom") {
-      setCustomCss(properties[index].value);
-    }
-
-    setProperty(index);
-  };
 
   let handleEdit = field => value => reduceAction({
     type: "edit",
@@ -2509,12 +2620,25 @@ function PropertiesSettingsPane(props) {
     }),
     dashicon: "plus",
     label: "Add property"
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_UIControls__WEBPACK_IMPORTED_MODULE_5__["ButtonControl"], {
+    className: "ncs4-style-block__remove-property",
+    onClick: () => reduceAction({
+      type: "delete",
+      index: currentProperty
+    }),
+    dashicon: "trash",
+    label: "Delete property",
+    disabled: currentProperty == null
   }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_js_UIControls__WEBPACK_IMPORTED_MODULE_5__["ListControl"], {
     className: "ncs4-style-block__properties-list",
     label: "Property",
     options: properties,
     getValue: prop => capitalize(prop.type),
-    onSelect: handleSelect
+    onSelect: index => reduceAction({
+      type: "select",
+      index: Number(index)
+    }),
+    disabled: properties.length < 1
   }), currentProperty != null && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
     className: "ncs4-style-block__property-settings"
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["SelectControl"], {
@@ -2525,7 +2649,8 @@ function PropertiesSettingsPane(props) {
       value: v
     })),
     value: propertyData.type,
-    onChange: handleTypeChange
+    onChange: handleTypeChange,
+    disabled: properties.length < 1
   }), propertyData && propertyData.type === "custom" && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["TextControl"], {
     label: "Advanced user authentication",
     help: "To use custom CSS properties, input password (if you don't know it, you shouldn't use this). DO NOT SUBMIT YOUR ACCOUNT PASSWORD",
