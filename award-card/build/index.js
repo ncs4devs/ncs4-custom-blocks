@@ -1187,6 +1187,74 @@ const getNextId = state => {
 
 /***/ }),
 
+/***/ "./node_modules/@babel/runtime/helpers/esm/defineProperty.js":
+/*!*******************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/esm/defineProperty.js ***!
+  \*******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _defineProperty; });
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/esm/objectSpread2.js":
+/*!******************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/esm/objectSpread2.js ***!
+  \******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _objectSpread2; });
+/* harmony import */ var _defineProperty_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./defineProperty.js */ "./node_modules/@babel/runtime/helpers/esm/defineProperty.js");
+
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    enumerableOnly && (symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    })), keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread2(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = null != arguments[i] ? arguments[i] : {};
+    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+      Object(_defineProperty_js__WEBPACK_IMPORTED_MODULE_0__["default"])(target, key, source[key]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
+      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+    });
+  }
+
+  return target;
+}
+
+/***/ }),
+
 /***/ "./node_modules/@babel/runtime/helpers/extends.js":
 /*!********************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/extends.js ***!
@@ -1212,6 +1280,710 @@ function _extends() {
 }
 
 module.exports = _extends, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "./node_modules/redux/es/redux.js":
+/*!****************************************!*\
+  !*** ./node_modules/redux/es/redux.js ***!
+  \****************************************/
+/*! exports provided: __DO_NOT_USE__ActionTypes, applyMiddleware, bindActionCreators, combineReducers, compose, createStore */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "__DO_NOT_USE__ActionTypes", function() { return ActionTypes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "applyMiddleware", function() { return applyMiddleware; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bindActionCreators", function() { return bindActionCreators; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "combineReducers", function() { return combineReducers; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compose", function() { return compose; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createStore", function() { return createStore; });
+/* harmony import */ var _babel_runtime_helpers_esm_objectSpread2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/esm/objectSpread2 */ "./node_modules/@babel/runtime/helpers/esm/objectSpread2.js");
+
+
+/**
+ * Adapted from React: https://github.com/facebook/react/blob/master/packages/shared/formatProdErrorMessage.js
+ *
+ * Do not require this module directly! Use normal throw error calls. These messages will be replaced with error codes
+ * during build.
+ * @param {number} code
+ */
+function formatProdErrorMessage(code) {
+  return "Minified Redux error #" + code + "; visit https://redux.js.org/Errors?code=" + code + " for the full message or " + 'use the non-minified dev environment for full errors. ';
+}
+
+// Inlined version of the `symbol-observable` polyfill
+var $$observable = (function () {
+  return typeof Symbol === 'function' && Symbol.observable || '@@observable';
+})();
+
+/**
+ * These are private action types reserved by Redux.
+ * For any unknown actions, you must return the current state.
+ * If the current state is undefined, you must return the initial state.
+ * Do not reference these action types directly in your code.
+ */
+var randomString = function randomString() {
+  return Math.random().toString(36).substring(7).split('').join('.');
+};
+
+var ActionTypes = {
+  INIT: "@@redux/INIT" + randomString(),
+  REPLACE: "@@redux/REPLACE" + randomString(),
+  PROBE_UNKNOWN_ACTION: function PROBE_UNKNOWN_ACTION() {
+    return "@@redux/PROBE_UNKNOWN_ACTION" + randomString();
+  }
+};
+
+/**
+ * @param {any} obj The object to inspect.
+ * @returns {boolean} True if the argument appears to be a plain object.
+ */
+function isPlainObject(obj) {
+  if (typeof obj !== 'object' || obj === null) return false;
+  var proto = obj;
+
+  while (Object.getPrototypeOf(proto) !== null) {
+    proto = Object.getPrototypeOf(proto);
+  }
+
+  return Object.getPrototypeOf(obj) === proto;
+}
+
+// Inlined / shortened version of `kindOf` from https://github.com/jonschlinkert/kind-of
+function miniKindOf(val) {
+  if (val === void 0) return 'undefined';
+  if (val === null) return 'null';
+  var type = typeof val;
+
+  switch (type) {
+    case 'boolean':
+    case 'string':
+    case 'number':
+    case 'symbol':
+    case 'function':
+      {
+        return type;
+      }
+  }
+
+  if (Array.isArray(val)) return 'array';
+  if (isDate(val)) return 'date';
+  if (isError(val)) return 'error';
+  var constructorName = ctorName(val);
+
+  switch (constructorName) {
+    case 'Symbol':
+    case 'Promise':
+    case 'WeakMap':
+    case 'WeakSet':
+    case 'Map':
+    case 'Set':
+      return constructorName;
+  } // other
+
+
+  return type.slice(8, -1).toLowerCase().replace(/\s/g, '');
+}
+
+function ctorName(val) {
+  return typeof val.constructor === 'function' ? val.constructor.name : null;
+}
+
+function isError(val) {
+  return val instanceof Error || typeof val.message === 'string' && val.constructor && typeof val.constructor.stackTraceLimit === 'number';
+}
+
+function isDate(val) {
+  if (val instanceof Date) return true;
+  return typeof val.toDateString === 'function' && typeof val.getDate === 'function' && typeof val.setDate === 'function';
+}
+
+function kindOf(val) {
+  var typeOfVal = typeof val;
+
+  if (true) {
+    typeOfVal = miniKindOf(val);
+  }
+
+  return typeOfVal;
+}
+
+/**
+ * Creates a Redux store that holds the state tree.
+ * The only way to change the data in the store is to call `dispatch()` on it.
+ *
+ * There should only be a single store in your app. To specify how different
+ * parts of the state tree respond to actions, you may combine several reducers
+ * into a single reducer function by using `combineReducers`.
+ *
+ * @param {Function} reducer A function that returns the next state tree, given
+ * the current state tree and the action to handle.
+ *
+ * @param {any} [preloadedState] The initial state. You may optionally specify it
+ * to hydrate the state from the server in universal apps, or to restore a
+ * previously serialized user session.
+ * If you use `combineReducers` to produce the root reducer function, this must be
+ * an object with the same shape as `combineReducers` keys.
+ *
+ * @param {Function} [enhancer] The store enhancer. You may optionally specify it
+ * to enhance the store with third-party capabilities such as middleware,
+ * time travel, persistence, etc. The only store enhancer that ships with Redux
+ * is `applyMiddleware()`.
+ *
+ * @returns {Store} A Redux store that lets you read the state, dispatch actions
+ * and subscribe to changes.
+ */
+
+function createStore(reducer, preloadedState, enhancer) {
+  var _ref2;
+
+  if (typeof preloadedState === 'function' && typeof enhancer === 'function' || typeof enhancer === 'function' && typeof arguments[3] === 'function') {
+    throw new Error( false ? undefined : 'It looks like you are passing several store enhancers to ' + 'createStore(). This is not supported. Instead, compose them ' + 'together to a single function. See https://redux.js.org/tutorials/fundamentals/part-4-store#creating-a-store-with-enhancers for an example.');
+  }
+
+  if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
+    enhancer = preloadedState;
+    preloadedState = undefined;
+  }
+
+  if (typeof enhancer !== 'undefined') {
+    if (typeof enhancer !== 'function') {
+      throw new Error( false ? undefined : "Expected the enhancer to be a function. Instead, received: '" + kindOf(enhancer) + "'");
+    }
+
+    return enhancer(createStore)(reducer, preloadedState);
+  }
+
+  if (typeof reducer !== 'function') {
+    throw new Error( false ? undefined : "Expected the root reducer to be a function. Instead, received: '" + kindOf(reducer) + "'");
+  }
+
+  var currentReducer = reducer;
+  var currentState = preloadedState;
+  var currentListeners = [];
+  var nextListeners = currentListeners;
+  var isDispatching = false;
+  /**
+   * This makes a shallow copy of currentListeners so we can use
+   * nextListeners as a temporary list while dispatching.
+   *
+   * This prevents any bugs around consumers calling
+   * subscribe/unsubscribe in the middle of a dispatch.
+   */
+
+  function ensureCanMutateNextListeners() {
+    if (nextListeners === currentListeners) {
+      nextListeners = currentListeners.slice();
+    }
+  }
+  /**
+   * Reads the state tree managed by the store.
+   *
+   * @returns {any} The current state tree of your application.
+   */
+
+
+  function getState() {
+    if (isDispatching) {
+      throw new Error( false ? undefined : 'You may not call store.getState() while the reducer is executing. ' + 'The reducer has already received the state as an argument. ' + 'Pass it down from the top reducer instead of reading it from the store.');
+    }
+
+    return currentState;
+  }
+  /**
+   * Adds a change listener. It will be called any time an action is dispatched,
+   * and some part of the state tree may potentially have changed. You may then
+   * call `getState()` to read the current state tree inside the callback.
+   *
+   * You may call `dispatch()` from a change listener, with the following
+   * caveats:
+   *
+   * 1. The subscriptions are snapshotted just before every `dispatch()` call.
+   * If you subscribe or unsubscribe while the listeners are being invoked, this
+   * will not have any effect on the `dispatch()` that is currently in progress.
+   * However, the next `dispatch()` call, whether nested or not, will use a more
+   * recent snapshot of the subscription list.
+   *
+   * 2. The listener should not expect to see all state changes, as the state
+   * might have been updated multiple times during a nested `dispatch()` before
+   * the listener is called. It is, however, guaranteed that all subscribers
+   * registered before the `dispatch()` started will be called with the latest
+   * state by the time it exits.
+   *
+   * @param {Function} listener A callback to be invoked on every dispatch.
+   * @returns {Function} A function to remove this change listener.
+   */
+
+
+  function subscribe(listener) {
+    if (typeof listener !== 'function') {
+      throw new Error( false ? undefined : "Expected the listener to be a function. Instead, received: '" + kindOf(listener) + "'");
+    }
+
+    if (isDispatching) {
+      throw new Error( false ? undefined : 'You may not call store.subscribe() while the reducer is executing. ' + 'If you would like to be notified after the store has been updated, subscribe from a ' + 'component and invoke store.getState() in the callback to access the latest state. ' + 'See https://redux.js.org/api/store#subscribelistener for more details.');
+    }
+
+    var isSubscribed = true;
+    ensureCanMutateNextListeners();
+    nextListeners.push(listener);
+    return function unsubscribe() {
+      if (!isSubscribed) {
+        return;
+      }
+
+      if (isDispatching) {
+        throw new Error( false ? undefined : 'You may not unsubscribe from a store listener while the reducer is executing. ' + 'See https://redux.js.org/api/store#subscribelistener for more details.');
+      }
+
+      isSubscribed = false;
+      ensureCanMutateNextListeners();
+      var index = nextListeners.indexOf(listener);
+      nextListeners.splice(index, 1);
+      currentListeners = null;
+    };
+  }
+  /**
+   * Dispatches an action. It is the only way to trigger a state change.
+   *
+   * The `reducer` function, used to create the store, will be called with the
+   * current state tree and the given `action`. Its return value will
+   * be considered the **next** state of the tree, and the change listeners
+   * will be notified.
+   *
+   * The base implementation only supports plain object actions. If you want to
+   * dispatch a Promise, an Observable, a thunk, or something else, you need to
+   * wrap your store creating function into the corresponding middleware. For
+   * example, see the documentation for the `redux-thunk` package. Even the
+   * middleware will eventually dispatch plain object actions using this method.
+   *
+   * @param {Object} action A plain object representing “what changed”. It is
+   * a good idea to keep actions serializable so you can record and replay user
+   * sessions, or use the time travelling `redux-devtools`. An action must have
+   * a `type` property which may not be `undefined`. It is a good idea to use
+   * string constants for action types.
+   *
+   * @returns {Object} For convenience, the same action object you dispatched.
+   *
+   * Note that, if you use a custom middleware, it may wrap `dispatch()` to
+   * return something else (for example, a Promise you can await).
+   */
+
+
+  function dispatch(action) {
+    if (!isPlainObject(action)) {
+      throw new Error( false ? undefined : "Actions must be plain objects. Instead, the actual type was: '" + kindOf(action) + "'. You may need to add middleware to your store setup to handle dispatching other values, such as 'redux-thunk' to handle dispatching functions. See https://redux.js.org/tutorials/fundamentals/part-4-store#middleware and https://redux.js.org/tutorials/fundamentals/part-6-async-logic#using-the-redux-thunk-middleware for examples.");
+    }
+
+    if (typeof action.type === 'undefined') {
+      throw new Error( false ? undefined : 'Actions may not have an undefined "type" property. You may have misspelled an action type string constant.');
+    }
+
+    if (isDispatching) {
+      throw new Error( false ? undefined : 'Reducers may not dispatch actions.');
+    }
+
+    try {
+      isDispatching = true;
+      currentState = currentReducer(currentState, action);
+    } finally {
+      isDispatching = false;
+    }
+
+    var listeners = currentListeners = nextListeners;
+
+    for (var i = 0; i < listeners.length; i++) {
+      var listener = listeners[i];
+      listener();
+    }
+
+    return action;
+  }
+  /**
+   * Replaces the reducer currently used by the store to calculate the state.
+   *
+   * You might need this if your app implements code splitting and you want to
+   * load some of the reducers dynamically. You might also need this if you
+   * implement a hot reloading mechanism for Redux.
+   *
+   * @param {Function} nextReducer The reducer for the store to use instead.
+   * @returns {void}
+   */
+
+
+  function replaceReducer(nextReducer) {
+    if (typeof nextReducer !== 'function') {
+      throw new Error( false ? undefined : "Expected the nextReducer to be a function. Instead, received: '" + kindOf(nextReducer));
+    }
+
+    currentReducer = nextReducer; // This action has a similiar effect to ActionTypes.INIT.
+    // Any reducers that existed in both the new and old rootReducer
+    // will receive the previous state. This effectively populates
+    // the new state tree with any relevant data from the old one.
+
+    dispatch({
+      type: ActionTypes.REPLACE
+    });
+  }
+  /**
+   * Interoperability point for observable/reactive libraries.
+   * @returns {observable} A minimal observable of state changes.
+   * For more information, see the observable proposal:
+   * https://github.com/tc39/proposal-observable
+   */
+
+
+  function observable() {
+    var _ref;
+
+    var outerSubscribe = subscribe;
+    return _ref = {
+      /**
+       * The minimal observable subscription method.
+       * @param {Object} observer Any object that can be used as an observer.
+       * The observer object should have a `next` method.
+       * @returns {subscription} An object with an `unsubscribe` method that can
+       * be used to unsubscribe the observable from the store, and prevent further
+       * emission of values from the observable.
+       */
+      subscribe: function subscribe(observer) {
+        if (typeof observer !== 'object' || observer === null) {
+          throw new Error( false ? undefined : "Expected the observer to be an object. Instead, received: '" + kindOf(observer) + "'");
+        }
+
+        function observeState() {
+          if (observer.next) {
+            observer.next(getState());
+          }
+        }
+
+        observeState();
+        var unsubscribe = outerSubscribe(observeState);
+        return {
+          unsubscribe: unsubscribe
+        };
+      }
+    }, _ref[$$observable] = function () {
+      return this;
+    }, _ref;
+  } // When a store is created, an "INIT" action is dispatched so that every
+  // reducer returns their initial state. This effectively populates
+  // the initial state tree.
+
+
+  dispatch({
+    type: ActionTypes.INIT
+  });
+  return _ref2 = {
+    dispatch: dispatch,
+    subscribe: subscribe,
+    getState: getState,
+    replaceReducer: replaceReducer
+  }, _ref2[$$observable] = observable, _ref2;
+}
+
+/**
+ * Prints a warning in the console if it exists.
+ *
+ * @param {String} message The warning message.
+ * @returns {void}
+ */
+function warning(message) {
+  /* eslint-disable no-console */
+  if (typeof console !== 'undefined' && typeof console.error === 'function') {
+    console.error(message);
+  }
+  /* eslint-enable no-console */
+
+
+  try {
+    // This error was thrown as a convenience so that if you enable
+    // "break on all exceptions" in your console,
+    // it would pause the execution at this line.
+    throw new Error(message);
+  } catch (e) {} // eslint-disable-line no-empty
+
+}
+
+function getUnexpectedStateShapeWarningMessage(inputState, reducers, action, unexpectedKeyCache) {
+  var reducerKeys = Object.keys(reducers);
+  var argumentName = action && action.type === ActionTypes.INIT ? 'preloadedState argument passed to createStore' : 'previous state received by the reducer';
+
+  if (reducerKeys.length === 0) {
+    return 'Store does not have a valid reducer. Make sure the argument passed ' + 'to combineReducers is an object whose values are reducers.';
+  }
+
+  if (!isPlainObject(inputState)) {
+    return "The " + argumentName + " has unexpected type of \"" + kindOf(inputState) + "\". Expected argument to be an object with the following " + ("keys: \"" + reducerKeys.join('", "') + "\"");
+  }
+
+  var unexpectedKeys = Object.keys(inputState).filter(function (key) {
+    return !reducers.hasOwnProperty(key) && !unexpectedKeyCache[key];
+  });
+  unexpectedKeys.forEach(function (key) {
+    unexpectedKeyCache[key] = true;
+  });
+  if (action && action.type === ActionTypes.REPLACE) return;
+
+  if (unexpectedKeys.length > 0) {
+    return "Unexpected " + (unexpectedKeys.length > 1 ? 'keys' : 'key') + " " + ("\"" + unexpectedKeys.join('", "') + "\" found in " + argumentName + ". ") + "Expected to find one of the known reducer keys instead: " + ("\"" + reducerKeys.join('", "') + "\". Unexpected keys will be ignored.");
+  }
+}
+
+function assertReducerShape(reducers) {
+  Object.keys(reducers).forEach(function (key) {
+    var reducer = reducers[key];
+    var initialState = reducer(undefined, {
+      type: ActionTypes.INIT
+    });
+
+    if (typeof initialState === 'undefined') {
+      throw new Error( false ? undefined : "The slice reducer for key \"" + key + "\" returned undefined during initialization. " + "If the state passed to the reducer is undefined, you must " + "explicitly return the initial state. The initial state may " + "not be undefined. If you don't want to set a value for this reducer, " + "you can use null instead of undefined.");
+    }
+
+    if (typeof reducer(undefined, {
+      type: ActionTypes.PROBE_UNKNOWN_ACTION()
+    }) === 'undefined') {
+      throw new Error( false ? undefined : "The slice reducer for key \"" + key + "\" returned undefined when probed with a random type. " + ("Don't try to handle '" + ActionTypes.INIT + "' or other actions in \"redux/*\" ") + "namespace. They are considered private. Instead, you must return the " + "current state for any unknown actions, unless it is undefined, " + "in which case you must return the initial state, regardless of the " + "action type. The initial state may not be undefined, but can be null.");
+    }
+  });
+}
+/**
+ * Turns an object whose values are different reducer functions, into a single
+ * reducer function. It will call every child reducer, and gather their results
+ * into a single state object, whose keys correspond to the keys of the passed
+ * reducer functions.
+ *
+ * @param {Object} reducers An object whose values correspond to different
+ * reducer functions that need to be combined into one. One handy way to obtain
+ * it is to use ES6 `import * as reducers` syntax. The reducers may never return
+ * undefined for any action. Instead, they should return their initial state
+ * if the state passed to them was undefined, and the current state for any
+ * unrecognized action.
+ *
+ * @returns {Function} A reducer function that invokes every reducer inside the
+ * passed object, and builds a state object with the same shape.
+ */
+
+
+function combineReducers(reducers) {
+  var reducerKeys = Object.keys(reducers);
+  var finalReducers = {};
+
+  for (var i = 0; i < reducerKeys.length; i++) {
+    var key = reducerKeys[i];
+
+    if (true) {
+      if (typeof reducers[key] === 'undefined') {
+        warning("No reducer provided for key \"" + key + "\"");
+      }
+    }
+
+    if (typeof reducers[key] === 'function') {
+      finalReducers[key] = reducers[key];
+    }
+  }
+
+  var finalReducerKeys = Object.keys(finalReducers); // This is used to make sure we don't warn about the same
+  // keys multiple times.
+
+  var unexpectedKeyCache;
+
+  if (true) {
+    unexpectedKeyCache = {};
+  }
+
+  var shapeAssertionError;
+
+  try {
+    assertReducerShape(finalReducers);
+  } catch (e) {
+    shapeAssertionError = e;
+  }
+
+  return function combination(state, action) {
+    if (state === void 0) {
+      state = {};
+    }
+
+    if (shapeAssertionError) {
+      throw shapeAssertionError;
+    }
+
+    if (true) {
+      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action, unexpectedKeyCache);
+
+      if (warningMessage) {
+        warning(warningMessage);
+      }
+    }
+
+    var hasChanged = false;
+    var nextState = {};
+
+    for (var _i = 0; _i < finalReducerKeys.length; _i++) {
+      var _key = finalReducerKeys[_i];
+      var reducer = finalReducers[_key];
+      var previousStateForKey = state[_key];
+      var nextStateForKey = reducer(previousStateForKey, action);
+
+      if (typeof nextStateForKey === 'undefined') {
+        var actionType = action && action.type;
+        throw new Error( false ? undefined : "When called with an action of type " + (actionType ? "\"" + String(actionType) + "\"" : '(unknown type)') + ", the slice reducer for key \"" + _key + "\" returned undefined. " + "To ignore an action, you must explicitly return the previous state. " + "If you want this reducer to hold no value, you can return null instead of undefined.");
+      }
+
+      nextState[_key] = nextStateForKey;
+      hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
+    }
+
+    hasChanged = hasChanged || finalReducerKeys.length !== Object.keys(state).length;
+    return hasChanged ? nextState : state;
+  };
+}
+
+function bindActionCreator(actionCreator, dispatch) {
+  return function () {
+    return dispatch(actionCreator.apply(this, arguments));
+  };
+}
+/**
+ * Turns an object whose values are action creators, into an object with the
+ * same keys, but with every function wrapped into a `dispatch` call so they
+ * may be invoked directly. This is just a convenience method, as you can call
+ * `store.dispatch(MyActionCreators.doSomething())` yourself just fine.
+ *
+ * For convenience, you can also pass an action creator as the first argument,
+ * and get a dispatch wrapped function in return.
+ *
+ * @param {Function|Object} actionCreators An object whose values are action
+ * creator functions. One handy way to obtain it is to use ES6 `import * as`
+ * syntax. You may also pass a single function.
+ *
+ * @param {Function} dispatch The `dispatch` function available on your Redux
+ * store.
+ *
+ * @returns {Function|Object} The object mimicking the original object, but with
+ * every action creator wrapped into the `dispatch` call. If you passed a
+ * function as `actionCreators`, the return value will also be a single
+ * function.
+ */
+
+
+function bindActionCreators(actionCreators, dispatch) {
+  if (typeof actionCreators === 'function') {
+    return bindActionCreator(actionCreators, dispatch);
+  }
+
+  if (typeof actionCreators !== 'object' || actionCreators === null) {
+    throw new Error( false ? undefined : "bindActionCreators expected an object or a function, but instead received: '" + kindOf(actionCreators) + "'. " + "Did you write \"import ActionCreators from\" instead of \"import * as ActionCreators from\"?");
+  }
+
+  var boundActionCreators = {};
+
+  for (var key in actionCreators) {
+    var actionCreator = actionCreators[key];
+
+    if (typeof actionCreator === 'function') {
+      boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
+    }
+  }
+
+  return boundActionCreators;
+}
+
+/**
+ * Composes single-argument functions from right to left. The rightmost
+ * function can take multiple arguments as it provides the signature for
+ * the resulting composite function.
+ *
+ * @param {...Function} funcs The functions to compose.
+ * @returns {Function} A function obtained by composing the argument functions
+ * from right to left. For example, compose(f, g, h) is identical to doing
+ * (...args) => f(g(h(...args))).
+ */
+function compose() {
+  for (var _len = arguments.length, funcs = new Array(_len), _key = 0; _key < _len; _key++) {
+    funcs[_key] = arguments[_key];
+  }
+
+  if (funcs.length === 0) {
+    return function (arg) {
+      return arg;
+    };
+  }
+
+  if (funcs.length === 1) {
+    return funcs[0];
+  }
+
+  return funcs.reduce(function (a, b) {
+    return function () {
+      return a(b.apply(void 0, arguments));
+    };
+  });
+}
+
+/**
+ * Creates a store enhancer that applies middleware to the dispatch method
+ * of the Redux store. This is handy for a variety of tasks, such as expressing
+ * asynchronous actions in a concise manner, or logging every action payload.
+ *
+ * See `redux-thunk` package as an example of the Redux middleware.
+ *
+ * Because middleware is potentially asynchronous, this should be the first
+ * store enhancer in the composition chain.
+ *
+ * Note that each middleware will be given the `dispatch` and `getState` functions
+ * as named arguments.
+ *
+ * @param {...Function} middlewares The middleware chain to be applied.
+ * @returns {Function} A store enhancer applying the middleware.
+ */
+
+function applyMiddleware() {
+  for (var _len = arguments.length, middlewares = new Array(_len), _key = 0; _key < _len; _key++) {
+    middlewares[_key] = arguments[_key];
+  }
+
+  return function (createStore) {
+    return function () {
+      var store = createStore.apply(void 0, arguments);
+
+      var _dispatch = function dispatch() {
+        throw new Error( false ? undefined : 'Dispatching while constructing your middleware is not allowed. ' + 'Other middleware would not be applied to this dispatch.');
+      };
+
+      var middlewareAPI = {
+        getState: store.getState,
+        dispatch: function dispatch() {
+          return _dispatch.apply(void 0, arguments);
+        }
+      };
+      var chain = middlewares.map(function (middleware) {
+        return middleware(middlewareAPI);
+      });
+      _dispatch = compose.apply(void 0, chain)(store.dispatch);
+      return Object(_babel_runtime_helpers_esm_objectSpread2__WEBPACK_IMPORTED_MODULE_0__["default"])(Object(_babel_runtime_helpers_esm_objectSpread2__WEBPACK_IMPORTED_MODULE_0__["default"])({}, store), {}, {
+        dispatch: _dispatch
+      });
+    };
+  };
+}
+
+/*
+ * This is a dummy function to check if the function name has been altered by minification.
+ * If the function has been minified and NODE_ENV !== 'production', warn the user.
+ */
+
+function isCrushed() {}
+
+if ( true && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
+  warning('You are currently using minified code outside of NODE_ENV === "production". ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or setting mode to production in webpack (https://webpack.js.org/concepts/mode/) ' + 'to ensure you have the correct code for your production build.');
+}
+
+
+
 
 /***/ }),
 
@@ -1480,8 +2252,8 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
       type: 'string'
     },
     recipients: {
-      type: 'array',
-      default: []
+      type: 'object',
+      default: {}
     },
     displayPrevious: {
       type: 'boolean',
@@ -1506,7 +2278,7 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
 /*!*************************************!*\
   !*** ./src/recipientActionTypes.js ***!
   \*************************************/
-/*! exports provided: Create, Delete, Edit, SetUseOrgs, AddOrganization, Sort */
+/*! exports provided: Create, Delete, Edit, SetRecipients, SetUseOrgs, AddOrganization, Sort, SetCurrentYearIf, SetCurrentYear, RecalculateCurrentYear */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1514,15 +2286,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Create", function() { return Create; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Delete", function() { return Delete; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Edit", function() { return Edit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SetRecipients", function() { return SetRecipients; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SetUseOrgs", function() { return SetUseOrgs; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AddOrganization", function() { return AddOrganization; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Sort", function() { return Sort; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SetCurrentYearIf", function() { return SetCurrentYearIf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SetCurrentYear", function() { return SetCurrentYear; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecalculateCurrentYear", function() { return RecalculateCurrentYear; });
 const Create = "CREATE";
 const Delete = "DELETE";
 const Edit = "EDIT";
+const SetRecipients = "SET_RECIPIENTS";
 const SetUseOrgs = "SET_ORGS";
 const AddOrganization = "ADD_ORG";
 const Sort = "SORT";
+const SetCurrentYearIf = "SET_CURRENT_YEAR_IF";
+const SetCurrentYear = "SET_CURRENT_YEAR";
+const RecalculateCurrentYear = "RECALCULATE_CURRENT_YEAR";
 
 /***/ }),
 
@@ -1530,7 +2310,7 @@ const Sort = "SORT";
 /*!*********************************!*\
   !*** ./src/recipientActions.js ***!
   \*********************************/
-/*! exports provided: createRecipient, deleteRecipient, editRecipient, setUseOrgs, addOrganization, sortRecipients */
+/*! exports provided: createRecipient, deleteRecipient, editRecipient, setRecipients, setUseOrgs, SetCurrentYear, SetCurrentYearIf, RecalculateCurrentYear, addOrganization, sortRecipients, updateCurrentYear */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1538,9 +2318,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createRecipient", function() { return createRecipient; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "deleteRecipient", function() { return deleteRecipient; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "editRecipient", function() { return editRecipient; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setRecipients", function() { return setRecipients; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setUseOrgs", function() { return setUseOrgs; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SetCurrentYear", function() { return SetCurrentYear; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SetCurrentYearIf", function() { return SetCurrentYearIf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecalculateCurrentYear", function() { return RecalculateCurrentYear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addOrganization", function() { return addOrganization; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sortRecipients", function() { return sortRecipients; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateCurrentYear", function() { return updateCurrentYear; });
 /* harmony import */ var _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./recipientActionTypes */ "./src/recipientActionTypes.js");
 
 function createRecipient(data) {
@@ -1549,15 +2334,22 @@ function createRecipient(data) {
     data
   };
 }
-function deleteRecipient(id) {
+function deleteRecipient(data) {
   return {
     type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["Delete"],
-    id
+    data
   };
 }
-function editRecipient(data) {
+function editRecipient(oldData, data) {
   return {
     type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["Edit"],
+    oldData,
+    data
+  };
+}
+function setRecipients(data) {
+  return {
+    type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["SetRecipients"],
     data
   };
 }
@@ -1565,6 +2357,23 @@ function setUseOrgs(useOrgs) {
   return {
     type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["SetUseOrgs"],
     useOrgs
+  };
+}
+function SetCurrentYear(year) {
+  return {
+    type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["SetCurrentYear"],
+    year
+  };
+}
+function SetCurrentYearIf(year) {
+  return {
+    type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["SetCurrentYearIf"],
+    year
+  };
+}
+function RecalculateCurrentYear() {
+  return {
+    type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["RecalculateCurrentYear"]
   };
 }
 function addOrganization(organization) {
@@ -1578,6 +2387,12 @@ function sortRecipients() {
     type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["Sort"]
   };
 }
+function updateCurrentYear(year) {
+  return {
+    type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["SetCurrentYearIf"],
+    year
+  };
+}
 
 /***/ }),
 
@@ -1585,81 +2400,233 @@ function sortRecipients() {
 /*!**********************************!*\
   !*** ./src/recipientReducers.js ***!
   \**********************************/
-/*! exports provided: default */
+/*! exports provided: traverseRecipients, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "traverseRecipients", function() { return traverseRecipients; });
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./recipientActionTypes */ "./src/recipientActionTypes.js");
 /* harmony import */ var _sort__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./sort */ "./src/sort.js");
+/* harmony import */ var _recipientActions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./recipientActions */ "./src/recipientActions.js");
 
 
- // action.data includes id
 
-const recipients = function () {
-  let state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-  let action = arguments.length > 1 ? arguments[1] : undefined;
-  let useOrgs = arguments.length > 2 ? arguments[2] : undefined;
-  let currentYear = state[0] ? state[0].year : null;
 
-  let newState = (() => {
-    switch (action.type) {
-      case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Create"]:
-        return [...state, action.data];
+/***** Sorting variables *****/
 
-      case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Delete"]:
-        return state.filter(x => x.id !== action.id);
-
-      case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Edit"]:
-        return [...state.filter(x => x.id !== action.data.id), action.data];
-
-      case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Sort"]:
-        return state;
-
-      default:
-        //console.warn("recipients: Unrecognized action type '" + action.type + "'");
-        return state;
-    }
-  })();
-
-  return newState.sort(Object(_sort__WEBPACK_IMPORTED_MODULE_2__["getRecipientsCompare"])(currentYear, useOrgs));
+const industrySegments = {
+  pro: {
+    title: "Professional Sports and Entertainment",
+    useOrgs: true
+  },
+  college: {
+    title: "Intercollegiate Athletics",
+    useOrgs: false
+  },
+  hs: {
+    title: "Interscholastic Athletics and After-School Activities",
+    useOrgs: false
+  },
+  marathon: {
+    title: "Marathon and Endurance Events",
+    useOrgs: false
+  },
+  other: {
+    title: "Other",
+    useOrgs: true
+  }
 };
-/* Original
+const orgFields = ["industry", "organization"];
+/***** Helper functions *****/
+// no particular order
 
-const recipients = (state = [], action, useOrgs) => {
-  let currentYear = state[0] ? state[0].year: null;
-  switch (action.type) {
-    case actionTypes.Create:
-      return sortedInsert(
-        state,
-        action.data,
-        getRecipientsCompare(currentYear, useOrgs),
-      );
+function traverseRecipients(tree, visit) {
+  if (Array.isArray(tree)) {
+    tree.map(visit);
+  } else {
+    for (let field in tree) {
+      if (field === "order" || field === "length") {
+        continue;
+      }
 
-    case actionTypes.Delete:
-      return state
-        .sort(getRecipientsCompare(currentYear, useOrgs))
-        .filter( (x) => x.id !== action.id );
-
-    case actionTypes.Edit:
-      return sortedInsert(
-        state.filter( (x) => x.id !== action.data.id ),
-        action.data,
-        getRecipientsCompare(currentYear, useOrgs),
-      );
-
-    case actionTypes.Sort:
-      return state.sort(getRecipientsCompare(currentYear, useOrgs));
-
-    default:
-      //console.warn("recipients: Unrecognized action type '" + action.type + "'");
-      return state;
+      traverseRecipients(tree[field], visit);
+    }
   }
 }
-*/
 
+function addToRecipientTree(root, recipient, useOrgs, currentYear) {
+  let tree = {
+    current: root.current || [],
+    previous: root.previous || (useOrgs ? {} : [])
+  };
+  const compare = _sort__WEBPACK_IMPORTED_MODULE_2__["compareYearThenNames"];
+
+  if (recipient.year === currentYear) {
+    tree.current = Object(_sort__WEBPACK_IMPORTED_MODULE_2__["sortedInsert"])(tree.current, recipient, compare);
+  } else {
+    if (useOrgs) {
+      tree.previous = buildSubtree(tree.previous, orgFields, recipient, compare, useOrgs = recipient.organization && industrySegments[recipient.organization] ? industrySegments[recipient.organization].useOrgs : useOrgs);
+      tree.previous.length = tree.previous.length ? tree.previous.length + 1 : 1;
+    } else {
+      tree.previous = Object(_sort__WEBPACK_IMPORTED_MODULE_2__["sortedInsert"])(tree.previous, recipient, compare);
+    }
+  }
+
+  return tree;
+}
+
+function buildSubtree(root, fields, recipient, compare) {
+  let useOrgs = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
+
+  if (fields.length > 0) {
+    let field = recipient[fields[0]];
+
+    if (fields[0] === "organization" && !useOrgs) {
+      return buildSubtree(root, fields.slice(1), recipient, compare, useOrgs);
+    }
+
+    if (fields.length && !root[field]) {
+      // there is a subtree and it needs to be added to order
+      let order = root.order || [];
+      order = Object(_sort__WEBPACK_IMPORTED_MODULE_2__["sortedInsert"])(order, field, _sort__WEBPACK_IMPORTED_MODULE_2__["compareStrings"]);
+      root.order = order;
+      root[field] = {};
+    } else {
+      root[field] = root[field] || [];
+    }
+
+    if (fields[0] === "industry" && industrySegments[field]) {
+      root[field] = buildSubtree(root[field], fields.slice(1), recipient, compare, industrySegments[field].useOrgs);
+    } else {
+      root[field] = buildSubtree(root[field], fields.slice(1), recipient, compare);
+    }
+
+    return root;
+  } else {
+    return Object(_sort__WEBPACK_IMPORTED_MODULE_2__["sortedInsert"])(root, recipient, compare);
+  }
+}
+
+function getRecipientsPath(tree, recipient, currentYear) {
+  const properties = ["industry", "organization"];
+  let path = "";
+
+  if (recipient.year === currentYear) {
+    path += "current/";
+  } else {
+    path += "previous/";
+    let field = "previous";
+    let propertiesArr = [...properties];
+
+    while (!Array.isArray(tree[field])) {
+      tree = tree[field];
+      field = recipient[propertiesArr[0]];
+      propertiesArr = propertiesArr.slice(1);
+      path += field + "/";
+    }
+  }
+
+  return path.replace(/(^\/)|(\/$)/g, "");
+}
+
+function assignRecipientsSlice(tree, slice, path) {
+  let newSlice = slice;
+  let fields = path.split("/");
+
+  for (let i = fields.length - 1; i >= 0; i--) {
+    newSlice = { ...getRecipientsSlice(tree, fields.slice(0, i).join("/")),
+      [fields[i]]: newSlice
+    };
+  }
+
+  return { ...tree,
+    ...newSlice
+  };
+}
+
+function getRecipientsSlice(tree, path) {
+  let fields = path.split("/");
+
+  for (let i = 0; i < fields.length; i++) {
+    tree = tree[fields[i]];
+  }
+
+  return tree;
+}
+/***** Reducers *****/
+// action.data includes id
+
+
+const recipients = function () {
+  let state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  let action = arguments.length > 1 ? arguments[1] : undefined;
+  let {
+    useOrgs,
+    currentYear
+  } = arguments.length > 2 ? arguments[2] : undefined;
+
+  switch (action.type) {
+    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Create"]:
+      {
+        action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["SetCurrentYearIf"](action.data.year));
+        return addToRecipientTree(state, action.data, useOrgs, currentYear);
+        break;
+      }
+
+    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Delete"]:
+      {
+        let path = getRecipientsPath(state, action.data, currentYear);
+        let newSlice = getRecipientsSlice(state, path).filter(x => x.id !== action.data.id);
+
+        if (action.data.year === currentYear && state.current.length < 2) {
+          let year = null;
+          traverseRecipients(state.previous, r => {
+            if (!year || r.year > year) {
+              year = r.year;
+            }
+          });
+          action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["SetCurrentYear"](year));
+        }
+
+        return assignRecipientsSlice(state, newSlice, path);
+        break;
+      }
+
+    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Edit"]:
+      {
+        action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["deleteRecipient"](action.oldData));
+        action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["createRecipient"](action.data));
+        return state;
+        break;
+      }
+
+    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["SetRecipients"]:
+      {
+        action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["RecalculateCurrentYear"]());
+        return Object.assign({}, action.data);
+        break;
+      }
+
+    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Sort"]:
+      {
+        // re-sort entire tree
+        let newTree = {};
+        traverseRecipients(state, recipient => {
+          newTree = addToRecipientTree(newTree, recipient, useOrgs, currentYear);
+        });
+        return newTree;
+        break;
+      }
+
+    default:
+      {
+        return state;
+      }
+  }
+};
 
 const ids = function () {
   let state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
@@ -1667,42 +2634,52 @@ const ids = function () {
 
   switch (action.type) {
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Create"]:
-      let out = [];
-      let j = 0;
-      let haveAdded = false;
-      let data = action.data;
+      {
+        let out = [];
+        let j = 0;
+        let haveAdded = false;
+        let data = action.data;
 
-      for (let i = 0; i < state.length; i++) {
-        if (!haveAdded && state[i] > data.id) {
-          out[j] = data.id;
-          haveAdded = true;
+        for (let i = 0; i < state.length; i++) {
+          if (!haveAdded && state[i] > data.id) {
+            out[j] = data.id;
+            haveAdded = true;
+            j++;
+          }
+
+          out[j] = state[i];
           j++;
         }
 
-        out[j] = state[i];
-        j++;
-      }
+        if (!haveAdded) {
+          out[out.length] = data.id;
+        }
 
-      if (!haveAdded) {
-        out[out.length] = data.id;
+        return out;
+        break;
       }
-
-      return out;
 
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Delete"]:
-      return state.filter(x => x !== action.id);
-
-    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Edit"]:
-      // just check the id exists
-      if (!state.includes(action.data.id)) {
-        console.error(_recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Edit"] + ": id '" + action.data.id + "' not found");
+      {
+        return state.filter(x => x !== action.id);
+        break;
       }
 
-      return state;
+    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Edit"]:
+      {
+        // just check the id exists
+        if (!state.includes(action.data.id)) {
+          console.error(_recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Edit"] + ": id '" + action.data.id + "' not found");
+        }
+
+        return state;
+        break;
+      }
 
     default:
-      //console.warn("ids: Unrecognized action type '" + action.type + "'");
-      return state;
+      {
+        return state;
+      }
   }
 };
 
@@ -1712,11 +2689,15 @@ const useOrgs = function () {
 
   switch (action.type) {
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["SetUseOrgs"]:
-      return action.useOrgs;
+      {
+        return action.useOrgs;
+        break;
+      }
 
     default:
-      //console.warn("useOrgs: Unrecognized action type '" + action.type + "'");
-      return state;
+      {
+        return state;
+      }
   }
 };
 
@@ -1726,15 +2707,66 @@ const organizations = function () {
 
   switch (action.type) {
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["AddOrganization"]:
-      if (!state.includes(action.organization)) {
-        return [...state, action.organization];
-      } else {
-        return state;
+      {
+        if (!state.includes(action.organization)) {
+          return [...state, action.organization];
+        } else {
+          return state;
+        }
+
+        break;
       }
 
     default:
-      //console.warn("organizations: Unrecognized action type '" + action.type + "'");
-      return state;
+      {
+        return state;
+      }
+  }
+};
+
+const currentYear = function () {
+  let state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+  let action = arguments.length > 1 ? arguments[1] : undefined;
+  let {
+    recipients
+  } = arguments.length > 2 ? arguments[2] : undefined;
+
+  switch (action.type) {
+    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["SetCurrentYearIf"]:
+      {
+        if (!state || state < action.year) {
+          action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["sortRecipients"]());
+          return action.year;
+        } else {
+          return state;
+        }
+
+        break;
+      }
+
+    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["SetCurrentYear"]:
+      {
+        action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["sortRecipients"]());
+        return action.year;
+        break;
+      }
+
+    case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["RecalculateCurrentYear"]:
+      {
+        let year = null;
+        traverseRecipients(recipients, r => {
+          if (!year || r.year > year) {
+            year = r.year;
+          }
+        });
+        action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["sortRecipients"]());
+        return year;
+      }
+
+    default:
+      {
+        return state;
+      }
   }
 }; // Higher-order reducers
 
@@ -1742,11 +2774,20 @@ const organizations = function () {
 /* harmony default export */ __webpack_exports__["default"] = (combineReducersWithData({
   recipients: {
     reducer: recipients,
-    stateReducer: state => state.useOrgs
+    stateReducer: state => ({
+      useOrgs: state.useOrgs,
+      currentYear: state.currentYear
+    })
   },
   ids,
   useOrgs,
-  organizations
+  organizations,
+  currentYear: {
+    reducer: currentYear,
+    stateReducer: state => ({
+      recipients: state.recipients
+    })
+  }
 })); // takes an object of {reducer: function(), stateReducer: function()} objects
 // stateReducer() should take the full store's state and return what data the
 // reducer function needs. This data will be passed to the reducer as the third
@@ -1783,7 +2824,7 @@ function combineReducersWithData(reducersWithData) {
 /*!***********************************!*\
   !*** ./src/recipientSelectors.js ***!
   \***********************************/
-/*! exports provided: getRecipients, getState, getUsedIds, getUseOrgs, getOrganizations, hasId, createRecipientData, getNextId */
+/*! exports provided: getRecipients, getState, getUsedIds, getUseOrgs, getCurrentYear, getOrganizations, hasId, createRecipientData, getNextId */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1792,6 +2833,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getState", function() { return getState; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUsedIds", function() { return getUsedIds; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUseOrgs", function() { return getUseOrgs; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCurrentYear", function() { return getCurrentYear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getOrganizations", function() { return getOrganizations; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasId", function() { return hasId; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createRecipientData", function() { return createRecipientData; });
@@ -1808,6 +2850,7 @@ const getRecipients = (state, ids) => {
 const getState = state => state;
 const getUsedIds = state => state.ids;
 const getUseOrgs = state => state.useOrgs;
+const getCurrentYear = state => state.currentYear;
 const getOrganizations = state => state.organizations;
 const hasId = (state, id) => state.ids.includes(id);
 const createRecipientData = (state, data) => ({ ...data,
@@ -1855,17 +2898,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _recipientSelectors__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./recipientSelectors */ "./src/recipientSelectors.js");
-/* harmony import */ var _recipientActions__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./recipientActions */ "./src/recipientActions.js");
-/* harmony import */ var _recipientActionTypes__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./recipientActionTypes */ "./src/recipientActionTypes.js");
-/* harmony import */ var _recipientReducers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./recipientReducers */ "./src/recipientReducers.js");
-/* harmony import */ var _sort__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./sort */ "./src/sort.js");
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lodash */ "lodash");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _recipientSelectors__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./recipientSelectors */ "./src/recipientSelectors.js");
+/* harmony import */ var _recipientActions__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./recipientActions */ "./src/recipientActions.js");
+/* harmony import */ var _recipientActionTypes__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./recipientActionTypes */ "./src/recipientActionTypes.js");
+/* harmony import */ var _recipientReducers__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./recipientReducers */ "./src/recipientReducers.js");
 
 
 
@@ -1876,14 +2921,181 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+/*
+  Sorting is done by splitting Recipients into a tree with the field being
+  either the header, or an alias to the header title.
+  Each subtree then becomes its own section on the page, with the depth
+  encoded as an HTML attribute for styling.
+  Each edge leaf is an array of recipient objects, sorted by year and then name
+  Sorting of organization and industry is handled by sorting their
+  identifiers in an array stored in a special leaf, `order`, in each proper
+  subtree that isn't an edge leaf.
+
+  Example recipient tree:
+
+  // Organization sorting disabled
+  {
+    "current": [
+      {"name":"Elizabeth Woollen","position":"Chief (Ret.), The University of Oklahoma Police Department","year":"2021","industry":"pro"}
+    ],
+    "previous": [
+      {"name":"John King","position":"CSSP, Executive Director of Public Safety, Chief of Police (Ret.), Boston College","year":"2019","industry":"other"},
+      {"name":"Dennis Cunningham","position":"Executive Vice President/Director of Security, National Hockey League","year":"2018","industry":"other"},
+      {"name":"Larry Buendorf","position":"Chief Security Officer, United States Olympic Committee","year":"2017","industry":"other"}
+    ]
+  }
+
+  // Organization sorting enabled (some entries ommitted, some organizations incorrectly labeled)
+  {
+    "current": [
+      {"name":"Salvatore DeAngelis","position":"Director, Operations/Security, Philadelphia Phillies ","organization":"MLB","year":"2021","industry":"pro"},
+      {"name":"Brandon Flynn","position":"Security and Parking Manager, Tampa Sports Authority ","organization":"NFL","year":"2021","industry":"pro"},
+      ...
+    ],
+    "previous": {
+      "order": ["hs","pro","other","marathon"],
+      "marathon": [
+        {"name":"John Bertsch","position":"Executive Director of Global Safety & Security, IRONMAN World Championship","organization":"Marathon/Endurance Events","year":"2017","industry":"marathon"},
+        {"name":"Virginia Achman","position":"Executive Director, Twin Cities in Motion","organization":"Marathon/Endurance Events","year":"2018","industry":"marathon"},
+        {"name":"Greg Haapala","position":"Race Director, Grandma's Marathon","organization":"Marathon/Endurance Events","year":"2019","industry":"marathon"}
+      ],
+      "length": 51,
+      "other": {
+        "order": ["NHL","NFL","NCAA","NBA","National Federation of High School Associations","MLB","Marathon/Endurance Events"],
+        "Marathon/Endurance Events": [
+          {"name":"Dave McGillivray","position":"Boston Marathon","organization":"Marathon/Endurance Events","year":"2014","industry":"other"},
+          {"name":"Mike Nishi","position":"Chicago Marathon","organization":"Marathon/Endurance Events","year":"2015","industry":"other"},
+          {"name":"Ted Metellus","position":"Competitor Group","organization":"Marathon/Endurance Events","year":"2016","industry":"other"}
+        ],
+        ...
+      },
+      "pro": {
+        "order": ["NBA","MLB"],
+        "MLB": [
+          {"name":"Greg Terp","position":"Miami Marlins","organization":"MLB","year":"2016","industry":"pro"},
+          {"name":"Randy Olewinski","position":"Security Director, Milwaukee Brewers","organization":"MLB","year":"2017","industry":"pro"},
+        ],
+        "NBA": [
+          {"name":"Scott Anderson","position":"Pinnacle Venue Services","organization":"NBA","year":"2016","industry":"pro"}
+        ]
+      },
+      "hs": [
+        {"name":"Marmion Dambrino","position":"Director of Athletics, Houston Independent School District","organization":"National Federation of High School Associations","year":"2018","industry":"hs"},
+        {"name":"Guy Grace","position":"Director of Security and Emergency Planning, Littleton Public Schools","organization":"National Federation of High School Associations","year":"2019","industry":"hs"}
+      ]
+    }
+  }
+
+*/
+// Create redux store with middleware and then add to WP registry
 
 const recipientStoreName = "ncs4/recipient-store";
-const store = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["createReduxStore"])(recipientStoreName, {
-  selectors: _recipientSelectors__WEBPACK_IMPORTED_MODULE_6__,
-  actions: _recipientActions__WEBPACK_IMPORTED_MODULE_7__,
-  reducer: _recipientReducers__WEBPACK_IMPORTED_MODULE_9__["default"]
+const reduxStore = Object(redux__WEBPACK_IMPORTED_MODULE_3__["createStore"])(_recipientReducers__WEBPACK_IMPORTED_MODULE_11__["default"], Object(redux__WEBPACK_IMPORTED_MODULE_3__["applyMiddleware"])(asyncDispatchMiddleware));
+const boundSelectors = Object(lodash__WEBPACK_IMPORTED_MODULE_4__["mapValues"])(_recipientSelectors__WEBPACK_IMPORTED_MODULE_8__, selector => function () {
+  for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+    args[_key] = arguments[_key];
+  }
+
+  return selector(reduxStore.getState(), ...args);
 });
-const defaultOrg = "Unaffiliated"; // create a default recipient and set it to editMode
+const boundActions = Object(lodash__WEBPACK_IMPORTED_MODULE_4__["mapValues"])(_recipientActions__WEBPACK_IMPORTED_MODULE_9__, action => function () {
+  return reduxStore.dispatch(action(...arguments));
+}); // WordPress store, wrapper around redux stor
+
+const store = {
+  name: recipientStoreName,
+  instantiate: () => {
+    let listeners = new Set();
+
+    const logger = store => next => action => {
+      console.log("Dispatching", action);
+      let result = next(action);
+      console.log("Next state", store.getState());
+      return result;
+    };
+
+    const reduxStore = Object(redux__WEBPACK_IMPORTED_MODULE_3__["createStore"])(_recipientReducers__WEBPACK_IMPORTED_MODULE_11__["default"], Object(redux__WEBPACK_IMPORTED_MODULE_3__["applyMiddleware"])(logger, asyncDispatchMiddleware));
+    const boundActions = Object(lodash__WEBPACK_IMPORTED_MODULE_4__["mapValues"])(_recipientActions__WEBPACK_IMPORTED_MODULE_9__, action => function () {
+      return reduxStore.dispatch(action(...arguments));
+    });
+    const boundSelectors = Object(lodash__WEBPACK_IMPORTED_MODULE_4__["mapValues"])(_recipientSelectors__WEBPACK_IMPORTED_MODULE_8__, selector => function () {
+      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      return selector(reduxStore.getState(), ...args);
+    });
+    return {
+      actions: _recipientActions__WEBPACK_IMPORTED_MODULE_9__,
+      selectors: _recipientSelectors__WEBPACK_IMPORTED_MODULE_8__,
+      subscribe: listener => reduxStore.subscribe(listener),
+      reducer: _recipientReducers__WEBPACK_IMPORTED_MODULE_11__["default"],
+      getSelectors: () => boundSelectors,
+      getActions: () => boundActions,
+      store: reduxStore
+    };
+  }
+};
+const storeTest = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_7__["createReduxStore"])(recipientStoreName, {
+  selectors: _recipientSelectors__WEBPACK_IMPORTED_MODULE_8__,
+  actions: _recipientActions__WEBPACK_IMPORTED_MODULE_9__,
+  reducer: _recipientReducers__WEBPACK_IMPORTED_MODULE_11__["default"]
+}); // Constants
+
+const industrySegments = {
+  pro: {
+    title: "Professional Sports and Entertainment",
+    useOrgs: true
+  },
+  college: {
+    title: "Intercollegiate Athletics",
+    useOrgs: false
+  },
+  hs: {
+    title: "Interscholastic Athletics and After-School Activities",
+    useOrgs: false
+  },
+  marathon: {
+    title: "Marathon and Endurance Events",
+    useOrgs: false
+  },
+  other: {
+    title: "Other",
+    useOrgs: true
+  }
+};
+const defaultOrg = "Unaffiliated";
+
+function asyncDispatchMiddleware(store) {
+  return next => action => {
+    let syncActivityFinished = false;
+    let actionQueue = [];
+
+    function flushQueue() {
+      actionQueue.forEach(a => store.dispatch(a)); // flush queue
+
+      actionQueue = [];
+    }
+
+    function asyncDispatch(asyncAction) {
+      actionQueue = actionQueue.concat([asyncAction]);
+
+      if (syncActivityFinished) {
+        flushQueue();
+      }
+    }
+
+    const actionWithAsyncDispatch = Object.assign({}, action, {
+      asyncDispatch
+    });
+    next(actionWithAsyncDispatch);
+    syncActivityFinished = true;
+    flushQueue();
+  };
+} // create a default recipient and set it to editMode
+
 
 function addRecipient(registry) {
   let {
@@ -1892,42 +3104,40 @@ function addRecipient(registry) {
   createRecipient({
     year: new Date().getFullYear(),
     id: registry.select(recipientStoreName).getNextId(),
+    industry: "other",
     editMode: true,
     cancelDisabled: true
   });
 }
 function initializeStore(registry, recipients, useOrgs) {
-  let {
-    createRecipient,
-    setUseOrgs,
-    addOrganization
-  } = registry.dispatch(recipientStoreName);
+  let actions = registry.dispatch(recipientStoreName);
   let organizations = registry.select(recipientStoreName).getOrganizations();
-  setUseOrgs(useOrgs);
-  recipients.forEach(r => {
-    createRecipient({ ...r,
-      id: registry.select(recipientStoreName).getNextId()
+  actions.setUseOrgs(useOrgs);
+  Object(_recipientReducers__WEBPACK_IMPORTED_MODULE_11__["traverseRecipients"])(recipients, r => {
+    actions.updateCurrentYear(r.year);
+    actions.createRecipient({ ...r,
+      id: registry.select(recipientStoreName).getNextId(),
+      industry: r.industry || "other"
     });
 
     if (r.organization && !organizations.includes(r.organization)) {
-      addOrganization(r.organization);
+      actions.addOrganization(r.organization);
     }
   });
 } // returns all data necessary to save recipients to DB
 
 function getRecipientData(registry) {
   let recipients = registry.select(recipientStoreName).getRecipients();
-  let fields = ["name", "position", "organization", "year"];
+  var currentYear = registry.select(recipientStoreName).getCurrentYear();
+  let fields = ["name", "position", "organization", "year", "industry"];
   var displayPrevious = false;
-  var currentYear;
+  let arr = [];
   return {
-    recipients: recipients.reduce((arr, r) => {
+    recipients: Object(_recipientReducers__WEBPACK_IMPORTED_MODULE_11__["traverseRecipients"])(recipients, r => {
       if (isRecipientValid(r)) {
         let data = {};
 
-        if (isNaN(currentYear)) {
-          currentYear = r.year;
-        } else if (r.year < currentYear) {
+        if (r.year < currentYear) {
           displayPrevious = true;
         }
 
@@ -1937,9 +3147,7 @@ function getRecipientData(registry) {
 
         arr.push(data);
       }
-
-      return arr;
-    }, []),
+    }),
     displayPrevious
   };
 } // tests if the recipient can be saved
@@ -1954,232 +3162,179 @@ function isRecipientValid(data) {
   }
 
   return true;
-} // Components
+}
+/***** Components *****/
 
 
-function divideRecipients(recipients, useOrgs, currentYear) {
-  let currentRecipients = [];
-  let previousRecipients = {};
-
-  for (let i = 0; i < recipients.length; i++) {
-    if (recipients[i].year === currentYear) {
-      // current recipient
-      currentRecipients.push(i);
-    } else {
-      // previous recipient
-      let org = recipients[i].organization || defaultOrg;
-
-      if (!previousRecipients[org]) {
-        previousRecipients[org] = [];
-      }
-
-      previousRecipients[org].push(i);
-    }
-  }
-
-  let previousRecipientsArray = [];
-
-  for (let organization in previousRecipients) {
-    previousRecipientsArray.push({
-      organization,
-      indices: previousRecipients[organization]
-    });
-  }
-
-  return {
-    currentRecipients,
-    previousRecipients: previousRecipientsArray.sort(_sort__WEBPACK_IMPORTED_MODULE_10__["compareOrganizations"])
-  };
-} // wrapper component to connect recipientStore to component props
-
-
+const RecipientsSectionContext = react__WEBPACK_IMPORTED_MODULE_2___default.a.createContext({
+  backend: false,
+  onChange: null,
+  recipients: [],
+  useOrgs: false,
+  actions: null,
+  currentYear: null
+});
 function Recipients(props) {
-  const {
-    createRecipient,
-    deleteRecipient,
-    editRecipient
-  } = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName);
+  /*****  Constants *****/
+  const actions = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_7__["useDispatch"])(recipientStoreName);
+  const recipients = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_7__["useSelect"])(select => select(recipientStoreName).getRecipients());
+  const currentYear = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_7__["useSelect"])(select => select(recipientStoreName).getCurrentYear());
+  const useOrgs = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_7__["useSelect"])(select => select(recipientStoreName).getUseOrgs());
 
-  let onChange = d => editRecipient(d);
+  if (!recipients || !recipients.current) {
+    return null;
+  }
 
-  let rs = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useSelect"])(select => {
-    let recipients = select(recipientStoreName).getRecipients();
-
-    if (!recipients || !recipients[0]) {
-      return null;
-    }
-
-    let useOrgs = select(recipientStoreName).getUseOrgs();
-    let currentYear = recipients[0].year;
-    let {
-      currentRecipients,
-      previousRecipients
-    } = divideRecipients(recipients, useOrgs, currentYear);
-    let hasPreviousRecipients = previousRecipients.length > 0; // create section components
-
-    let commonProps = {
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSectionContext.Provider, {
+    value: {
+      backend: true,
+      onChange: actions.editRecipient,
       recipients,
-      onChange,
-      currentYear,
-      displayYear: !hasPreviousRecipients,
       useOrgs,
-      awardId: props.awardId,
-      backend: true
-    };
-    let CurrentRecipientsSection = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
-      indices: currentRecipients
-    }));
-    let PreviousRecipientsSections;
-
-    if (!hasPreviousRecipients) {
-      PreviousRecipientsSections = null;
-    } else {
-      PreviousRecipientsSections = previousRecipients.map((section, i) => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
-        indices: section.indices,
-        key: section.organization,
-        displayPreviousRecipientsHeader: i === 0
-      })));
+      actions,
+      currentYear
     }
-
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, CurrentRecipientsSection, PreviousRecipientsSections);
-  });
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, rs);
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSectionContext.Consumer, null, context => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsTree, {
+    recipients: context.recipients,
+    currentYear: context.currentYear,
+    depth: 0
+  })));
 }
 function RecipientsSave(props) {
-  let {
-    currentRecipients,
-    previousRecipients
-  } = divideRecipients(props.recipients, props.useOrgs, props.recipients[0].year);
-  let hasPreviousRecipients = previousRecipients.length > 0;
-  let commonProps = {
-    recipients: props.recipients,
-    currentYear: props.recipients[0].year,
-    displayYear: !hasPreviousRecipients,
-    useOrgs: props.useOrgs,
-    backend: false
-  };
-  let CurrentRecipientsSection = Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
-    indices: currentRecipients
-  }));
-  let PreviousRecipientsSections;
+  let recipients = props.recipients;
 
-  if (!hasPreviousRecipients) {
-    PreviousRecipientsSections = null;
-  } else {
-    PreviousRecipientsSections = previousRecipients.map((section, i) => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSection, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, commonProps, {
-      indices: section.indices,
-      key: section.organization,
-      displayPreviousRecipientsHeader: i === 0
-    })));
+  if (!recipients || !recipients.current || !recipients.previous) {
+    return null; // malformed database attribute
   }
 
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, CurrentRecipientsSection, PreviousRecipientsSections);
+  let hasPreviousRecipients = recipients.previous.length > 0;
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSectionContext.Provider, {
+    value: {
+      backend: false,
+      recipients,
+      useOrgs: props.useOrgs,
+      currentYear: recipients.current[0].year
+    }
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSectionContext.Consumer, null, context => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsTree, {
+    recipients: context.recipients,
+    currentYear: context.currentYear,
+    depth: 0
+  })));
 }
 
-function RecipientsSection(props) {
-  let header; // current recipients, previous recipients
+function RecipientsTree(props) {
+  let leaves = [];
+  let recipients = props.recipients;
+  let fields = recipients.order || Object.keys(recipients).filter(field => field !== "order" && field !== "length");
 
-  let orgHeader; // organization abbreviation
+  for (let field of fields) {
+    let recipients = props.recipients[field];
+    let header;
 
+    if (industrySegments[field]) {
+      header = industrySegments[field].title;
+    } else if (field === "current") {
+      header = recipients.length > 0 ? recipients[0].year + " Recipient" : null;
+      header = recipients.length > 1 ? header + "s" : header;
+    } else if (field === "previous") {
+      header = recipients.length > 0 ? "Previous Recipient" : null;
+      header = recipients.length > 1 ? header + "s" : header;
+    } else {
+      header = field;
+    }
+
+    leaves.push(Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsLeaf, {
+      key: field,
+      recipients: recipients,
+      header: header,
+      displayYear: field !== "current",
+      depth: props.depth
+    }));
+  }
+
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, leaves);
+}
+
+function RecipientsLeaf(props) {
+  let content = Array.isArray(props.recipients) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsList, {
+    recipients: props.recipients,
+    displayYear: props.displayYear,
+    depth: props.depth
+  }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsTree, {
+    recipients: props.recipients,
+    displayYear: props.displayYear,
+    depth: props.depth + 1
+  });
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, props.header && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsHeader, {
+    depth: props.depth,
+    header: props.header
+  }), content);
+}
+
+function RecipientsHeader(props) {
   let commonProps = {
-    useOrgs: props.useOrgs,
-    currentYear: props.currentYear,
-    awardId: props.awardId,
-    backend: props.backend
+    className: "ncs4-award-recipient__header",
+    depth: props.depth
   };
-  let rs = props.recipients.reduce((arr, r, index) => {
-    if (props.indices.includes(index)) {
-      arr.push(Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, props.backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Recipient, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, commonProps, {
-        key: r.id,
-        actions: Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useDispatch"])(recipientStoreName),
-        onChange: props.onChange,
-        displayYear: props.displayYear || r.year !== props.currentYear
-      })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientSave, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, r, commonProps, {
-        key: r.id,
-        displayYear: props.displayYear || r.year !== props.currentYear
-      }))));
-    }
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, props.depth === 0 && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h3", commonProps, props.header), props.depth === 1 && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h4", commonProps, props.header), props.depth === 2 && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h5", commonProps, props.header), props.depth > 2 && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h6", commonProps, props.header));
+}
 
-    return arr;
-  }, []); // set headers
-
-  if (props.recipients[0].year === props.currentYear && props.recipients[props.recipients.length - 1].year !== props.currentYear) {
-    // Divide into current and previous recipients
-    if (props.recipients[props.indices[0]].year === props.currentYear) {
-      // current recipients section
-      header = props.currentYear + " Recipient";
-    } else if (props.useOrgs) {
-      orgHeader = props.recipients[props.indices[0]].organization || defaultOrg;
-    }
-
-    if (props.displayPreviousRecipientsHeader) {
-      header = "Previous Recipient";
-    }
-  }
-
-  if (header && props.indices[props.indices.length - 1] - props.indices[0]) {
-    header = header + "s"; // make plural
-  }
-
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, header && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
-    className: "ncs4-award-card__recipient-section-header"
-  }, header), orgHeader && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
-    className: "ncs4-award-card__recipient-section-org-header"
-  }, orgHeader), rs);
+function RecipientsList(props) {
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, props.recipients.map(recipient => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSectionContext.Consumer, null, context => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, context.backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Recipient, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, context, {
+    recipient: recipient,
+    key: recipient.id,
+    displayYear: props.displayYear
+  })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientSave, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, context, recipient, {
+    key: recipient.id,
+    displayYear: props.displayYear
+  }))))));
 }
 
 function Recipient(props) {
-  let [isEditing, setEditing] = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(Boolean(props.editMode));
-  let {
-    createRecipient,
-    deleteRecipient,
-    editRecipient
-  } = props.actions;
-  let orgs = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useSelect"])(select => select(recipientStoreName).getOrganizations());
+  let initData = props.recipient;
+  let [isEditing, setEditing] = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(Boolean(initData.editMode));
+  let actions = props.actions;
+  let orgs = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_7__["useSelect"])(select => select(recipientStoreName).getOrganizations());
   let {
     addOrganization
   } = props.actions;
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, isEditing ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientEditer, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
-    delete: () => deleteRecipient(props.id),
+    initialState: initData,
+    delete: () => actions.deleteRecipient(initData),
     cancel: () => setEditing(false),
     save: info => {
       setEditing(false);
 
       if (info.organization && !orgs.includes(info.organization)) {
-        addOrganization(info.organization);
+        actions.addOrganization(info.organization);
       }
 
-      props.onChange(info);
+      props.onChange(initData, info);
     }
   })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientSave, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+    recipient: initData,
     setEditing: setEditing
   })));
 }
 
 function RecipientSave(props) {
+  let recipient = props.recipient;
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
     className: "ncs4-award-recipient"
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
     className: "ncs4-award-recipient__name"
-  }, props.name), props.position && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
+  }, recipient.name), recipient.position && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
     className: "ncs4-award-recipient__position"
-  }, props.position)), props.displayYear && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
+  }, recipient.position)), props.displayYear && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
     className: "ncs4-award-recipient__year"
-  }, props.year)), props.useOrgs && props.organization && !props.displayYear && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, " (", props.organization, ")"), props.backend && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
+  }, recipient.year)), props.useOrgs && recipient.organization && !props.displayYear && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, " (", recipient.organization, ")"), props.backend && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
     className: "dashicons dashicons-edit ncs4-award-recipient__edit",
     onClick: () => props.setEditing(true)
   }));
 }
 
 function RecipientEditer(props) {
-  let [dataState, setDataState] = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])({
-    id: props.id,
-    // keep constant
-    name: props.name,
-    position: props.position,
-    organization: props.organization,
-    year: props.year
-  });
+  let [dataState, setDataState] = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(props.initialState);
   let [uiState, setUIState] = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])({
     deleteClicked: false,
     cancelClicked: false,
@@ -2224,7 +3379,7 @@ function RecipientEditer(props) {
     }
   };
 
-  let organizations = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useSelect"])(select => select(recipientStoreName).getOrganizations());
+  let organizations = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_7__["useSelect"])(select => select(recipientStoreName).getOrganizations());
   const deleteClass = "dashicons dashicons-trash ncs4-award-recipient__edit-delete";
   const cancelClass = "dashicons dashicons-no ncs4-award-recipient__edit-cancel";
   const labelClasses = "css-1wzzj1a css-4dk55l e1puf3u1";
@@ -2245,12 +3400,12 @@ function RecipientEditer(props) {
     onClick: saveHandler
   }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
     className: "ncs4-award-recipient__input-fields-area"
-  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["TextControl"], {
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__["TextControl"], {
     value: dataState.name,
     label: "Recipient name",
     placeholder: "John Deer",
     onChange: changeHandler("name")
-  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["TextControl"], {
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__["TextControl"], {
     value: dataState.position,
     label: "Recipient position",
     placeholder: "Super-executive-vice-president of business operations",
@@ -2288,7 +3443,27 @@ function RecipientEditer(props) {
     className: "css-1kyqli5",
     value: dataState.year,
     onChange: e => changeHandler("year")(e.target.value)
-  })))));
+  })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__["RadioControl"], {
+    label: "Industry segment",
+    selected: dataState.industry,
+    options: [{
+      label: "Professional & Entertainment",
+      value: "pro"
+    }, {
+      label: "Intercollegiate",
+      value: "college"
+    }, {
+      label: "Interscholastic & After-School",
+      value: "hs"
+    }, {
+      label: "Marathon & Endurance",
+      value: "marathon"
+    }, {
+      label: "Miscellaneous",
+      value: "other"
+    }],
+    onChange: changeHandler("industry")
+  }))));
 }
 
 /***/ }),
@@ -2364,15 +3539,15 @@ class AwardCardSave extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
 /*!*********************!*\
   !*** ./src/sort.js ***!
   \*********************/
-/*! exports provided: sortedInsert, getRecipientsCompare, compareIsEmptyRecipient, compareOrganizations, compareYears, compareNames, transposeName */
+/*! exports provided: sortedInsert, compareYearThenNames, compareIsEmptyRecipient, compareStrings, compareYears, compareNames, transposeName */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sortedInsert", function() { return sortedInsert; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRecipientsCompare", function() { return getRecipientsCompare; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareYearThenNames", function() { return compareYearThenNames; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareIsEmptyRecipient", function() { return compareIsEmptyRecipient; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareOrganizations", function() { return compareOrganizations; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareStrings", function() { return compareStrings; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareYears", function() { return compareYears; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "compareNames", function() { return compareNames; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "transposeName", function() { return transposeName; });
@@ -2405,37 +3580,9 @@ function sortedInsert(arr, x, compare) {
 
   return out;
 }
-function getRecipientsCompare(currentYear, useOrgs) {
-  return combineCompares(compareIsEmptyRecipient, getCurrentRecipientsCompare(currentYear, useOrgs), getPreviousRecipientsCompare(currentYear, useOrgs));
-}
-
-function getCurrentRecipientsCompare(currentYear, useOrgs) {
-  return (x, y) => {
-    if (useOrgs && (x.year !== currentYear || y.year !== currentYear)) {
-      return 0; // pass sorting on to getPreviousRecipientsCompare()
-    } // sorting when not using orgs & for "current recipients" always
-
-
-    return combineCompares(compareYears, compareNames)(x, y);
-  };
-}
-
-function getPreviousRecipientsCompare(currentYear, useOrgs) {
-  if (!useOrgs) {
-    return () => 0; // fall through
-  }
-
-  return combineCompares((x, y) => {
-    if (x.year === currentYear) {
-      return -1;
-    } else if (y.year === currentYear) {
-      return 1;
-    }
-
-    return 0;
-  }, compareOrganizations, compareYears, compareNames);
+function compareYearThenNames(x, y) {
+  return combineCompares(compareIsEmptyRecipient, compareYears, compareNames)(x, y);
 } // Applies each compare in order until a non-zero result is reached or all return 0
-
 
 function combineCompares() {
   for (var _len = arguments.length, compares = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -2467,15 +3614,11 @@ function compareIsEmptyRecipient(x, y) {
     return 0;
   }
 }
-function compareOrganizations(x, y) {
-  if (x.organization && !y.organization) {
-    return -1;
-  } else if (!x.organization && y.organization) {
-    return 1;
-  } else if (!x.organization && !y.organization || x.organization === y.organization) {
+function compareStrings(x, y) {
+  if (x === y) {
     return 0;
   } else {
-    return 2 * Number(x.organization.toUpperCase() > y.organization.toUpperCase()) - 1;
+    return 2 * Number(x.toUpperCase() > y.toUpperCase()) - 1;
   }
 }
 function compareYears(x, y) {
@@ -2560,6 +3703,17 @@ function transposeName(name) {
 /***/ (function(module, exports) {
 
 (function() { module.exports = window["wp"]["element"]; }());
+
+/***/ }),
+
+/***/ "lodash":
+/*!*************************!*\
+  !*** external "lodash" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function() { module.exports = window["lodash"]; }());
 
 /***/ }),
 

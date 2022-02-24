@@ -23,44 +23,12 @@ export function sortedInsert(arr, x, compare) {
   return out;
 }
 
-export function getRecipientsCompare(currentYear, useOrgs) {
+export function compareYearThenNames(x, y) {
   return combineCompares(
     compareIsEmptyRecipient,
-    getCurrentRecipientsCompare(currentYear, useOrgs),
-    getPreviousRecipientsCompare(currentYear, useOrgs),
-  );
-}
-
-function getCurrentRecipientsCompare(currentYear, useOrgs) {
-  return (x, y) => {
-    if (useOrgs && ( x.year !== currentYear || y.year !== currentYear )) {
-      return 0; // pass sorting on to getPreviousRecipientsCompare()
-    }
-    // sorting when not using orgs & for "current recipients" always
-    return combineCompares(
-      compareYears,
-      compareNames,
-    )(x, y);
-  }
-}
-
-function getPreviousRecipientsCompare(currentYear, useOrgs) {
-  if (!useOrgs) {
-    return ( () => 0 ); // fall through
-  }
-  return combineCompares(
-    (x, y) => {
-      if (x.year === currentYear) {
-        return -1;
-      } else if (y.year === currentYear) {
-        return 1;
-      }
-      return 0;
-    },
-    compareOrganizations,
     compareYears,
     compareNames,
-  );
+  )(x, y);
 }
 
 // Applies each compare in order until a non-zero result is reached or all return 0
@@ -88,19 +56,12 @@ export function compareIsEmptyRecipient(x, y) {
   }
 }
 
-export function compareOrganizations(x, y) {
-  if (x.organization && !y.organization) {
-    return -1;
-  } else if (!x.organization && y.organization) {
-    return 1;
-  } else if (
-         (!x.organization && !y.organization)
-      || x.organization === y.organization)
-    {
+export function compareStrings(x, y) {
+  if (x === y) {
     return 0;
   } else {
     return 2 * Number(
-      x.organization.toUpperCase() > y.organization.toUpperCase()
+      x.toUpperCase() > y.toUpperCase()
     ) - 1;
   }
 }

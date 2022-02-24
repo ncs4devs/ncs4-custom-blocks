@@ -1,7 +1,9 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
+import { createStore, applyMiddleware } from 'redux';
+import { mapValues } from 'lodash';
 
 import { RichText } from '@wordpress/block-editor';
-import { TextControl } from '@wordpress/components';
+import { TextControl, RadioControl } from '@wordpress/components';
 
 import {
   createReduxStore,
@@ -13,21 +15,192 @@ import {
 import * as selectors from './recipientSelectors';
 import * as actions from './recipientActions';
 import * as actionTypes from './recipientActionTypes';
-import reducer from './recipientReducers';
-import { compareOrganizations } from './sort';
+import reducer, { traverseRecipients } from './recipientReducers';
 
+/*
+  Sorting is done by splitting Recipients into a tree with the field being
+  either the header, or an alias to the header title.
+  Each subtree then becomes its own section on the page, with the depth
+  encoded as an HTML attribute for styling.
+  Each edge leaf is an array of recipient objects, sorted by year and then name
+  Sorting of organization and industry is handled by sorting their
+  identifiers in an array stored in a special leaf, `order`, in each proper
+  subtree that isn't an edge leaf.
+
+  Example recipient tree:
+
+  // Organization sorting disabled
+  {
+    "current": [
+      {"name":"Elizabeth Woollen","position":"Chief (Ret.), The University of Oklahoma Police Department","year":"2021","industry":"pro"}
+    ],
+    "previous": [
+      {"name":"John King","position":"CSSP, Executive Director of Public Safety, Chief of Police (Ret.), Boston College","year":"2019","industry":"other"},
+      {"name":"Dennis Cunningham","position":"Executive Vice President/Director of Security, National Hockey League","year":"2018","industry":"other"},
+      {"name":"Larry Buendorf","position":"Chief Security Officer, United States Olympic Committee","year":"2017","industry":"other"}
+    ]
+  }
+
+  // Organization sorting enabled (some entries ommitted, some organizations incorrectly labeled)
+  {
+    "current": [
+      {"name":"Salvatore DeAngelis","position":"Director, Operations/Security, Philadelphia Phillies ","organization":"MLB","year":"2021","industry":"pro"},
+      {"name":"Brandon Flynn","position":"Security and Parking Manager, Tampa Sports Authority ","organization":"NFL","year":"2021","industry":"pro"},
+      ...
+    ],
+    "previous": {
+      "order": ["hs","pro","other","marathon"],
+      "marathon": [
+        {"name":"John Bertsch","position":"Executive Director of Global Safety & Security, IRONMAN World Championship","organization":"Marathon/Endurance Events","year":"2017","industry":"marathon"},
+        {"name":"Virginia Achman","position":"Executive Director, Twin Cities in Motion","organization":"Marathon/Endurance Events","year":"2018","industry":"marathon"},
+        {"name":"Greg Haapala","position":"Race Director, Grandma's Marathon","organization":"Marathon/Endurance Events","year":"2019","industry":"marathon"}
+      ],
+      "length": 51,
+      "other": {
+        "order": ["NHL","NFL","NCAA","NBA","National Federation of High School Associations","MLB","Marathon/Endurance Events"],
+        "Marathon/Endurance Events": [
+          {"name":"Dave McGillivray","position":"Boston Marathon","organization":"Marathon/Endurance Events","year":"2014","industry":"other"},
+          {"name":"Mike Nishi","position":"Chicago Marathon","organization":"Marathon/Endurance Events","year":"2015","industry":"other"},
+          {"name":"Ted Metellus","position":"Competitor Group","organization":"Marathon/Endurance Events","year":"2016","industry":"other"}
+        ],
+        ...
+      },
+      "pro": {
+        "order": ["NBA","MLB"],
+        "MLB": [
+          {"name":"Greg Terp","position":"Miami Marlins","organization":"MLB","year":"2016","industry":"pro"},
+          {"name":"Randy Olewinski","position":"Security Director, Milwaukee Brewers","organization":"MLB","year":"2017","industry":"pro"},
+        ],
+        "NBA": [
+          {"name":"Scott Anderson","position":"Pinnacle Venue Services","organization":"NBA","year":"2016","industry":"pro"}
+        ]
+      },
+      "hs": [
+        {"name":"Marmion Dambrino","position":"Director of Athletics, Houston Independent School District","organization":"National Federation of High School Associations","year":"2018","industry":"hs"},
+        {"name":"Guy Grace","position":"Director of Security and Emergency Planning, Littleton Public Schools","organization":"National Federation of High School Associations","year":"2019","industry":"hs"}
+      ]
+    }
+  }
+
+*/
+
+
+// Create redux store with middleware and then add to WP registry
 
 export const recipientStoreName = "ncs4/recipient-store";
-export const store = createReduxStore(
+const reduxStore = createStore(reducer, applyMiddleware(asyncDispatchMiddleware));
+const boundSelectors = mapValues(
+  selectors,
+  (selector) => (...args) => selector(reduxStore.getState(), ...args),
+);
+const boundActions = mapValues(
+  actions,
+  (action) => (...args) => reduxStore.dispatch(action(...args)),
+);
+
+// WordPress store, wrapper around redux stor
+
+export const store = {
+  name: recipientStoreName,
+  instantiate: () => {
+    let listeners = new Set();
+
+    const logger = (store) => (next) => (action) => {
+      console.log("Dispatching", action);
+      let result = next(action);
+      console.log("Next state", store.getState());
+      return result;
+    }
+
+    const reduxStore = createStore(
+      reducer,
+      applyMiddleware(logger, asyncDispatchMiddleware),
+    );
+
+    const boundActions = mapValues(
+      actions,
+      (action) => (...args) => reduxStore.dispatch(action(...args)),
+    )
+    const boundSelectors = mapValues(
+      selectors,
+      (selector) => (...args) => selector(reduxStore.getState(), ...args),
+    );
+
+    return {
+      actions,
+      selectors,
+      subscribe: (listener) => reduxStore.subscribe(listener),
+      reducer,
+      getSelectors: () => boundSelectors,
+      getActions: () => boundActions,
+      store: reduxStore,
+    };
+  }
+}
+
+const storeTest = createReduxStore(
   recipientStoreName,
   {
     selectors,
     actions,
     reducer,
-  }
+  },
 );
 
+// Constants
+
+const industrySegments = {
+  pro: {
+    title: "Professional Sports and Entertainment",
+    useOrgs: true,
+  },
+  college: {
+    title: "Intercollegiate Athletics",
+    useOrgs: false,
+  },
+  hs: {
+    title: "Interscholastic Athletics and After-School Activities",
+    useOrgs: false,
+  },
+  marathon: {
+    title: "Marathon and Endurance Events",
+    useOrgs: false,
+  },
+  other: {
+    title: "Other",
+    useOrgs: true,
+  },
+};
+
 const defaultOrg = "Unaffiliated";
+
+
+function asyncDispatchMiddleware(store) {
+  return (next) => (action) => {
+    let syncActivityFinished = false;
+    let actionQueue = [];
+
+    function flushQueue() {
+      actionQueue.forEach((a) => store.dispatch(a)); // flush queue
+      actionQueue = [];
+    }
+
+    function asyncDispatch(asyncAction) {
+      actionQueue = actionQueue.concat([asyncAction]);
+
+      if (syncActivityFinished) {
+        flushQueue();
+      }
+    }
+
+    const actionWithAsyncDispatch = Object.assign({}, action, { asyncDispatch });
+
+    next(actionWithAsyncDispatch);
+    syncActivityFinished = true;
+    flushQueue();
+  }
+}
+
 
  // create a default recipient and set it to editMode
 export function addRecipient(registry) {
@@ -35,26 +208,26 @@ export function addRecipient(registry) {
   createRecipient({
     year: (new Date()).getFullYear(),
     id: registry.select(recipientStoreName).getNextId(),
+    industry: "other",
     editMode: true,
     cancelDisabled: true,
   });
 }
 
 export function initializeStore(registry, recipients, useOrgs) {
-  let {
-    createRecipient,
-    setUseOrgs,
-    addOrganization
-  } = registry.dispatch(recipientStoreName);
+  let actions = registry.dispatch(recipientStoreName);
   let organizations = registry.select(recipientStoreName).getOrganizations();
-  setUseOrgs(useOrgs);
-  recipients.forEach( (r) => {
-    createRecipient({
+  actions.setUseOrgs(useOrgs);
+
+  traverseRecipients(recipients, (r) => {
+    actions.updateCurrentYear(r.year);
+    actions.createRecipient({
       ...r,
       id: registry.select(recipientStoreName).getNextId(),
+      industry: r.industry || "other",
     });
     if (r.organization && !organizations.includes(r.organization)) {
-      addOrganization(r.organization);
+      actions.addOrganization(r.organization);
     }
   });
 }
@@ -62,23 +235,25 @@ export function initializeStore(registry, recipients, useOrgs) {
 // returns all data necessary to save recipients to DB
 export function getRecipientData(registry) {
   let recipients = registry.select(recipientStoreName).getRecipients();
+  var currentYear = registry.select(recipientStoreName).getCurrentYear();
+
   let fields = [
     "name",
     "position",
     "organization",
     "year",
+    "industry",
   ]
   var displayPrevious = false;
-  var currentYear;
 
+  let arr = [];
   return {
-    recipients: recipients.reduce(
-      (arr, r) => {
+    recipients: traverseRecipients(
+      recipients,
+      (r) => {
         if (isRecipientValid(r)) {
           let data = {};
-          if (isNaN(currentYear)) {
-            currentYear = r.year;
-          } else if(r.year < currentYear) {
+          if(r.year < currentYear) {
             displayPrevious = true;
           }
 
@@ -87,8 +262,7 @@ export function getRecipientData(registry) {
           }
           arr.push(data);
         }
-        return arr;
-      }, []
+      }
     ),
     displayPrevious,
   }
@@ -105,265 +279,256 @@ function isRecipientValid(data) {
   return true;
 }
 
-// Components
 
-function divideRecipients(recipients, useOrgs, currentYear) {
-  let currentRecipients = [];
-  let previousRecipients = {};
 
-  for (let i = 0; i < recipients.length; i++) {
-    if (recipients[i].year === currentYear) {
-      // current recipient
-      currentRecipients.push(i);
-    } else {
-      // previous recipient
-      let org = recipients[i].organization || defaultOrg;
-      if (!previousRecipients[org]) {
-        previousRecipients[org] = [];
-      }
-      previousRecipients[org].push(i);
-    }
-  }
-  let previousRecipientsArray = [];
-  for (let organization in previousRecipients) {
-    previousRecipientsArray.push({
-      organization,
-      indices: previousRecipients[organization],
-    });
-  }
-  return {
-    currentRecipients,
-    previousRecipients: previousRecipientsArray.sort(compareOrganizations),
-  };
-}
+/***** Components *****/
 
-// wrapper component to connect recipientStore to component props
+
+
+const RecipientsSectionContext = React.createContext({
+  backend: false,
+  onChange: null,
+  recipients: [],
+  useOrgs: false,
+  actions: null,
+  currentYear: null,
+})
+
 export default function Recipients(props) {
-  const {
-    createRecipient,
-    deleteRecipient,
-    editRecipient,
-  } = useDispatch(recipientStoreName);
 
-  let onChange = (d) => editRecipient(d);
-  let rs = useSelect( (select) => {
-    let recipients = select(recipientStoreName).getRecipients();
-    if (!recipients || !recipients[0]) {
-      return null;
-    }
-    let useOrgs = select(recipientStoreName).getUseOrgs();
-    let currentYear = recipients[0].year;
+  /*****  Constants *****/
 
-    let { currentRecipients, previousRecipients } = divideRecipients(
-      recipients,
-      useOrgs,
-      currentYear,
-    );
-    let hasPreviousRecipients = previousRecipients.length > 0;
+  const actions = useDispatch(recipientStoreName);
+  const recipients = useSelect( (select) =>
+     select(recipientStoreName)
+    .getRecipients()
+  );
+  const currentYear = useSelect( (select) =>
+    select(recipientStoreName)
+    .getCurrentYear()
+  );
+  const useOrgs = useSelect( (select) =>
+    select(recipientStoreName).getUseOrgs()
+  );
 
-    // create section components
-    let commonProps = {
-      recipients,
-      onChange,
-      currentYear,
-      displayYear: !hasPreviousRecipients,
-      useOrgs,
-      awardId: props.awardId,
-      backend: true,
-    }
-    let CurrentRecipientsSection = (
-      <RecipientsSection
-        { ...commonProps }
-        indices = { currentRecipients }
-      />
-    );
 
-    let PreviousRecipientsSections;
-    if (!hasPreviousRecipients) {
-      PreviousRecipientsSections = null;
-    } else {
-      PreviousRecipientsSections = previousRecipients.map(
-        (section, i) => (
-          <RecipientsSection
-            { ...commonProps }
-            indices = { section.indices }
-            key = { section.organization }
-            displayPreviousRecipientsHeader = { i === 0 }
-          />
-        )
-      );
-    }
-    return (
-      <>
-        { CurrentRecipientsSection }
-        { PreviousRecipientsSections }
-      </>
-    );
-  })
+  if (!recipients || !recipients.current) {
+    return null;
+  }
 
   return (
-    <>
-      { rs }
-    </>
-  )
+    <RecipientsSectionContext.Provider
+      value = {{
+        backend: true,
+        onChange: actions.editRecipient,
+        recipients,
+        useOrgs,
+        actions,
+        currentYear,
+      }}
+    >
+      <RecipientsSectionContext.Consumer>
+        { context => (
+          <RecipientsTree
+            recipients = { context.recipients }
+            currentYear = { context.currentYear }
+            depth = { 0 }
+          />
+        )}
+      </RecipientsSectionContext.Consumer>
+    </RecipientsSectionContext.Provider>
+  );
 }
 
 export function RecipientsSave(props) {
-  let { currentRecipients, previousRecipients } = divideRecipients(
-    props.recipients,
-    props.useOrgs,
-    props.recipients[0].year,
-  );
-  let hasPreviousRecipients = previousRecipients.length > 0;
-
-  let commonProps = {
-    recipients: props.recipients,
-    currentYear: props.recipients[0].year,
-    displayYear: !hasPreviousRecipients,
-    useOrgs: props.useOrgs,
-    backend: false,
-  };
-
-  let CurrentRecipientsSection = (
-    <RecipientsSection
-      { ...commonProps }
-      indices = { currentRecipients }
-    />
-  );
-
-  let PreviousRecipientsSections;
-  if (!hasPreviousRecipients) {
-    PreviousRecipientsSections = null;
-  } else {
-    PreviousRecipientsSections = previousRecipients.map(
-      (section, i) => (
-        <RecipientsSection
-          { ...commonProps }
-          indices = { section.indices }
-          key = { section.organization }
-          displayPreviousRecipientsHeader = { i === 0 }
-        />
-      )
-    );
+  let recipients = props.recipients;
+  if (!recipients || !recipients.current || !recipients.previous) {
+    return null; // malformed database attribute
   }
+
+  let hasPreviousRecipients = recipients.previous.length > 0;
+
   return (
-    <>
-      { CurrentRecipientsSection }
-      { PreviousRecipientsSections }
-    </>
+    <RecipientsSectionContext.Provider
+      value = {{
+        backend: false,
+        recipients,
+        useOrgs: props.useOrgs,
+        currentYear: recipients.current[0].year,
+      }}
+    >
+      <RecipientsSectionContext.Consumer>
+        { context => (
+          <RecipientsTree
+            recipients = { context.recipients }
+            currentYear = { context.currentYear }
+            depth = { 0 }
+          />
+        )}
+      </RecipientsSectionContext.Consumer>
+    </RecipientsSectionContext.Provider>
   )
 }
 
-function RecipientsSection(props) {
-  let header; // current recipients, previous recipients
-  let orgHeader; // organization abbreviation
-  let commonProps = {
-    useOrgs: props.useOrgs,
-    currentYear: props.currentYear,
-    awardId: props.awardId,
-    backend: props.backend,
-  }
+function RecipientsTree(props) {
+  let leaves = [];
+  let recipients = props.recipients;
 
-  let rs = props.recipients.reduce(
-    (arr, r, index) => {
-      if (props.indices.includes(index)) {
-        arr.push(
-          <>
-            { props.backend
-              ? <Recipient
-                  {...r}
-                  {...commonProps}
-                  key = {r.id}
-                  actions = { useDispatch(recipientStoreName) }
-                  onChange = { props.onChange }
-                  displayYear = { props.displayYear || r.year !== props.currentYear }
-                />
-              : <RecipientSave
-                  {...r}
-                  {...commonProps}
-                  key = {r.id}
-                  displayYear = { props.displayYear ||  r.year !== props.currentYear }
-                />
-            }
-          </>
-        );
-      }
-      return arr;
-    },
-    [],
+  let fields = recipients.order || Object.keys(recipients).filter(
+    (field) => field !== "order" && field !== "length"
   );
 
-  // set headers
-  if (
-       props.recipients[0].year === props.currentYear
-    && props.recipients[props.recipients.length - 1].year !== props.currentYear
-  ) {
-    // Divide into current and previous recipients
-    if (props.recipients[props.indices[0]].year === props.currentYear) {
-      // current recipients section
-      header = props.currentYear + " Recipient";
-    } else if (props.useOrgs) {
-      orgHeader = props.recipients[props.indices[0]].organization || defaultOrg;
+  for (let field of fields) {
+    let recipients = props.recipients[field];
+    let header;
+
+    if (industrySegments[field]) {
+      header = industrySegments[field].title;
+    } else if (field === "current") {
+      header = recipients.length > 0
+        ? recipients[0].year + " Recipient"
+        : null;
+      header = recipients.length > 1
+        ? header + "s"
+        : header;
+    } else if (field === "previous") {
+        header = recipients.length > 0
+          ? "Previous Recipient"
+          : null;
+        header = recipients.length > 1
+          ? header + "s"
+          : header;
+    } else {
+      header = field;
     }
-    if (props.displayPreviousRecipientsHeader) {
-      header = "Previous Recipient";
-    }
-  }
-  if (header && props.indices[props.indices.length - 1] - props.indices[0]) {
-    header = header + "s"; // make plural
+
+    leaves.push(
+      <RecipientsLeaf
+        key = { field }
+        recipients = { recipients }
+        header = { header }
+        displayYear = { field !== "current" }
+        depth = { props.depth }
+      />
+    )
   }
 
   return (
     <>
-      { header && (
-        <p
-          className = "ncs4-award-card__recipient-section-header"
-        >
-          { header }
-        </p>
+      { leaves }
+    </>
+  );
+}
+
+function RecipientsLeaf(props) {
+  let content = Array.isArray(props.recipients)
+    ? <RecipientsList
+        recipients = { props.recipients }
+        displayYear = { props.displayYear }
+        depth = { props.depth }
+      />
+    : <RecipientsTree
+        recipients = { props.recipients }
+        displayYear = { props.displayYear }
+        depth = { props.depth + 1 }
+      />
+  ;
+  return (
+    <>
+      { props.header && (
+        <RecipientsHeader
+          depth = { props.depth }
+          header = { props.header }
+        />
       )}
-      { orgHeader && (
-        <p
-          className = "ncs4-award-card__recipient-section-org-header"
-        >
-          { orgHeader }
-        </p>
+      { content }
+    </>
+  );
+}
+
+function RecipientsHeader(props) {
+  let commonProps = {
+    className: "ncs4-award-recipient__header",
+    depth: props.depth,
+  };
+
+  return (
+    <>
+      { props.depth === 0 && (
+        <h3 { ...commonProps }>{ props.header }</h3>
       )}
-      { rs }
+      { props.depth === 1 && (
+        <h4 { ...commonProps }>{ props.header }</h4>
+      )}
+      { props.depth === 2 && (
+        <h5 { ...commonProps }>{ props.header }</h5>
+      )}
+      { props.depth > 2 && (
+        <h6 { ...commonProps }>{ props.header }</h6>
+      )}
+    </>
+  );
+}
+
+function RecipientsList(props) {
+  return (
+    <>
+      { props.recipients.map(recipient => (
+        <RecipientsSectionContext.Consumer>
+          { context => (
+            <>
+              { context.backend
+                ? <Recipient
+                    { ...context }
+                    recipient = { recipient }
+                    key = { recipient.id }
+                    displayYear = { props.displayYear }
+                  />
+                : <RecipientSave
+                    { ...context }
+                    { ...recipient }
+                    key = { recipient.id }
+                    displayYear = { props.displayYear }
+                  />
+              }
+            </>
+          )}
+        </RecipientsSectionContext.Consumer>
+      )) }
     </>
   );
 }
 
 function Recipient(props) {
-  let [ isEditing, setEditing ] = useState(Boolean(props.editMode));
-  let {
-    createRecipient,
-    deleteRecipient,
-    editRecipient,
-  } = props.actions;
+  let initData = props.recipient;
+  let [ isEditing, setEditing ] = useState(Boolean(initData.editMode));
+  let actions = props.actions;
 
   let orgs = useSelect( (select) => (
     select(recipientStoreName).getOrganizations()
   ));
   let { addOrganization } = props.actions;
 
+
   return (
     <>
       { isEditing
         ? <RecipientEditer
             { ...props }
-            delete = { () => deleteRecipient(props.id) }
+            initialState = { initData }
+            delete = { () => actions.deleteRecipient(initData) }
             cancel = { () => setEditing(false) }
             save = { (info) => {
               setEditing(false);
               if (info.organization && !orgs.includes(info.organization)) {
-                addOrganization(info.organization);
+                actions.addOrganization(info.organization);
               }
-              props.onChange(info);
+              props.onChange(initData, info);
             } }
           />
         : <RecipientSave
             { ...props }
+            recipient = { initData }
             setEditing = { setEditing }
           />
       }
@@ -372,16 +537,18 @@ function Recipient(props) {
 }
 
 function RecipientSave(props) {
+  let recipient = props.recipient;
+
   return (
     <p className = "ncs4-award-recipient">
       <span
         className = "ncs4-award-recipient__name"
-      >{ props.name }</span>{
-        props.position && (
+      >{ recipient.name }</span>{
+        recipient.position && (
           <>
             , <span
                 className = "ncs4-award-recipient__position"
-              >{ props.position }</span>
+              >{ recipient.position }</span>
           </>
         )
       }
@@ -389,11 +556,11 @@ function RecipientSave(props) {
         <>
           , <span
             className = "ncs4-award-recipient__year"
-          >{ props.year }</span>
+          >{ recipient.year }</span>
         </>
       )}
-      { (props.useOrgs && props.organization && !props.displayYear) && (
-        <> ({ props.organization })</>
+      { (props.useOrgs && recipient.organization && !props.displayYear) && (
+        <> ({ recipient.organization })</>
       )}
       { props.backend && (
         <span
@@ -407,13 +574,7 @@ function RecipientSave(props) {
 
 function RecipientEditer(props) {
 
-  let [dataState, setDataState] = useState({
-    id: props.id, // keep constant
-    name: props.name,
-    position: props.position,
-    organization: props.organization,
-    year: props.year,
-  });
+  let [dataState, setDataState] = useState(props.initialState);
 
   let [uiState, setUIState] = useState({
     deleteClicked: false,
@@ -549,6 +710,18 @@ function RecipientEditer(props) {
               onChange = { (e) => changeHandler("year")(e.target.value) }
             />
           </div>
+          <RadioControl
+            label = "Industry segment"
+            selected = { dataState.industry }
+            options = { [
+              { label: "Professional & Entertainment", value: "pro" },
+              { label: "Intercollegiate", value: "college" },
+              { label: "Interscholastic & After-School", value: "hs" },
+              { label: "Marathon & Endurance", value: "marathon" },
+              { label: "Miscellaneous", value: "other" },
+            ] }
+            onChange = { changeHandler("industry") }
+          />
         </div>
       </div>
     </div>

@@ -12,6 +12,7 @@ export const getRecipients = ( state, ids ) => {
 export const getState = (state) => state;
 export const getUsedIds = (state) => state.ids;
 export const getUseOrgs = (state) => state.useOrgs;
+export const getCurrentYear = (state) => state.currentYear;
 export const getOrganizations = (state) => state.organizations;
 export const hasId = (state, id) => state.ids.includes(id);
 export const createRecipientData = (state, data) => ({

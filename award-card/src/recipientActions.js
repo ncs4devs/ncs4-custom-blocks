@@ -7,16 +7,24 @@ export function createRecipient(data) {
   }
 }
 
-export function deleteRecipient(id) {
+export function deleteRecipient(data) {
   return {
     type: actionTypes.Delete,
-    id,
+    data,
   }
 }
 
-export function editRecipient(data) {
+export function editRecipient(oldData, data) {
   return {
     type: actionTypes.Edit,
+    oldData,
+    data,
+  }
+}
+
+export function setRecipients(data) {
+  return {
+    type: actionTypes.SetRecipients,
     data,
   }
 }
@@ -25,6 +33,26 @@ export function setUseOrgs(useOrgs) {
   return {
     type: actionTypes.SetUseOrgs,
     useOrgs,
+  }
+}
+
+export function SetCurrentYear(year) {
+  return {
+    type: actionTypes.SetCurrentYear,
+    year,
+  }
+}
+
+export function SetCurrentYearIf(year) {
+  return {
+    type: actionTypes.SetCurrentYearIf,
+    year,
+  }
+}
+
+export function RecalculateCurrentYear() {
+  return {
+    type: actionTypes.RecalculateCurrentYear,
   }
 }
 
@@ -38,5 +66,12 @@ export function addOrganization(organization) {
 export function sortRecipients() {
   return {
     type: actionTypes.Sort,
+  }
+}
+
+export function updateCurrentYear(year) {
+  return {
+    type: actionTypes.SetCurrentYearIf,
+    year,
   }
 }

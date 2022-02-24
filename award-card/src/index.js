@@ -54,8 +54,8 @@ registerBlockType( 'ncs4-custom-blocks/award-card', {
       type: 'string',
     },
     recipients: {
-      type: 'array',
-      default: [],
+      type: 'object',
+      default: {},
     },
     displayPrevious: {
       type: 'boolean',

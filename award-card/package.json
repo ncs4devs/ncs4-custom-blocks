@@ -11,5 +11,8 @@
   "license": "GPL-2.0+",
   "devDependencies": {
     "@wordpress/scripts": "17.1.0"
+  },
+  "dependencies": {
+    "redux": "^4.1.2"
   }
 }
