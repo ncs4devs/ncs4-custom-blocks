@@ -2418,6 +2418,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***** Sorting variables *****/
 
+const defaultOrg = "Unaffiliated";
 const industrySegments = {
   pro: {
     title: "Professional Sports and Entertainment",
@@ -2501,6 +2502,10 @@ function buildSubtree(root, fields, recipient, compare) {
 
   if (fields.length > 0) {
     let field = recipient[fields[0]];
+
+    if (fields[0] === "organization" && !field) {
+      field = defaultOrg;
+    }
 
     if (fields[0] === "organization" && !useOrgs) {
       return buildSubtree(root, fields.slice(1), recipient, compare, useOrgs);
@@ -3093,8 +3098,7 @@ const industrySegments = {
     title: "Other",
     useOrgs: true
   }
-};
-const defaultOrg = "Unaffiliated"; // create a default recipient and set it to editMode
+}; // create a default recipient and set it to editMode
 
 function addRecipient(registry) {
   let {
@@ -3138,7 +3142,7 @@ function getRecipientData(registry) {
           continue;
         }
 
-        filteredRecipient[field] = r[field];
+        filteredRecipient[field] = typeof r[field] === "string" ? r[field].trim() : r[field];
       }
 
       return arr.concat([filteredRecipient]);
@@ -3202,7 +3206,7 @@ function Recipients(props) {
 function RecipientsSave(props) {
   let recipients = props.recipients;
 
-  if (!recipients || !recipients.current || !recipients.previous) {
+  if (!recipients || !recipients.current || !recipients.previous || !recipients.current[0]) {
     return null; // malformed database attribute
   }
 

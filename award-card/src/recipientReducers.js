@@ -10,6 +10,7 @@ import * as actions from './recipientActions';
 
 /***** Sorting variables *****/
 
+const defaultOrg = "Unaffiliated";
 
 const industrySegments = {
   pro: {
@@ -105,6 +106,9 @@ function addToRecipientTree(root, recipient, useOrgs, currentYear) {
 function buildSubtree(root, fields, recipient, compare, useOrgs = true) {
   if (fields.length > 0) {
     let field = recipient[fields[0]];
+    if (fields[0] === "organization" && !field) {
+      field = defaultOrg;
+    }
 
     if (fields[0] === "organization" && !useOrgs) {
       return buildSubtree(

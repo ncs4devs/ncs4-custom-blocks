@@ -183,8 +183,6 @@ const industrySegments = {
   },
 };
 
-const defaultOrg = "Unaffiliated";
-
 
  // create a default recipient and set it to editMode
 export function addRecipient(registry) {
@@ -234,7 +232,9 @@ export function getRecipientData(registry) {
           if (excludeFields.includes(field)) {
             continue;
           }
-          filteredRecipient[field] = r[field];
+          filteredRecipient[field] = typeof r[field] === "string"
+            ? r[field].trim()
+            : r[field];
         }
         return arr.concat([filteredRecipient]);
       }
@@ -319,7 +319,7 @@ export default function Recipients(props) {
 
 export function RecipientsSave(props) {
   let recipients = props.recipients;
-  if (!recipients || !recipients.current || !recipients.previous) {
+  if (!recipients || !recipients.current || !recipients.previous || !recipients.current[0]) {
     return null; // malformed database attribute
   }
 
