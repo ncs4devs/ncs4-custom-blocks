@@ -2310,7 +2310,7 @@ const RecalculateCurrentYear = "RECALCULATE_CURRENT_YEAR";
 /*!*********************************!*\
   !*** ./src/recipientActions.js ***!
   \*********************************/
-/*! exports provided: createRecipient, deleteRecipient, editRecipient, setRecipients, setUseOrgs, SetCurrentYear, SetCurrentYearIf, RecalculateCurrentYear, addOrganization, sortRecipients, updateCurrentYear */
+/*! exports provided: createRecipient, deleteRecipient, editRecipient, setRecipients, setUseOrgs, setCurrentYear, setCurrentYearIf, recalculateCurrentYear, addOrganization, sortRecipients, updateCurrentYear */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2320,9 +2320,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "editRecipient", function() { return editRecipient; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setRecipients", function() { return setRecipients; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setUseOrgs", function() { return setUseOrgs; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SetCurrentYear", function() { return SetCurrentYear; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SetCurrentYearIf", function() { return SetCurrentYearIf; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RecalculateCurrentYear", function() { return RecalculateCurrentYear; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setCurrentYear", function() { return setCurrentYear; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setCurrentYearIf", function() { return setCurrentYearIf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recalculateCurrentYear", function() { return recalculateCurrentYear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addOrganization", function() { return addOrganization; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sortRecipients", function() { return sortRecipients; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateCurrentYear", function() { return updateCurrentYear; });
@@ -2359,19 +2359,19 @@ function setUseOrgs(useOrgs) {
     useOrgs
   };
 }
-function SetCurrentYear(year) {
+function setCurrentYear(year) {
   return {
     type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["SetCurrentYear"],
     year
   };
 }
-function SetCurrentYearIf(year) {
+function setCurrentYearIf(year) {
   return {
     type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["SetCurrentYearIf"],
     year
   };
 }
-function RecalculateCurrentYear() {
+function recalculateCurrentYear() {
   return {
     type: _recipientActionTypes__WEBPACK_IMPORTED_MODULE_0__["RecalculateCurrentYear"]
   };
@@ -2400,12 +2400,13 @@ function updateCurrentYear(year) {
 /*!**********************************!*\
   !*** ./src/recipientReducers.js ***!
   \**********************************/
-/*! exports provided: traverseRecipients, default */
+/*! exports provided: traverseRecipients, reduceOverRecipients, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "traverseRecipients", function() { return traverseRecipients; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reduceOverRecipients", function() { return reduceOverRecipients; });
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./recipientActionTypes */ "./src/recipientActionTypes.js");
@@ -2445,7 +2446,7 @@ const orgFields = ["industry", "organization"];
 
 function traverseRecipients(tree, visit) {
   if (Array.isArray(tree)) {
-    tree.map(visit);
+    tree.forEach(visit);
   } else {
     for (let field in tree) {
       if (field === "order" || field === "length") {
@@ -2455,6 +2456,23 @@ function traverseRecipients(tree, visit) {
       traverseRecipients(tree[field], visit);
     }
   }
+}
+function reduceOverRecipients(tree, visit) {
+  let newTree = {};
+
+  if (Array.isArray(tree)) {
+    return tree.reduce(visit, []);
+  }
+
+  for (let field in tree) {
+    if (field === "order" || field === "length") {
+      continue;
+    }
+
+    newTree[field] = reduceOverRecipients(tree[field], visit);
+  }
+
+  return newTree;
 }
 
 function addToRecipientTree(root, recipient, useOrgs, currentYear) {
@@ -2571,7 +2589,7 @@ const recipients = function () {
   switch (action.type) {
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["Create"]:
       {
-        action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["SetCurrentYearIf"](action.data.year));
+        action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["setCurrentYearIf"](action.data.year));
         return addToRecipientTree(state, action.data, useOrgs, currentYear);
         break;
       }
@@ -2588,7 +2606,7 @@ const recipients = function () {
               year = r.year;
             }
           });
-          action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["SetCurrentYear"](year));
+          action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["setCurrentYear"](year));
         }
 
         return assignRecipientsSlice(state, newSlice, path);
@@ -2605,7 +2623,7 @@ const recipients = function () {
 
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["SetRecipients"]:
       {
-        action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["RecalculateCurrentYear"]());
+        action.asyncDispatch(_recipientActions__WEBPACK_IMPORTED_MODULE_3__["recalculateCurrentYear"]());
         return Object.assign({}, action.data);
         break;
       }
@@ -2989,31 +3007,46 @@ __webpack_require__.r(__webpack_exports__);
   }
 
 */
-// Create redux store with middleware and then add to WP registry
 
-const recipientStoreName = "ncs4/recipient-store";
-const reduxStore = Object(redux__WEBPACK_IMPORTED_MODULE_3__["createStore"])(_recipientReducers__WEBPACK_IMPORTED_MODULE_11__["default"], Object(redux__WEBPACK_IMPORTED_MODULE_3__["applyMiddleware"])(asyncDispatchMiddleware));
-const boundSelectors = Object(lodash__WEBPACK_IMPORTED_MODULE_4__["mapValues"])(_recipientSelectors__WEBPACK_IMPORTED_MODULE_8__, selector => function () {
-  for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-    args[_key] = arguments[_key];
-  }
-
-  return selector(reduxStore.getState(), ...args);
-});
-const boundActions = Object(lodash__WEBPACK_IMPORTED_MODULE_4__["mapValues"])(_recipientActions__WEBPACK_IMPORTED_MODULE_9__, action => function () {
-  return reduxStore.dispatch(action(...arguments));
-}); // WordPress store, wrapper around redux stor
+const recipientStoreName = "ncs4/recipient-store"; // Create redux store with middleware and then add to WP registry
+// WordPress store, wrapper around redux store
 
 const store = {
   name: recipientStoreName,
   instantiate: () => {
-    let listeners = new Set();
+    let listeners = new Set(); // Middleware
 
     const logger = store => next => action => {
-      console.log("Dispatching", action);
-      let result = next(action);
-      console.log("Next state", store.getState());
+      //console.log("Dispatching", action);
+      let result = next(action); //console.log("Next state", store.getState());
+
       return result;
+    };
+
+    const asyncDispatchMiddleware = store => next => action => {
+      let syncActivityFinished = false;
+      let actionQueue = [];
+
+      function flushQueue() {
+        actionQueue.forEach(a => store.dispatch(a)); // flush queue
+
+        actionQueue = [];
+      }
+
+      function asyncDispatch(asyncAction) {
+        actionQueue = actionQueue.concat([asyncAction]);
+
+        if (syncActivityFinished) {
+          flushQueue();
+        }
+      }
+
+      const actionWithAsyncDispatch = Object.assign({}, action, {
+        asyncDispatch
+      });
+      next(actionWithAsyncDispatch);
+      syncActivityFinished = true;
+      flushQueue();
     };
 
     const reduxStore = Object(redux__WEBPACK_IMPORTED_MODULE_3__["createStore"])(_recipientReducers__WEBPACK_IMPORTED_MODULE_11__["default"], Object(redux__WEBPACK_IMPORTED_MODULE_3__["applyMiddleware"])(logger, asyncDispatchMiddleware));
@@ -3021,8 +3054,8 @@ const store = {
       return reduxStore.dispatch(action(...arguments));
     });
     const boundSelectors = Object(lodash__WEBPACK_IMPORTED_MODULE_4__["mapValues"])(_recipientSelectors__WEBPACK_IMPORTED_MODULE_8__, selector => function () {
-      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
       }
 
       return selector(reduxStore.getState(), ...args);
@@ -3037,12 +3070,7 @@ const store = {
       store: reduxStore
     };
   }
-};
-const storeTest = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_7__["createReduxStore"])(recipientStoreName, {
-  selectors: _recipientSelectors__WEBPACK_IMPORTED_MODULE_8__,
-  actions: _recipientActions__WEBPACK_IMPORTED_MODULE_9__,
-  reducer: _recipientReducers__WEBPACK_IMPORTED_MODULE_11__["default"]
-}); // Constants
+}; // Constants
 
 const industrySegments = {
   pro: {
@@ -3066,36 +3094,7 @@ const industrySegments = {
     useOrgs: true
   }
 };
-const defaultOrg = "Unaffiliated";
-
-function asyncDispatchMiddleware(store) {
-  return next => action => {
-    let syncActivityFinished = false;
-    let actionQueue = [];
-
-    function flushQueue() {
-      actionQueue.forEach(a => store.dispatch(a)); // flush queue
-
-      actionQueue = [];
-    }
-
-    function asyncDispatch(asyncAction) {
-      actionQueue = actionQueue.concat([asyncAction]);
-
-      if (syncActivityFinished) {
-        flushQueue();
-      }
-    }
-
-    const actionWithAsyncDispatch = Object.assign({}, action, {
-      asyncDispatch
-    });
-    next(actionWithAsyncDispatch);
-    syncActivityFinished = true;
-    flushQueue();
-  };
-} // create a default recipient and set it to editMode
-
+const defaultOrg = "Unaffiliated"; // create a default recipient and set it to editMode
 
 function addRecipient(registry) {
   let {
@@ -3129,26 +3128,26 @@ function initializeStore(registry, recipients, useOrgs) {
 function getRecipientData(registry) {
   let recipients = registry.select(recipientStoreName).getRecipients();
   var currentYear = registry.select(recipientStoreName).getCurrentYear();
-  let fields = ["name", "position", "organization", "year", "industry"];
-  var displayPrevious = false;
-  let arr = [];
-  return {
-    recipients: Object(_recipientReducers__WEBPACK_IMPORTED_MODULE_11__["traverseRecipients"])(recipients, r => {
-      if (isRecipientValid(r)) {
-        let data = {};
+  let excludeFields = ["editMode", "cancelDisabled"];
+  let newRecipients = Object(_recipientReducers__WEBPACK_IMPORTED_MODULE_11__["reduceOverRecipients"])(recipients, (arr, r) => {
+    if (isRecipientValid(r)) {
+      let filteredRecipient = {};
 
-        if (r.year < currentYear) {
-          displayPrevious = true;
+      for (let field in r) {
+        if (excludeFields.includes(field)) {
+          continue;
         }
 
-        for (let attr of fields) {
-          data[attr] = r[attr];
-        }
-
-        arr.push(data);
+        filteredRecipient[field] = r[field];
       }
-    }),
-    displayPrevious
+
+      return arr.concat([filteredRecipient]);
+    }
+
+    return arr;
+  });
+  return {
+    recipients: newRecipients
   };
 } // tests if the recipient can be saved
 
@@ -3284,7 +3283,8 @@ function RecipientsList(props) {
     recipient: recipient,
     key: recipient.id,
     displayYear: props.displayYear
-  })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientSave, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, context, recipient, {
+  })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientSave, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, context, {
+    recipient: recipient,
     key: recipient.id,
     displayYear: props.displayYear
   }))))));
@@ -3309,7 +3309,9 @@ function Recipient(props) {
         actions.addOrganization(info.organization);
       }
 
-      props.onChange(initData, info);
+      props.onChange(initData, { ...info,
+        editMode: false
+      });
     }
   })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientSave, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
     recipient: initData,

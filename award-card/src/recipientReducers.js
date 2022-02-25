@@ -45,7 +45,7 @@ const orgFields = [
 // no particular order
 export function traverseRecipients(tree, visit) {
   if (Array.isArray(tree)) {
-    tree.map(visit);
+    tree.forEach(visit);
   } else {
     for (let field in tree) {
       if (field === "order" || field === "length") {
@@ -54,6 +54,21 @@ export function traverseRecipients(tree, visit) {
       traverseRecipients(tree[field], visit);
     }
   }
+}
+
+export function reduceOverRecipients(tree, visit) {
+  let newTree = {};
+  if (Array.isArray(tree)) {
+    return tree.reduce(visit, []);
+  }
+
+  for (let field in tree) {
+    if (field === "order" || field === "length") {
+      continue;
+    }
+    newTree[field] = reduceOverRecipients(tree[field], visit);
+  }
+  return newTree;
 }
 
 function addToRecipientTree(root, recipient, useOrgs, currentYear) {
@@ -202,7 +217,7 @@ const recipients = (state = {}, action, {
 
   switch (action.type) {
     case actionTypes.Create: {
-      action.asyncDispatch(actions.SetCurrentYearIf(action.data.year));
+      action.asyncDispatch(actions.setCurrentYearIf(action.data.year));
       return addToRecipientTree(
         state,
         action.data,
@@ -227,7 +242,7 @@ const recipients = (state = {}, action, {
           }
         });
 
-        action.asyncDispatch(actions.SetCurrentYear(year));
+        action.asyncDispatch(actions.setCurrentYear(year));
       }
 
       return assignRecipientsSlice(
@@ -249,7 +264,7 @@ const recipients = (state = {}, action, {
     }
 
     case actionTypes.SetRecipients: {
-      action.asyncDispatch(actions.RecalculateCurrentYear());
+      action.asyncDispatch(actions.recalculateCurrentYear());
       return Object.assign({}, action.data);
 
       break;

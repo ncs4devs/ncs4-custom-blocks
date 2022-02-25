@@ -36,21 +36,21 @@ export function setUseOrgs(useOrgs) {
   }
 }
 
-export function SetCurrentYear(year) {
+export function setCurrentYear(year) {
   return {
     type: actionTypes.SetCurrentYear,
     year,
   }
 }
 
-export function SetCurrentYearIf(year) {
+export function setCurrentYearIf(year) {
   return {
     type: actionTypes.SetCurrentYearIf,
     year,
   }
 }
 
-export function RecalculateCurrentYear() {
+export function recalculateCurrentYear() {
   return {
     type: actionTypes.RecalculateCurrentYear,
   }

@@ -15,7 +15,7 @@ import {
 import * as selectors from './recipientSelectors';
 import * as actions from './recipientActions';
 import * as actionTypes from './recipientActionTypes';
-import reducer, { traverseRecipients } from './recipientReducers';
+import reducer, { traverseRecipients, reduceOverRecipients } from './recipientReducers';
 
 /*
   Sorting is done by splitting Recipients into a tree with the field being
@@ -85,36 +85,56 @@ import reducer, { traverseRecipients } from './recipientReducers';
 */
 
 
-// Create redux store with middleware and then add to WP registry
 
 export const recipientStoreName = "ncs4/recipient-store";
-const reduxStore = createStore(reducer, applyMiddleware(asyncDispatchMiddleware));
-const boundSelectors = mapValues(
-  selectors,
-  (selector) => (...args) => selector(reduxStore.getState(), ...args),
-);
-const boundActions = mapValues(
-  actions,
-  (action) => (...args) => reduxStore.dispatch(action(...args)),
-);
 
-// WordPress store, wrapper around redux stor
+// Create redux store with middleware and then add to WP registry
+// WordPress store, wrapper around redux store
 
-export const store = {
+export const store = ({
   name: recipientStoreName,
   instantiate: () => {
     let listeners = new Set();
 
+    // Middleware
+
     const logger = (store) => (next) => (action) => {
-      console.log("Dispatching", action);
+      //console.log("Dispatching", action);
       let result = next(action);
-      console.log("Next state", store.getState());
+      //console.log("Next state", store.getState());
       return result;
+    }
+
+    const asyncDispatchMiddleware = (store) => (next) => (action) => {
+      let syncActivityFinished = false;
+      let actionQueue = [];
+
+      function flushQueue() {
+        actionQueue.forEach((a) => store.dispatch(a)); // flush queue
+        actionQueue = [];
+      }
+
+      function asyncDispatch(asyncAction) {
+        actionQueue = actionQueue.concat([asyncAction]);
+
+        if (syncActivityFinished) {
+          flushQueue();
+        }
+      }
+
+      const actionWithAsyncDispatch = Object.assign({}, action, { asyncDispatch });
+
+      next(actionWithAsyncDispatch);
+      syncActivityFinished = true;
+      flushQueue();
     }
 
     const reduxStore = createStore(
       reducer,
-      applyMiddleware(logger, asyncDispatchMiddleware),
+      applyMiddleware(
+        logger,
+        asyncDispatchMiddleware,
+      ),
     );
 
     const boundActions = mapValues(
@@ -136,16 +156,7 @@ export const store = {
       store: reduxStore,
     };
   }
-}
-
-const storeTest = createReduxStore(
-  recipientStoreName,
-  {
-    selectors,
-    actions,
-    reducer,
-  },
-);
+});
 
 // Constants
 
@@ -173,33 +184,6 @@ const industrySegments = {
 };
 
 const defaultOrg = "Unaffiliated";
-
-
-function asyncDispatchMiddleware(store) {
-  return (next) => (action) => {
-    let syncActivityFinished = false;
-    let actionQueue = [];
-
-    function flushQueue() {
-      actionQueue.forEach((a) => store.dispatch(a)); // flush queue
-      actionQueue = [];
-    }
-
-    function asyncDispatch(asyncAction) {
-      actionQueue = actionQueue.concat([asyncAction]);
-
-      if (syncActivityFinished) {
-        flushQueue();
-      }
-    }
-
-    const actionWithAsyncDispatch = Object.assign({}, action, { asyncDispatch });
-
-    next(actionWithAsyncDispatch);
-    syncActivityFinished = true;
-    flushQueue();
-  }
-}
 
 
  // create a default recipient and set it to editMode
@@ -237,35 +221,28 @@ export function getRecipientData(registry) {
   let recipients = registry.select(recipientStoreName).getRecipients();
   var currentYear = registry.select(recipientStoreName).getCurrentYear();
 
-  let fields = [
-    "name",
-    "position",
-    "organization",
-    "year",
-    "industry",
-  ]
-  var displayPrevious = false;
-
-  let arr = [];
-  return {
-    recipients: traverseRecipients(
-      recipients,
-      (r) => {
-        if (isRecipientValid(r)) {
-          let data = {};
-          if(r.year < currentYear) {
-            displayPrevious = true;
+  let excludeFields = [
+    "editMode",
+    "cancelDisabled",
+  ];
+  let newRecipients = reduceOverRecipients(
+    recipients,
+    (arr, r) => {
+      if (isRecipientValid(r)) {
+        let filteredRecipient = {};
+        for (let field in r) {
+          if (excludeFields.includes(field)) {
+            continue;
           }
-
-          for (let attr of fields) {
-            data[attr] = r[attr];
-          }
-          arr.push(data);
+          filteredRecipient[field] = r[field];
         }
+        return arr.concat([filteredRecipient]);
       }
-    ),
-    displayPrevious,
-  }
+      return arr;
+    }
+  );
+
+  return {recipients: newRecipients};
 }
 
 // tests if the recipient can be saved
@@ -486,7 +463,7 @@ function RecipientsList(props) {
                   />
                 : <RecipientSave
                     { ...context }
-                    { ...recipient }
+                    recipient = { recipient }
                     key = { recipient.id }
                     displayYear = { props.displayYear }
                   />
@@ -509,7 +486,6 @@ function Recipient(props) {
   ));
   let { addOrganization } = props.actions;
 
-
   return (
     <>
       { isEditing
@@ -523,7 +499,7 @@ function Recipient(props) {
               if (info.organization && !orgs.includes(info.organization)) {
                 actions.addOrganization(info.organization);
               }
-              props.onChange(initData, info);
+              props.onChange(initData, {...info, editMode: false});
             } }
           />
         : <RecipientSave
