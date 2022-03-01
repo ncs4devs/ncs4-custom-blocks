@@ -5,7 +5,8 @@ import {
   TextControl,
   CheckboxControl,
 } from '@wordpress/components';
-import { verifyColor } from '../../js/ColorSelector.js';
+import { verifyColor } from '../../js/ColorSelector';
+import { normalizeStringLength } from '../../js/utils';
 import { createRegistry, RegistryProvider } from '@wordpress/data';
 
 import {
@@ -112,16 +113,10 @@ export class AwardCardEdit extends React.Component {
 
   handleDescription(str) {
     str = str.trim();
-    let paddingChars = normalizedDescLength - str.length;
-    let normalizedDesc = str;
-
-    if (paddingChars > 0) {
-      normalizedDesc += " " + "&nbsp;".repeat(paddingChars - 1);
-    } else if (paddingChars < 0) {
-      normalizedDesc = normalizedDesc.slice(0, normalizedDescLength - 3) + "...";
-    }
     this.setStateAttributes({ "desc": str });
-    this.setAttributes({ "normalizedDesc": normalizedDesc });
+    this.setAttributes(
+      { "normalizedDesc": normalizeStringLength(str, normalizedDescLength)
+    });
   }
 
   render() {

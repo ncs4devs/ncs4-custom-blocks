@@ -805,6 +805,45 @@ _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(Ema
 
 /***/ }),
 
+/***/ "../js/utils.js":
+/*!**********************!*\
+  !*** ../js/utils.js ***!
+  \**********************/
+/*! exports provided: normalizeStringLength */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "normalizeStringLength", function() { return normalizeStringLength; });
+function normalizeStringLength(str, n) {
+  let useNbsp = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+  let addEllipses = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+  let shortStrLength;
+
+  if (str.length === n) {
+    return str; // no shortening or lengthening needed
+  }
+
+  if (str.length < n) {
+    shortStrLength = str.length;
+  } else {
+    if (addEllipses) {
+      shortStrLength = 1 + str.slice(0, n - 3).search(/[\S][\s]+[\S]+[\s]*$/g);
+    } else {
+      shortStrLength = 1 + str.slice(0, n).search(/[\S][\s]+[\S]+[\s]*$/g);
+    }
+  }
+
+  let spaces = addEllipses ? n - 3 - shortStrLength : n - shortStrLength;
+  let outStr;
+  outStr = str.slice(0, shortStrLength);
+  outStr += addEllipses ? "..." : "";
+  outStr += useNbsp ? " " + "&nbsp;".repeat(spaces - 1) : " ".repeat(spaces);
+  return outStr;
+}
+
+/***/ }),
+
 /***/ "../node_modules/@babel/runtime/helpers/defineProperty.js":
 /*!****************************************************************!*\
   !*** ../node_modules/@babel/runtime/helpers/defineProperty.js ***!
@@ -2007,12 +2046,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../js/ColorSelector.js */ "../js/ColorSelector.js");
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../popup/src/popup.js */ "../popup/src/popup.js");
-/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
-/* harmony import */ var _recipients__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./recipients */ "./src/recipients.js");
+/* harmony import */ var _js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../js/ColorSelector */ "../js/ColorSelector.js");
+/* harmony import */ var _js_utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../js/utils */ "../js/utils.js");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../popup/src/popup.js */ "../popup/src/popup.js");
+/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
+/* harmony import */ var _recipients__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./recipients */ "./src/recipients.js");
+
 
 
 
@@ -2030,8 +2071,8 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     super(props);
     this.attributes = props.attributes;
     this.setAttributes = props.setAttributes;
-    this.registry = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_6__["createRegistry"])({});
-    this.registry.register(_recipients__WEBPACK_IMPORTED_MODULE_9__["store"]);
+    this.registry = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_7__["createRegistry"])({});
+    this.registry.register(_recipients__WEBPACK_IMPORTED_MODULE_10__["store"]);
     this.setStateAttributes = this.setStateAttributes.bind(this);
     this.trimStateAttribute = this.trimStateAttribute.bind(this);
     this.onStoreUpdate = this.onStoreUpdate.bind(this);
@@ -2042,8 +2083,8 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     } // store existing recipients
 
 
-    Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["initializeStore"])(this.registry, this.attributes.recipients, this.attributes.useOrgs);
-    this.registry.stores[_recipients__WEBPACK_IMPORTED_MODULE_9__["recipientStoreName"]].subscribe(this.onStoreUpdate);
+    Object(_recipients__WEBPACK_IMPORTED_MODULE_10__["initializeStore"])(this.registry, this.attributes.recipients, this.attributes.useOrgs);
+    this.registry.stores[_recipients__WEBPACK_IMPORTED_MODULE_10__["recipientStoreName"]].subscribe(this.onStoreUpdate);
     this.state = {
       overlayOpacity: this.attributes.overlayOpacity,
       bgColor: this.attributes.bgColor,
@@ -2058,25 +2099,25 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
   }
 
   componentDidMount() {
-    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["reserveId"])(x => this.setStateAttributes({
+    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_8__["reserveId"])(x => this.setStateAttributes({
       id: x
     }), this.state.id);
     this.setStateAttributes({
       bgColor: {
-        color: Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_5__["verifyColor"])(this.state.bgColor),
+        color: Object(_js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__["verifyColor"])(this.state.bgColor),
         slug: this.state.bgColor.slug
       }
     });
     this.setStateAttributes({
       textColor: {
-        color: Object(_js_ColorSelector_js__WEBPACK_IMPORTED_MODULE_5__["verifyColor"])(this.state.textColor),
+        color: Object(_js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__["verifyColor"])(this.state.textColor),
         slug: this.state.textColor.slug
       }
     });
   }
 
   componentWillUnmount() {
-    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["deleteId"])(this.state.id);
+    Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_8__["deleteId"])(this.state.id);
   }
 
   setStateAttributes(attrs) {
@@ -2099,25 +2140,16 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
   }
 
   onStoreUpdate() {
-    this.setAttributes(Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["getRecipientData"])(this.registry));
+    this.setAttributes(Object(_recipients__WEBPACK_IMPORTED_MODULE_10__["getRecipientData"])(this.registry));
   }
 
   handleDescription(str) {
     str = str.trim();
-    let paddingChars = normalizedDescLength - str.length;
-    let normalizedDesc = str;
-
-    if (paddingChars > 0) {
-      normalizedDesc += " " + "&nbsp;".repeat(paddingChars - 1);
-    } else if (paddingChars < 0) {
-      normalizedDesc = normalizedDesc.slice(0, normalizedDescLength - 3) + "...";
-    }
-
     this.setStateAttributes({
       "desc": str
     });
     this.setAttributes({
-      "normalizedDesc": normalizedDesc
+      "normalizedDesc": Object(_js_utils__WEBPACK_IMPORTED_MODULE_6__["normalizeStringLength"])(str, normalizedDescLength)
     });
   }
 
@@ -2125,7 +2157,7 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     let blockProps = this.props.blockProps;
     let registry = this.registry;
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, blockProps, {
-      className: ["ncs4-award-card", _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["Popup"].classType, blockProps.className].join(' ')
+      className: ["ncs4-award-card", _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_8__["Popup"].classType, blockProps.className].join(' ')
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h2", {
       className: "ncs4-award-card__name"
     }, this.state.name), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["RichText"], {
@@ -2139,10 +2171,10 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", null, "Recipients"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
       className: "dashicons dashicons-plus",
       title: "Add recipient",
-      onClick: () => Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["addRecipient"])(registry)
-    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_data__WEBPACK_IMPORTED_MODULE_6__["RegistryProvider"], {
+      onClick: () => Object(_recipients__WEBPACK_IMPORTED_MODULE_10__["addRecipient"])(registry)
+    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_data__WEBPACK_IMPORTED_MODULE_7__["RegistryProvider"], {
       value: registry
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_9__["default"], {
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_10__["default"], {
       awardId: blockProps.id
     }))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelBody"], {
       title: "Award info",
@@ -2156,19 +2188,19 @@ class AwardCardEdit extends react__WEBPACK_IMPORTED_MODULE_2___default.a.Compone
     }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["CheckboxControl"], {
       label: "Split past recipients by organization",
       help: "Leave checked to organize past recipients by their organization",
-      checked: this.registry.select(_recipients__WEBPACK_IMPORTED_MODULE_9__["recipientStoreName"]).getUseOrgs(),
+      checked: this.registry.select(_recipients__WEBPACK_IMPORTED_MODULE_10__["recipientStoreName"]).getUseOrgs(),
       onChange: b => {
         let {
           setUseOrgs,
           sortRecipients
-        } = this.registry.dispatch(_recipients__WEBPACK_IMPORTED_MODULE_9__["recipientStoreName"]);
+        } = this.registry.dispatch(_recipients__WEBPACK_IMPORTED_MODULE_10__["recipientStoreName"]);
         setUseOrgs(b);
         sortRecipients();
         this.setAttributes({
           useOrgs: b
         });
       }
-    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["PopupSettings"], {
+    })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_8__["PopupSettings"], {
       attributes: this.state,
       callback: this.setStateAttributes
     })));
