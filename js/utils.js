@@ -18,7 +18,7 @@ export function normalizeStringLength(str, n, useNbsp = true, addEllipses = true
   let outStr;
 
   outStr = str.slice(0, shortStrLength);
-  outStr += addEllipses ? "..." : "";
+  outStr += addEllipses && str.length > n ? "..." : "";
   outStr += useNbsp ? " " + "&nbsp;".repeat(spaces - 1) : " ".repeat(spaces);
 
   return outStr;
