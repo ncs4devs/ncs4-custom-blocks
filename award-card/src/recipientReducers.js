@@ -65,6 +65,7 @@ export function reduceOverRecipients(tree, visit) {
 
   for (let field in tree) {
     if (field === "order" || field === "length") {
+      newTree[field] = tree[field];
       continue;
     }
     newTree[field] = reduceOverRecipients(tree[field], visit);
@@ -162,11 +163,11 @@ function getRecipientsPath(tree, recipient, currentYear) {
     "organization",
   ];
 
-  let path = "";
+  let path = [];
   if (recipient.year === currentYear) {
-    path += "current/";
+    path.push("current");
   } else {
-    path += "previous/";
+    path.push("previous");
     let field = "previous";
     let propertiesArr = [...properties];
 
@@ -174,24 +175,23 @@ function getRecipientsPath(tree, recipient, currentYear) {
       tree = tree[field];
       field = recipient[propertiesArr[0]];
       propertiesArr = propertiesArr.slice(1);
-      path += field + "/";
+      path.push(field);
     }
   }
 
-  return path.replace(/(^\/)|(\/$)/g, "");
+  return path;
 }
 
 function assignRecipientsSlice(tree, slice, path) {
   let newSlice = slice;
 
-  let fields = path.split("/");
-  for (let i = fields.length - 1; i >= 0; i--) {
+  for (let i = path.length - 1; i >= 0; i--) {
     newSlice = {
       ...getRecipientsSlice(
         tree,
-        fields.slice(0, i).join("/"),
+        path.slice(0, i),
       ),
-      [ fields[i] ]: newSlice,
+      [ path[i] ]: newSlice,
     };
   }
 
@@ -202,9 +202,8 @@ function assignRecipientsSlice(tree, slice, path) {
 }
 
 function getRecipientsSlice(tree, path) {
-  let fields = path.split("/");
-  for (let i = 0; i < fields.length; i++) {
-    tree = tree[fields[i]];
+  for (let i = 0; i < path.length; i++) {
+    tree = tree[path[i]];
   }
   return tree;
 }
