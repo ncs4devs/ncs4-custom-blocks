@@ -432,16 +432,16 @@ function RecipientsHeader(props) {
   return (
     <>
       { props.depth === 0 && (
-        <h3 { ...commonProps }>{ props.header }</h3>
+        <h2 { ...commonProps }>{ props.header }</h2>
       )}
       { props.depth === 1 && (
-        <h4 { ...commonProps }>{ props.header }</h4>
+        <h3 { ...commonProps }>{ props.header }</h3>
       )}
       { props.depth === 2 && (
-        <h5 { ...commonProps }>{ props.header }</h5>
+        <h4 { ...commonProps }>{ props.header }</h4>
       )}
       { props.depth > 2 && (
-        <h6 { ...commonProps }>{ props.header }</h6>
+        <h5 { ...commonProps }>{ props.header }</h5>
       )}
     </>
   );

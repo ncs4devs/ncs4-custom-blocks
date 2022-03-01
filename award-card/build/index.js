@@ -3311,7 +3311,7 @@ function RecipientsHeader(props) {
     className: "ncs4-award-recipient__header",
     depth: props.depth
   };
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, props.depth === 0 && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h3", commonProps, props.header), props.depth === 1 && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h4", commonProps, props.header), props.depth === 2 && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h5", commonProps, props.header), props.depth > 2 && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h6", commonProps, props.header));
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, props.depth === 0 && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h2", commonProps, props.header), props.depth === 1 && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h3", commonProps, props.header), props.depth === 2 && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h4", commonProps, props.header), props.depth > 2 && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h5", commonProps, props.header));
 }
 
 function RecipientsList(props) {
