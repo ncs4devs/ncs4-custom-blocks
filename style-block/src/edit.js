@@ -117,21 +117,23 @@ export default class Edit extends React.Component {
   }
   createSelectorFromRule(rule, prefix) {
     let selectors = rule.selectors;
-    if (rule.onlyDirectChildren) {
-      prefix += ">";
-    } else {
-      prefix += " ";
-    }
     if (!selectors || selectors.length < 1) {
       return null;
     }
     let out = "";
     for (let selector of selectors) {
+      let delim;
+      if (selector.onlyDirectChildren) {
+        delim = ">";
+      } else {
+        delim = " ";
+      }
+
       let selectorString = selector.value.split(",").reduce(
         (str, sel) => (
           str !== ""
-            ? str + "," + prefix + sel
-            : str + prefix + sel
+            ? str + "," + prefix + delim + sel
+            : str + prefix + delim + sel
         ),
         "",
       );
