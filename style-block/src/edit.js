@@ -578,7 +578,7 @@ function SelectorsSettingsPane(props) {
         if (selectors[action.index].type === "custom") {
           setCustomCss(selectors[action.index].value);
         }
-        setSelector(index);
+        setSelector(action.index);
 
         break;
       }

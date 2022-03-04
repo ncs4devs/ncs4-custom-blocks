@@ -2677,7 +2677,7 @@ function SelectorsSettingsPane(props) {
             setCustomCss(selectors[action.index].value);
           }
 
-          setSelector(index);
+          setSelector(action.index);
           break;
         }
 
