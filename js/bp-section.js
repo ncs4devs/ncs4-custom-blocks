@@ -294,7 +294,11 @@ export class BPIndustrySectionSave extends BPSection {
     let blockProps = this.props.blockProps;
 
     return (
-      <div className = { this.createClassName(blockProps.className) }>
+      <div { ...blockProps }
+        className = {
+          this.createClassName(blockProps.className, this.slug)
+        }
+      >
         { this.attributes.showTitle
           ?
             <h6

@@ -45,23 +45,34 @@ export class SectionMixedEdit extends BPSectionEdit {
     this.setStateAttributes( {isMarathonChecked: b} );
   }
 
-  createClassName(
+  // Must be an arrow function to override parent method
+  createClassName = (
       classes,
-  ) {
-    return [
+      isPro = false,
+      isCollege = false,
+      isHs = false,
+      isMarathon = false,
+  ) => [
       "ncs4-section",
+      (isPro) ? "ncs4-bp-content__pro" : null,
+      (isCollege) ? "ncs4-bp-content__college" : null,
+      (isHs) ? "ncs4-bp-content__hs" : null,
+      (isMarathon) ? "ncs4-bp-content__marathon" : null,
     ].join(' ') + ' ' + classes;
-  }
 
   render() {
     let blockProps = this.props.blockProps;
-    
+
     return (
       <>
-        <div { ...blockProps }
-          className = {
-            this.createClassName(blockProps.className)
-          }
+        <div {...blockProps}
+          className = {this.createClassName(
+            blockProps.className,
+            this.attributes.isProChecked,
+            this.attributes.isCollegeChecked,
+            this.attributes.isHsChecked,
+            this.attributes.isMarathonChecked,
+          ) }
         >
           { this.state.showTitle && (
             <TextControl

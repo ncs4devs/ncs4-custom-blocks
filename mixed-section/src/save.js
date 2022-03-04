@@ -5,42 +5,29 @@ import { InnerBlocks } from '@wordpress/block-editor';
 export class SectionMixedSave extends BPSection {
   constructor(props) {
     super(props);
-    this.classes = "";
-    if (this.attributes.isProChecked) {
-      this.classes += " ncs4-bp-content__pro";
-    }
-    if (this.attributes.isCollegeChecked) {
-      this.classes += " ncs4-bp-content__college";
-    }
-    if (this.attributes.isHsChecked) {
-      this.classes += " ncs4-bp-content__hs";
-    }
-    if (this.attributes.isMarathonChecked) {
-      this.classes += " ncs4-bp-content__marathon";
-    }
   }
 
-  createClassName(
+  // Must be an arrow function to override parent method
+  createClassName = (
       classes,
       isPro = false,
       isCollege = false,
       isHs = false,
       isMarathon = false,
-  ) {
-    return [
+  ) => [
       "ncs4-section",
       (isPro) ? "ncs4-bp-content__pro" : null,
       (isCollege) ? "ncs4-bp-content__college" : null,
       (isHs) ? "ncs4-bp-content__hs" : null,
       (isMarathon) ? "ncs4-bp-content__marathon" : null,
     ].join(' ') + ' ' + classes;
-  }
 
   render() {
     let blockProps = this.props.blockProps;
-    
+
     return (
-      <div className = {this.createClassName(
+      <div {...blockProps}
+        className = {this.createClassName(
           blockProps.className,
           this.attributes.isProChecked,
           this.attributes.isCollegeChecked,
