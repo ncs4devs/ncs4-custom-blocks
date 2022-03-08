@@ -34,6 +34,7 @@ export class BioSave extends React.Component {
           alignment = { attributes.alignment }
         />
         <Popup
+          className = "ncs4-button ncs4-button__blue"
           attributes = { attributes }
           backend = { this.props.backend }
         >

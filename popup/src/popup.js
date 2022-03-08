@@ -39,10 +39,16 @@ export class Popup extends React.Component {
     return (
       <>
         { this.props.backend
-          ? <a className = "ncs4-popup-button" href="#">
+          ? <a
+              className = { "ncs4-popup-button " + this.props.className }
+              href="#"
+            >
               { attrs.buttonTitle }
             </a>
-          : <a className = "ncs4-popup-button" href= { "#" + id }>
+          : <a
+              className = { "ncs4-popup-button " + this.props.className }
+              href= { "#" + id }
+            >
               { attrs.buttonTitle }
             </a>
         }
