@@ -1,0 +1,80 @@
+@mixin popup-style() {
+  $dismiss-icon-spread: 10px;
+  $dismiss-icon-scale: 1.1;
+
+  display: flex;
+  flex-direction: column;
+  background-color: $color_white-dark;
+  padding: 1.5rem 2.5rem;
+  height: 100%;
+
+  &__name {
+    text-transform: none;
+    margin-top: 0;
+    color: $color_link-1;
+  }
+
+  &__popup-dismiss-link {
+    margin-left: auto;
+    margin-bottom: auto;
+    transition: transform 0.1s ease-in-out;
+
+    &:hover, &:focus, &:focus-visible {
+      border-radius: 50%;
+      box-shadow: 0 0 $dismiss-icon-spread 3px $color_link-1;
+
+      @media (prefers-reduced-motion: no-preference) {
+        & {
+          transform: scale($dismiss-icon-scale)
+        }
+      }
+    }
+
+    &:focus-visible, &:visited:focus-visible {
+      outline: none;
+    }
+  }
+
+  &__popup-dismiss {
+    display: block;
+    width: 32px;
+    height: 32px;
+
+    .dismiss_svg__cls-1 {
+      fill: $color_white-dark;
+    }
+
+    .dismiss_svg__cls-2 {
+      stroke: $color_link-1;
+    }
+  }
+
+  .ncs4-popup-button {
+    align-self: end;
+    margin-top: auto;
+  }
+
+  .ncs4-popup-content {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0;
+    overflow: hidden;
+  }
+
+  &__popup-name {
+    text-transform: none;
+    margin: 0;
+    color: $color_link-1;
+  }
+
+  &__popup-header {
+    display: flex;
+    margin-top: $dismiss-icon-spread * $dismiss-icon-scale + 1px;
+  }
+
+  &__popup-content {
+    overflow: hidden auto;
+    box-shadow: inset 0 8px 16px -16px $color_secondary-0c;
+    padding: 1em;
+  }
+}
