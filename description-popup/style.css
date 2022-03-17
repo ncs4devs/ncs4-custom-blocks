@@ -1,0 +1,94 @@
+/* These colors are kept for compatibility reasons and should not be used */
+/* These colors may be used */
+/* Colors are swapped around to be in order from darkest to lightest */
+/* Navy */
+/* Dark Blue */
+/* Yellow */
+/* Grey */
+/* Links */
+.ncs4-description-popup {
+  display: flex;
+  flex-direction: column;
+  background-color: #e6e6e6;
+  padding: 1.5rem 2.5rem;
+  height: 100%;
+}
+.ncs4-description-popup__name {
+  text-transform: none;
+  margin-top: 0;
+  color: #037fff;
+}
+.ncs4-description-popup__popup-dismiss-link {
+  margin-left: auto;
+  margin-bottom: auto;
+  transition: transform 0.1s ease-in-out;
+}
+.ncs4-description-popup__popup-dismiss-link:hover, .ncs4-description-popup__popup-dismiss-link:focus, .ncs4-description-popup__popup-dismiss-link:focus-visible {
+  border-radius: 50%;
+  box-shadow: 0 0 10px 3px #037fff;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ncs4-description-popup__popup-dismiss-link:hover, .ncs4-description-popup__popup-dismiss-link:focus, .ncs4-description-popup__popup-dismiss-link:focus-visible {
+    transform: scale(1.1);
+  }
+}
+.ncs4-description-popup__popup-dismiss-link:focus-visible, .ncs4-description-popup__popup-dismiss-link:visited:focus-visible {
+  outline: none;
+}
+.ncs4-description-popup__popup-dismiss {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+.ncs4-description-popup__popup-dismiss .dismiss_svg__cls-1 {
+  fill: #e6e6e6;
+}
+.ncs4-description-popup__popup-dismiss .dismiss_svg__cls-2 {
+  stroke: #037fff;
+}
+.ncs4-description-popup .ncs4-popup-button {
+  align-self: end;
+  margin-top: auto;
+}
+.ncs4-description-popup .ncs4-popup-content {
+  display: flex;
+  flex-direction: column;
+  padding-top: 0;
+  overflow: hidden;
+}
+.ncs4-description-popup__popup-name {
+  text-transform: none;
+  margin: 0;
+  color: #037fff;
+}
+.ncs4-description-popup__popup-header {
+  display: flex;
+  margin-top: 12px;
+}
+.ncs4-description-popup__popup-content {
+  overflow: hidden auto;
+  box-shadow: inset 0 8px 16px -16px #040303;
+  padding: 1em;
+}
+.ncs4-description-popup__footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 1em;
+  gap: 1em;
+}
+.ncs4-description-popup__footer .ncs4-description-popup__img {
+  margin: 0 auto;
+  max-width: max(40%, 16ch);
+  height: fit-content;
+}
+.ncs4-description-popup__footer .ncs4-description-popup__img img, .ncs4-description-popup__footer .ncs4-description-popup__img svg {
+  max-height: 6em;
+  display: block;
+}
+.ncs4-description-popup__footer .ncs4-button {
+  margin: auto;
+  flex: 0 0 auto;
+}
+
+/*# sourceMappingURL=style.css.map */

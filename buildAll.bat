@@ -49,4 +49,7 @@ call npm run build
 cd ../style-block
 call npm run build
 
+cd ../description-popup
+call npm run build
+
 cd ../
