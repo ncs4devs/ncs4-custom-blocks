@@ -15,7 +15,8 @@
 
     .ncs4-description-popup__img, embed {
       margin: 0 auto;
-      max-width: max(40%, 16ch);
+      max-width: max(50%, 16ch);
+      max-height: 4em;
       height: fit-content;
       flex: 1 0 auto;
 
