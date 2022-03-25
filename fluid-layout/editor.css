@@ -1,4 +1,5 @@
 .ncs4-fluid-layout {
+  margin: auto !important;
   /* Pass down certain inline props to InnerBlocks container */
 }
 .ncs4-fluid-layout.is-selected {
@@ -64,6 +65,10 @@
   content: "";
   display: table;
   width: var(--minw);
+}
+.ncs4-fluid-layout__inline-block > .block-editor-inner-blocks > .block-editor-block-list__layout > .ncs4-fluid-layout-item {
+  display: inline-block;
+  vertical-align: var(--vertical-align, inherit);
 }
 .ncs4-fluid-layout > .block-editor-inner-blocks {
   gap: inherit;

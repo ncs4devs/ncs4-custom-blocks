@@ -19,6 +19,7 @@ export class FluidLayoutSave extends React.Component {
     ] );
     let style = {
       ...colorStyle,
+      ['--vertical-align']: attrs.optionVerticalAlign || null,
       ['--min-width']: attrs.minWidth.asString,
       ['--max-width']: (attrs.maxWidth.useMaxWidth)
         ? attrs.maxWidth.asString

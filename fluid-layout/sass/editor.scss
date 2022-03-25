@@ -2,6 +2,7 @@
 
 .ncs4-fluid-layout {
   $secondary-outline-color: #555;
+  margin: auto !important;
 
   &.is-selected {
     box-shadow: 0 0 0 var(--wp-admin-border-width-focus) var(--wp-admin-theme-color);

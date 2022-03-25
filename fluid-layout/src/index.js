@@ -78,6 +78,10 @@ registerBlockType( 'ncs4-custom-blocks/fluid-layout', {
       type: "string",
       default: "1fr",
     },
+    optionVerticalAlign: {
+      type: "string",
+      default: ""
+    },
   },
 
   edit: (props) => (

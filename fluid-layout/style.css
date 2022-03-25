@@ -48,5 +48,9 @@
   display: table;
   width: var(--minw);
 }
+.ncs4-fluid-layout__inline-block > .ncs4-fluid-layout-item {
+  display: inline-block;
+  vertical-align: var(--vertical-align, inherit);
+}
 
 /*# sourceMappingURL=style.css.map */

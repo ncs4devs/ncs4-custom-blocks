@@ -12,6 +12,7 @@
   @include fixedGrid($edit);
   @include fixedColumn($edit);
   @include floatedImage($edit);
+  @include inlineBlock($edit);
 }
 
 @mixin equalColumn($edit: false) {
@@ -130,6 +131,17 @@
           display: table;
           width: var(--minw);
         }
+      }
+    }
+  }
+}
+
+@mixin inlineBlock($edit: false) {
+  &__inline-block {
+    #{eCond($edit)} {
+      > .ncs4-fluid-layout-item {
+        display: inline-block;
+        vertical-align: var(--vertical-align, inherit);
       }
     }
   }

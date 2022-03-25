@@ -6,10 +6,15 @@ import {
   AlignmentToolbar,
   InspectorControls,
 } from '@wordpress/block-editor';
-import { PanelBody, PanelRow } from '@wordpress/components';
-import { ColorSelector, createColorClass } from '../../js/ColorSelector.js';
-import { OptionsControl, UnitControl } from '../../js/SelectControls.js';
-import { FluidLayoutSave } from './save.js';
+import {
+  PanelBody,
+  PanelRow,
+  RadioControl,
+  TextControl
+} from '@wordpress/components';
+import { ColorSelector, createColorClass } from '../../js/ColorSelector';
+import { OptionsControl, UnitControl } from '../../js/SelectControls';
+import { FluidLayoutSave } from './save';
 
 let allowed_inner_blocks = [
   'ncs4-custom-blocks/fluid-layout-item',
@@ -60,6 +65,7 @@ let layoutUsesMaxWidth = [
   "equal-grid",
   "equal-columns",
   "floated-image",
+  "inline-block",
 ];
 
 let layoutUsesFixedColumns = [
@@ -74,6 +80,7 @@ let layoutOptions = [
   //{ value: "fixed-grid", label: "Fixed Grid" }, // Unsafe, causes shrinkage or overflow
   { value: "fixed-columns", label: "Fixed Columns" },
   { value: "floated-image", label: "Floated Image" },
+  { value: "inline-block", label: "Inline Block" },
 ];
 
 let justifyOptions = [
@@ -114,6 +121,7 @@ export class FluidLayoutEdit extends React.Component {
       optionJustify: this.attributes.optionJustify,
       numColumns: this.attributes.numColumns,
       optionColSize: this.attributes.optionColSize,
+      optionVerticalAlign: this.attributes.optionVerticalAlign,
     }
   }
 
@@ -170,6 +178,13 @@ export class FluidLayoutEdit extends React.Component {
               ]}
               onChange = { this.updateState }
             />
+            {/* Inline-Block controls */}
+            { this.state.optionLayout === "inline-block" &&
+              <InlineBlockOptions
+                vAlign = { this.state.optionVerticalAlign }
+                onChange = { (v) => this.setStateAttributes({optionVerticalAlign: v}) }
+              />
+            }
             {/* Max Width controls */}
             { layoutUsesMaxWidth.includes(this.state.optionLayout) &&
               <UnitControl
@@ -309,4 +324,49 @@ export class FluidLayoutEdit extends React.Component {
       </>
     );
   }
+}
+
+function InlineBlockOptions(props) {
+  let vAlignOptions = [
+    {label: "Top", value: "top"},
+    {label: "Middle", value: "middle"},
+    {label: "Bottom", value: "bottom"},
+  ];
+  let isCustomVAlign = !vAlignOptions.map(obj => obj.value).includes(props.vAlign);
+
+  let [vAlign, setVAlign] = React.useState(props.vAlign);
+
+  const radioChangeHandler = (v) => {
+    if (v === "custom") {
+       setVAlign("");
+       props.onChange("");
+    } else {
+      setVAlign(v);
+      props.onChange(v);
+    }
+  }
+
+  const customChangeHandler = (s) => {
+    setVAlign(s);
+    props.onChange(s);
+  }
+
+  return <>
+    <RadioControl
+      options = {[
+        ...vAlignOptions,
+        {label: "Custom", value: "custom"},
+      ]}
+      selected = {isCustomVAlign ? "custom" : vAlign}
+      label = "Vertical align"
+      help = "How items should be aligned vertically with one another"
+      onChange = { radioChangeHandler }
+    />
+    <TextControl
+      value = {isCustomVAlign ? vAlign : ""}
+      disabled = {!isCustomVAlign}
+      help = "Custom vertical align code"
+      onChange = { customChangeHandler }
+    />
+  </>
 }
