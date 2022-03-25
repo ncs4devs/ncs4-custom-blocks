@@ -52,4 +52,7 @@ call npm run build
 cd ../description-popup
 call npm run build
 
+cd ../icon
+call npm run build
+
 cd ../

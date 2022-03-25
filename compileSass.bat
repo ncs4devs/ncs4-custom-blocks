@@ -16,3 +16,4 @@ call sass ./bio/sass:./bio/
 call sass ./award-card/sass:./award-card
 call sass ./style-block/sass:./style-block
 call sass ./description-popup/sass:./description-popup
+call sass ./icon/sass:./icon

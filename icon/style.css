@@ -1,0 +1,13 @@
+.ncs4-icon-block {
+  display: inline-block;
+}
+.ncs4-icon-block img, .ncs4-icon-block svg, .ncs4-icon-block .dashicons {
+  font-size: var(--image-size, 16px);
+  width: var(--image-size, 16px);
+  height: auto;
+}
+.ncs4-icon-block .dashicons {
+  color: var(--dashicons-color, "inherit");
+}
+
+/*# sourceMappingURL=style.css.map */
