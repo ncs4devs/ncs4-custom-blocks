@@ -4,13 +4,19 @@ import { Button } from '@wordpress/components';
 
 // Be careful that you only use trusted SVGs as they are not secure!
 export function Svg(props) {
-  return (
-    <div
-      dangerouslySetInnerHTML = {{
-        __html: props.svg
-      }}
-    />
-  )
+  return <>
+    { props.useInlineSvg
+      ? <div
+          dangerouslySetInnerHTML = {{
+            __html: props.img.data
+          }}
+        />
+      : <embed
+          type = { props.img.mime }
+          src = { props.img.url }
+        />
+    }
+  </>
 }
 
 // Image object format:
@@ -32,6 +38,7 @@ const imageStyle = (props) => ({
 
 // Edit-side image display
 export function ImageEdit(props) {
+  props.useInlineSvg = props.useInlineSvg == null ? true : props.useInlineSvg;
 
   return (
     <MediaUploadCheck>
@@ -51,7 +58,8 @@ export function ImageEdit(props) {
             { props.img
               ? (props.img.mime === "image/svg+xml" && props.img.data
                   ? <Svg
-                      svg = { props.img.data }
+                      img = { props.img }
+                      useInlineSvg = { props.useInlineSvg }
                       style = { imageStyle(props) }
                     />
                   : <img
@@ -71,28 +79,35 @@ export function ImageEdit(props) {
 // Front-end image display
 export function ImageSave(props) {
   let isSvg = props.img && props.img.mime === "image/svg+xml" && props.img.data;
+  props.useInlineSvg = props.useInlineSvg == null ? true : props.useInlineSvg;
 
-  return (
-    <div {...props}
-      { ...(
-        isSvg
-          ? { dangerouslySetInnerHTML: {
-            __html: props.img.data,
-            style: imageStyle(props),
-          }}
-          : {}
-        )
-      }
-    >
-      { props.img && !isSvg
-        ? <img
-            src = { props.img.url }
-            style = { imageStyle(props) }
-          />
-        : null
-      }
-    </div>
-  );
+  return <>
+    { isSvg && !props.useInlineSvg
+      ? <embed
+          type = { props.img.mine }
+          src = { props.img.url }
+        />
+      : <div {...props}
+        { ...(
+          isSvg
+            ? { dangerouslySetInnerHTML: {
+              __html: props.img.data,
+              style: imageStyle(props),
+            }}
+            : {}
+          )
+        }
+      >
+        { props.img && !isSvg
+          ? <img
+              src = { props.img.url }
+              style = { imageStyle(props) }
+            />
+          : null
+        }
+      </div>
+    }
+  </>;
 }
 
 // Generic image change handler

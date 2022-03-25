@@ -92,8 +92,12 @@ export class DescriptionPopupEdit extends React.Component {
   render() {
     let blockProps = this.props.blockProps;
     let ImageEditor = <ImageEdit
-      onChange = { (i) => onImageChange(i, this.setStateAttributes({img: i }) ) }
+      onChange = { (i) => onImageChange(
+        i,
+        (_i) => this.setStateAttributes({img: _i })
+      ) }
       img = { this.state.img }
+      useInlineSvg = { false }
     />;
 
     return (

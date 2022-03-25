@@ -99,6 +99,7 @@ function PopupFooter(props) {
       : <ImageSave
           className = "ncs4-description-popup__img"
           img = { props.img }
+          useInlineSvg = { false }
           align = "left"
         />
     }
