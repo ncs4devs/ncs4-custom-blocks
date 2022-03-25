@@ -5,6 +5,8 @@
   font-size: var(--image-size, 16px);
   width: var(--image-size, 16px);
   height: auto;
+  overflow: visible;
+  /* Occasional floating point scaling errors cause parts to be clipped */
 }
 .ncs4-icon-block .dashicons {
   color: var(--dashicons-color, "inherit");
