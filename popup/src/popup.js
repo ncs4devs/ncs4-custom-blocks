@@ -24,6 +24,12 @@ export class Popup extends React.Component {
     { value: 'size-body', label: 'Medium (body size)' },
     { value: 'size-large', label: 'Large' },
   ];
+  static linkOptions = [
+    { value: '', label: 'Link'},
+    { value: 'ncs4-button ncs4-button__blue', label: 'Blue button'},
+    { value: 'ncs4-button ncs4-button__yellow', label: 'Yellow button'},
+    { value: 'ncs4-button ncs4-button__gold', label: 'Gold button'},
+  ];
 
   render() {
     let attrs = this.props.attributes;
@@ -40,13 +46,19 @@ export class Popup extends React.Component {
       <>
         { this.props.backend
           ? <a
-              className = { "ncs4-popup-button " + this.props.className }
+              className = {
+                "ncs4-popup-button " + (this.props.className || "")
+                + " " + (attrs.linkStyle || "")
+              }
               href="#"
             >
               { attrs.buttonTitle }
             </a>
           : <a
-              className = { "ncs4-popup-button " + this.props.className }
+              className = {
+                "ncs4-popup-button " + (this.props.className || "")
+                + " " + (attrs.linkStyle || "")
+              }
               href= { "#" + id }
             >
               { attrs.buttonTitle }

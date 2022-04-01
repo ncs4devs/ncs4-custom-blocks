@@ -40,6 +40,10 @@ registerBlockType( 'ncs4-custom-blocks/popup', {
       type: 'string',
       default: 'size-body',
     },
+    linkStyle: {
+      type: 'string',
+      default: '',
+    },
   },
 
   edit: (props) => (

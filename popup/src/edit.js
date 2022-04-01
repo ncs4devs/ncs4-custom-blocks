@@ -2,6 +2,8 @@ import React from 'react';
 
 import { select } from '@wordpress/data';
 import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
+import { PanelBody } from '@wordpress/components';
+import { OptionsControl } from '../../js/SelectControls';
 import { Popup, PopupSettings, reserveId, deleteId } from './popup.js';
 import { verifyColor } from '../../js/ColorSelector.js';
 
@@ -23,6 +25,7 @@ export class PopupEdit extends React.Component {
       buttonTitle: this.attributes.buttonTitle,
       id: this.attributes.id,
       optionSize: this.attributes.optionSize,
+      linkStyle: this.attributes.linkStyle,
     }
 
     if (!this.state.optionSize) {
@@ -99,6 +102,23 @@ export class PopupEdit extends React.Component {
             attributes = { this.state }
             callback = { this.setStateAttributes }
           />
+          <PanelBody
+            title = "Link settings"
+            initialOpen = { true }
+          >
+            <OptionsControl
+              options = {[
+                {
+                  attribute: 'linkStyle',
+                  label: 'Link style',
+                  default: '',
+                  value: this.state.linkStyle,
+                  choices: Popup.linkOptions,
+                },
+              ]}
+              onChange = { this.setStateAttributes }
+            />
+          </PanelBody>
         </InspectorControls>
       </div>
     );
