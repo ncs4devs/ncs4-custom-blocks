@@ -84,9 +84,9 @@
   height: fit-content;
   flex: 1 0 auto;
 }
-.ncs4-description-popup__footer .ncs4-description-popup__img img, .ncs4-description-popup__footer .ncs4-description-popup__img svg, .ncs4-description-popup__footer embed img, .ncs4-description-popup__footer embed svg {
-  max-height: 6em;
+.ncs4-description-popup__footer .ncs4-description-popup__img img {
   display: block;
+  max-height: 100%;
 }
 .ncs4-description-popup__footer .ncs4-button {
   margin: auto;

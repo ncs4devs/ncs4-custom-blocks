@@ -19,12 +19,13 @@
       max-height: 4em;
       height: fit-content;
       flex: 1 0 auto;
-
-      img, svg {
-        max-height: 6em;
-        display: block;
-      }
     }
+
+    .ncs4-description-popup__img img {
+      display: block;
+      max-height: 100%;
+    }
+
     .ncs4-button {
       margin: auto;
       flex: 0 0 auto;
