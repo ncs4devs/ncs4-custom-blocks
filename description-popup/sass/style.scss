@@ -11,13 +11,13 @@
     justify-content: space-between;
     margin-top: 1em;
     gap: 1em;
+    max-height: 7em;
 
 
     .ncs4-description-popup__img, embed {
       margin: 0 auto;
       max-width: max(50%, 16ch);
-      max-height: 4em;
-      height: fit-content;
+      height: 100%;
       flex: 1 0 auto;
     }
 
