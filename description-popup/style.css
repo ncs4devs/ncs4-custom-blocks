@@ -81,7 +81,7 @@
 .ncs4-description-popup__footer .ncs4-description-popup__img, .ncs4-description-popup__footer embed {
   margin: 0 auto;
   max-width: max(50%, 16ch);
-  height: 100%;
+  max-height: inherit;
   flex: 1 0 auto;
 }
 .ncs4-description-popup__footer .ncs4-description-popup__img img {
