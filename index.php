@@ -40,3 +40,4 @@ include 'award-card/index.php';
 include 'style-block/index.php';
 include 'description-popup/index.php';
 include 'icon/index.php';
+include 'button/index.php';
