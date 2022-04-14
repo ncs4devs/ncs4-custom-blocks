@@ -890,7 +890,7 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
   apiVersion: 2,
   title: 'Button',
   icon: 'button',
-  category: 'media',
+  category: 'layout',
   attributes: {
     text: {
       type: "string",

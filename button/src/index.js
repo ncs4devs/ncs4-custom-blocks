@@ -9,7 +9,7 @@ registerBlockType( 'ncs4-custom-blocks/button', {
 
   title: 'Button',
   icon: 'button',
-  category: 'media',
+  category: 'layout',
   attributes: {
     text: {
       type: "string",
