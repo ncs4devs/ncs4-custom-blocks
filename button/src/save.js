@@ -8,13 +8,15 @@ export default function Save(props) {
     "data-style": attributes.style,
   }
 
+  let hasStyle = attributes.style !== "link"
+
   return (
     <a { ...blockProps }
       { ...data }
       className = {
         [
-          "ncs4-button",
-          "ncs4-button__" + attributes.style,
+          hasStyle ? "ncs4-button" : null,
+          hasStyle ? "ncs4-button__" + attributes.style : null,
           blockProps.className,
         ].join(' ')
       }

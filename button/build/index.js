@@ -954,8 +954,9 @@ function Save(props) {
     "data-new-tab": attributes.doNewTab,
     "data-style": attributes.style
   };
+  let hasStyle = attributes.style !== "link";
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, blockProps, data, {
-    className: ["ncs4-button", "ncs4-button__" + attributes.style, blockProps.className].join(' '),
+    className: [hasStyle ? "ncs4-button" : null, hasStyle ? "ncs4-button__" + attributes.style : null, blockProps.className].join(' '),
     href: props.backend ? null : attributes.link,
     target: attributes.doNewTab ? "_blank" : null
   }), attributes.text);
