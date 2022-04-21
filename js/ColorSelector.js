@@ -3,6 +3,29 @@ import React from 'react';
 import { select } from '@wordpress/data';
 import { ColorPalette } from '@wordpress/components';
 
+// Adds className and style properties to a color loaded from DB
+export function fromColorAttribute(attr, bg = false) {
+  let customColor = attr.slug ? null : attr.color;
+
+  if (bg) {
+    return Object.assign({}, attr, {
+      className: createColorClass(attr.slug, "background-color"),
+      style: {
+        backgroundColor: customColor,
+        ["--palette-bg-color"]: customColor,
+      },
+    });
+  }
+
+  return Object.assign({}, attr, {
+    className: createColorClass(attr.slug, "color"),
+    style: {
+      color: customColor,
+      ["--palette-color"]: customColor,
+    },
+  });
+}
+
 export function createColorClass(slug, prop) {
   if (!slug || !prop) {
     return null;
@@ -47,7 +70,6 @@ export class ColorSelector extends React.Component {
         <ColorPalette
           colors = { settings.colors }
           disableCustomColors = { settings.disableCustomColors }
-          clearable = { !settings.disableCustomColors }
           value = { value }
           onChange = { (c) => {
             let color = settings.colors.filter( (obj) => obj.color === c)[0];
