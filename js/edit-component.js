@@ -7,6 +7,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, TextControl } from '@wordpress/components';
 import { UnitControl, OptionsControl } from './SelectControls';
 import { ColorSelector } from './ColorSelector';
+import { ImageEdit, onImageChange } from './ImageControl';
 
 /* Example usage:
 
@@ -204,6 +205,21 @@ function ControlPanel(props) {
                 key = { key }
                 value = { state[control.attribute].color }
                 onChange = { setAttribute(control.attribute) }
+              />
+            );
+
+            break;
+          }
+
+          case "image": {
+            return (
+              <ImageEdit
+                { ...control }
+                onChange = { (i) => onImageChange(
+                  i,
+                  setAttribute(control.attribute),
+                )}
+                img = { state[control.attribute] }
               />
             );
 
