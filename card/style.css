@@ -1,0 +1,38 @@
+/* These colors are kept for compatibility reasons and should not be used */
+/* These colors may be used */
+/* Colors are swapped around to be in order from darkest to lightest */
+/* Navy */
+/* Dark Blue */
+/* Yellow */
+/* Grey */
+/* Links */
+.ncs4-card {
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.32), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+}
+.ncs4-card__banner {
+  padding: 1em 2em;
+  /* clearfix */
+}
+.ncs4-card__banner::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.ncs4-card__banner[data-use-image=true] .ncs4-card__banner-text {
+  /* 1.6em is the paragraph's line height */
+  padding-top: calc( (var(--icon-height, 64px) - 1.6em) / 2);
+}
+.ncs4-card__icon {
+  width: var(--icon-width, 64px);
+  float: left;
+  margin-right: 1em;
+}
+.ncs4-card__icon img {
+  display: block;
+}
+.ncs4-card__content {
+  background-color: #e6e6e6;
+  padding: 2em;
+}
+
+/*# sourceMappingURL=style.css.map */
