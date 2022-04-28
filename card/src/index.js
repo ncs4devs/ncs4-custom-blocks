@@ -36,7 +36,7 @@ const attributes = {
     source: "attribute",
     attribute: "data-margin",
     selector: ".ncs4-card",
-    default: [0, 0, 0, 0],
+    default: [3, 0, 3, 0],
   },
   useImg: {
     type: "boolean",
