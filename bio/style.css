@@ -44,7 +44,7 @@
   margin: 0 auto;
   padding: 3.2rem;
   width: 100%;
-  border: 16px solid var(--palette-bg-color);
+  border: 16px solid var(--palette-bg-color, #fff);
   border-radius: 16px;
 }
 .ncs4-popup-content.size-alert {
@@ -71,6 +71,7 @@
 .ncs4-bio-header {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   column-gap: 2em;
 }
 .ncs4-bio-header .ncs4-bio-position {
@@ -89,11 +90,11 @@
   font-style: italic;
 }
 .ncs4-bio-col1 {
-  flex: 1 0 auto;
+  flex: 0 1 auto;
 }
 .ncs4-bio-col2 {
   margin: auto auto 0 0;
-  flex: 0 1 100%;
+  flex: 1 0 min-content;
 }
 
 .super-secret-best-staff .ncs4-popup-overlay::before {
