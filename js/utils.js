@@ -1,3 +1,52 @@
+// ensures loaded attributes from the database are cast to their correct type
+export function parseAttributes(table, data) {
+  let out = {};
+  for (let attr in data) {
+    if (
+        typeof data[attr] === "string" && table[attr] &&
+        typeof table[attr] === "object" && table[attr].type
+      ) {
+      switch (table[attr].type) {
+        case "string": {
+          out[attr] = data[attr];
+          break;
+        }
+
+        case "boolean": {
+          out[attr] = Boolean(data[attr]);
+          break;
+        }
+
+        case "integer":
+        case "number":
+        case "json": {
+          out[attr] = JSON.parse(data[attr]);
+          break;
+        }
+
+        case "null": {
+          if (data[attr] !== null && data[attr] !== "" && data[attr] !== "null") {
+            console.warn("Attribute '" + attr +
+              "': expected null, got '" + data[attr] + "'"
+            );
+          }
+          out[attr] = null;
+          break;
+        }
+
+        default: {
+          console.warn(
+            "Attribute '" + attr + "': Unknown type '" + table[attr].type + "'"
+          );
+        }
+      }
+    } else {
+      out[attr] = data[attr];
+    }
+  }
+  return out;
+}
+
 export function normalizeStringLength(str, n, useNbsp = true, addEllipses = true) {
   let richText = parseRichText(str);
   if (richText.length === n) {
