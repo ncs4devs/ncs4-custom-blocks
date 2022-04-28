@@ -15,7 +15,10 @@ export default function Save(props) {
 
   return (
     <div { ...blockProps }
-      data-backend = { props.backend ? "true" : null }
+      { ...{
+        "data-backend": props.backend ? "true" : null,
+        "data-margin": JSON.stringify(attributes.margin),
+      } }
       style = {{
         ...props.style,
         margin: attributes.margin
@@ -30,7 +33,10 @@ export default function Save(props) {
     >
       <div
         { ...{
+          "data-banner-background": JSON.stringify(bgColor),
+          "data-banner-color": JSON.stringify(textColor),
           "data-use-image": attributes.useImg,
+          "data-image": JSON.stringify(attributes.img),
           "data-icon-width": attributes.imgSize,
         } }
         className = {

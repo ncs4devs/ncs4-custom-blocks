@@ -1178,6 +1178,310 @@ function withAttributes(attributes, setAttributes, initialState = {}, reducers =
 
 /***/ }),
 
+/***/ "../js/utils.js":
+/*!**********************!*\
+  !*** ../js/utils.js ***!
+  \**********************/
+/*! exports provided: parseAttributes, normalizeStringLength */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseAttributes", function() { return parseAttributes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "normalizeStringLength", function() { return normalizeStringLength; });
+// ensures loaded attributes from the database are cast to their correct type
+function parseAttributes(table, data) {
+  let out = {};
+
+  for (let attr in data) {
+    if (typeof data[attr] === "string" && table[attr] && typeof table[attr] === "object" && table[attr].type) {
+      switch (table[attr].type) {
+        case "string":
+          {
+            out[attr] = data[attr];
+            break;
+          }
+
+        case "boolean":
+          {
+            out[attr] = Boolean(data[attr]);
+            break;
+          }
+
+        case "integer":
+        case "number":
+        case "json":
+          {
+            out[attr] = JSON.parse(data[attr]);
+            break;
+          }
+
+        case "null":
+          {
+            if (data[attr] !== null && data[attr] !== "" && data[attr] !== "null") {
+              console.warn("Attribute '" + attr + "': expected null, got '" + data[attr] + "'");
+            }
+
+            out[attr] = null;
+            break;
+          }
+
+        default:
+          {
+            console.warn("Attribute '" + attr + "': Unknown type '" + table[attr].type + "'");
+          }
+      }
+    } else {
+      out[attr] = data[attr];
+    }
+  }
+
+  return out;
+}
+function normalizeStringLength(str, n, useNbsp = true, addEllipses = true) {
+  let richText = parseRichText(str);
+
+  if (richText.length === n) {
+    return richText.toString(); // no shortening or lengthening needed
+  }
+
+  let outStr;
+
+  if (richText.length <= n) {
+    let spaces = addEllipses ? n - 3 - richText.length : n - richText.length;
+    outStr = richText.toString();
+    outStr += useNbsp ? " " + "&nbsp;".repeat(spaces - 1) : " ".repeat(spaces);
+  } else {
+    richText = richText.slice(0, addEllipses ? n - 3 : n);
+    outStr = richText.toString();
+    outStr += addEllipses ? "..." : "";
+  }
+
+  return outStr;
+}
+/*
+  Takes a rich text string and returns an object of the form
+  {
+    length: <int>,
+    tag: <html element name>, // e.g. "em", "strong"
+    hasEndTag: <false | true>,
+    text: [string | rich text object],
+    slice: (min, max) => <rich text object>,
+    toString: () => <string>,
+  }
+*/
+
+function parseRichText(str, rootTag = null) {
+  // tag: charValue,
+  const voidTags = {
+    br: 30,
+    hr: 30
+  };
+
+  const traverse = (root, visit) => {
+    root.text.forEach((leaf, index) => typeof leaf === "object" ? leaf.tag && !leaf.hasEndTag ? visit(leaf, root, index) // "visit" void tags
+    : traverse(leaf, visit) : visit(leaf, root, index));
+  };
+
+  const prototype = {
+    slice(min, max) {
+      if (min < 0) {
+        slice(this.length + min);
+      }
+
+      if (max < 0) {
+        slice(this.length + max);
+      }
+
+      max = max == null ? this.length : max;
+      let out = Object.assign(Object.create(prototype), this);
+      out.text = [];
+      let i = 0;
+
+      const addLeaf = (leaf, root) => {
+        let isVoidTag = typeof leaf === "object" && leaf.tag && !leaf.hasEndTag; // leaf is a rich text object
+
+        if (isVoidTag) {
+          if (i < min || i + leaf.length > max) {
+            // skip tag
+            i += leaf.length;
+          } else {
+            // add tag
+            i += leaf.length;
+            out.text.push(leaf);
+            out.length += leaf.length;
+          }
+
+          return; // leaf is a string
+        } else {
+          let value = Object.assign(Object.create(prototype), root);
+          let text = "";
+          let chars = 0;
+
+          if (leaf.length === 0) {
+            return; // empty string
+          }
+
+          if (i < min) {
+            // skip characters until i == min
+            if (i + leaf.length >= min) {
+              let skip = min - i;
+              i += skip;
+              chars = Math.min(leaf.length, max - min);
+              text = leaf.slice(skip, skip + chars);
+            } else {
+              // leaf doesn't reach up to the min index
+              i += leaf.length;
+            }
+          } else if (i < max) {
+            // min <= i < max
+            chars = Math.min(leaf.length, max - i);
+            text = leaf.slice(0, chars);
+            i += chars;
+          }
+
+          if (text !== "") {
+            value.text = [text];
+            value.length = chars;
+            out.text.push(value);
+            out.length = Math.max(0, i - min);
+          }
+        }
+      };
+
+      traverse(this, addLeaf);
+      return out;
+    },
+
+    toString() {
+      let out = "";
+
+      const addLeaf = (leaf, root, index) => {
+        if (typeof leaf === "object" && leaf.tag && !leaf.hasEndTag) {
+          // void tag
+          out += "<" + leaf.tag + ">";
+          return;
+        }
+
+        if (root.tag && index === 0) {
+          out += "<" + root.tag + ">";
+        }
+
+        out += leaf;
+
+        if (root.tag && root.hasEndTag && index === root.text.length - 1) {
+          out += "</" + root.tag + ">";
+        }
+      };
+
+      traverse(this, addLeaf);
+      return out;
+    }
+
+  };
+  let out = Object.create(prototype);
+  out = Object.assign(out, {
+    length: 0,
+    tag: rootTag,
+    hasEndTag: false,
+    text: []
+  }); // tokenize string
+
+  let tokens = [];
+  let workingStr = str;
+  let a = workingStr.search("<");
+  let b = workingStr.search(">");
+
+  while (a !== -1 && b !== -1) {
+    let token = workingStr.slice(0, a);
+
+    if (token !== "") {
+      // there is a string token
+      tokens.push(token);
+    } // handle html token
+
+
+    tokens.push(workingStr.slice(a, b + 1));
+    workingStr = workingStr.slice(b + 1);
+    a = workingStr.search("<");
+    b = workingStr.search(">");
+  } // handle the rest of the string
+
+
+  if (workingStr !== "") {
+    tokens.push(workingStr);
+  }
+
+  const reduceTokens = (textObj, token, index, arr) => {
+    const next = (acc, index) => () => reduceTokens(Object.assign(Object.create(prototype), acc), arr[index + 1], index + 1, arr);
+
+    const recur = (arr, init) => dynamicReduce(arr, reduceTokens, init);
+
+    if (textObj.hasEndTag || index >= arr.length) {
+      return textObj;
+    }
+
+    if (/^<\/.*>$/.test(token)) {
+      // HTML end tag
+      a = token.search("<") + 1;
+      b = token.search(">");
+      let tag = token.slice(a + 1, b);
+
+      if (tag === textObj.tag) {
+        // exit reduce
+        textObj.hasEndTag = true;
+        return textObj;
+      }
+    } else if (/^<.*>$/.test(token)) {
+      // HTML start tag
+      a = token.search("<");
+      b = token.search(">");
+      let htmlOut = Object.create(prototype);
+      htmlOut = Object.assign(htmlOut, {
+        length: 0,
+        tag: token.slice(a + 1, b),
+        hasEndTag: false,
+        text: []
+      });
+
+      if (voidTags[htmlOut.tag]) {
+        htmlOut.length = voidTags[htmlOut.tag];
+      } else {
+        htmlOut = recur(arr.slice(index + 1), htmlOut);
+        index += 1 + htmlOut.text.length; // prevent going over the same entries twice
+      }
+
+      textObj.text.push(htmlOut);
+      textObj.length += htmlOut.length;
+    } else {
+      // normal string
+      textObj.text.push(token);
+      textObj.length += token.length;
+    }
+
+    if (textObj.tag && index + 1 === arr.length && !textObj.hasEndTag) {
+      console.error("EOL reached: Expected closing tag for <" + textObj.tag + ">");
+    }
+
+    return next(textObj, index);
+  };
+
+  out = dynamicReduce(tokens, reduceTokens, out);
+  return out;
+}
+
+function dynamicReduce(arr, reduceFunc, init) {
+  let value = reduceFunc(init, arr[0], 0, arr);
+
+  while (typeof value === "function") {
+    value = value();
+  }
+
+  return value;
+}
+
+/***/ }),
+
 /***/ "../node_modules/@babel/runtime/helpers/defineProperty.js":
 /*!****************************************************************!*\
   !*** ../node_modules/@babel/runtime/helpers/defineProperty.js ***!
@@ -1327,65 +1631,83 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _edit_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./edit.js */ "./src/edit.js");
-/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
+/* harmony import */ var _js_utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../js/utils */ "../js/utils.js");
+/* harmony import */ var _edit_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./edit.js */ "./src/edit.js");
+/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
 
 
 
 
 
 
-Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs4-custom-blocks/card', {
+
+const attributes = {
+  bannerBg: {
+    type: "json",
+    source: "attribute",
+    attribute: "data-banner-background",
+    selector: ".ncs4-card__banner",
+    default: {
+      color: "#18243E",
+      slug: "primary-1"
+    }
+  },
+  bannerColor: {
+    type: "json",
+    source: "attribute",
+    attribute: "data-banner-color",
+    selector: ".ncs4-card__banner",
+    default: {
+      color: "#e6e6e6",
+      slug: "white-dark"
+    }
+  },
+  bannerText: {
+    type: "string",
+    source: "html",
+    selector: ".ncs4-card__banner-text"
+  },
+  margin: {
+    type: "json",
+    source: "attribute",
+    attribute: "data-margin",
+    selector: ".ncs4-card",
+    default: [0, 0, 0, 0]
+  },
+  useImg: {
+    type: "boolean",
+    source: "attribute",
+    attribute: "data-use-image",
+    selector: ".ncs4-card__banner",
+    default: false
+  },
+  img: {
+    type: 'json',
+    source: "attribute",
+    attribute: "data-image",
+    selector: ".ncs4-card__banner",
+    default: {}
+  },
+  imgSize: {
+    type: 'number',
+    source: "attribute",
+    attribute: "data-icon-width",
+    selector: ".ncs4-card__banner",
+    default: 64
+  }
+};
+Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])("ncs4-custom-blocks/card", {
   apiVersion: 2,
   title: 'Card',
   icon: 'index-card',
   category: 'layout',
-  attributes: {
-    bannerBg: {
-      type: "object",
-      default: {
-        color: "#18243E",
-        slug: "primary-1"
-      }
-    },
-    bannerColor: {
-      type: "object",
-      default: {
-        color: "#e6e6e6",
-        slug: "white-dark"
-      }
-    },
-    bannerText: {
-      type: "string",
-      source: "html",
-      selector: ".ncs4-card__banner-text"
-    },
-    margin: {
-      type: "array",
-      default: [0, 0, 0, 0]
-    },
-    useImg: {
-      type: "boolean",
-      source: "attribute",
-      attribute: "data-use-image",
-      selector: ".ncs4-card__banner",
-      default: false
-    },
-    img: {
-      type: 'object'
-    },
-    imgSize: {
-      type: 'number',
-      source: "attribute",
-      attribute: "data-icon-width",
-      selector: ".ncs4-card__banner",
-      default: 64
-    }
-  },
-  edit: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_edit_js__WEBPACK_IMPORTED_MODULE_4__["default"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+  attributes,
+  edit: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_edit_js__WEBPACK_IMPORTED_MODULE_5__["default"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+    attributes: Object(_js_utils__WEBPACK_IMPORTED_MODULE_4__["parseAttributes"])(attributes, props.attributes),
     blockProps: Object(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["useBlockProps"])()
   })),
-  save: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_save_js__WEBPACK_IMPORTED_MODULE_5__["default"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+  save: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_save_js__WEBPACK_IMPORTED_MODULE_6__["default"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+    attributes: Object(_js_utils__WEBPACK_IMPORTED_MODULE_4__["parseAttributes"])(attributes, props.attributes),
     blockProps: _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["useBlockProps"].save()
   }))
 });
@@ -1424,12 +1746,16 @@ function Save(props) {
   let imgHeight = imgResolution * attributes.imgSize;
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, blockProps, {
     "data-backend": props.backend ? "true" : null,
+    "data-margin": JSON.stringify(attributes.margin),
     style: { ...props.style,
       margin: attributes.margin.map(v => String(v) + "rem").join(" ")
     },
     className: ["ncs4-card", blockProps.className].join(' ')
   }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
+    "data-banner-background": JSON.stringify(bgColor),
+    "data-banner-color": JSON.stringify(textColor),
     "data-use-image": attributes.useImg,
+    "data-image": JSON.stringify(attributes.img),
     "data-icon-width": attributes.imgSize,
     className: ["ncs4-card__banner", bgColor.className, textColor.className].join(' '),
     style: {
