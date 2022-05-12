@@ -9,12 +9,7 @@ import { verifyColor } from '../../js/ColorSelector';
 import { normalizeStringLength } from '../../js/utils';
 import { ImageEdit, onImageChange } from '../../js/ImageControl.js';
 
-import {
-  Popup,
-  PopupSettings,
-  reserveId,
-  deleteId,
-} from '../../popup/src/popup.js';
+import Popup, { reserveId, deleteId } from '../../popup/src/popup.js';
 import { DescriptionPopupSave } from './save.js';
 
 const normalizedDescLength = 400; // Number of chars for the short description
@@ -149,7 +144,7 @@ export class DescriptionPopupEdit extends React.Component {
               help = "The link for the button"
             />
           </PanelBody>
-          <PopupSettings
+          <Popup.Settings
             attributes = { this.state }
             callback = { this.setStateAttributes }
           />

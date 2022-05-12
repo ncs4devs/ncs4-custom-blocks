@@ -9,9 +9,7 @@ import { verifyColor } from '../../js/ColorSelector';
 import { normalizeStringLength } from '../../js/utils';
 import { createRegistry, RegistryProvider } from '@wordpress/data';
 
-import {
-  Popup,
-  PopupSettings,
+import Popup, {
   reserveId,
   deleteId,
 } from '../../popup/src/popup.js';
@@ -182,7 +180,7 @@ export class AwardCardEdit extends React.Component {
               }}
             />
           </PanelBody>
-          <PopupSettings
+          <Popup.Settings
             attributes = { this.state }
             callback = { this.setStateAttributes }
           />

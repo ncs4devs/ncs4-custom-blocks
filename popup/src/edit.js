@@ -4,7 +4,7 @@ import { select } from '@wordpress/data';
 import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
 import { OptionsControl } from '../../js/SelectControls';
-import { Popup, PopupSettings, reserveId, deleteId } from './popup.js';
+import Popup, { reserveId, deleteId } from './popup.js';
 import { verifyColor } from '../../js/ColorSelector.js';
 
 export class PopupEdit extends React.Component {
@@ -98,7 +98,7 @@ export class PopupEdit extends React.Component {
           <InnerBlocks/>
         </Popup>
         <InspectorControls>
-          <PopupSettings
+          <Popup.Settings
             attributes = { this.state }
             callback = { this.setStateAttributes }
           />

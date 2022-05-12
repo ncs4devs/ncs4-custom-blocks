@@ -2,7 +2,7 @@ import React from 'react';
 import { InnerBlocks } from '@wordpress/block-editor';
 import { createColorClass } from '../../js/ColorSelector.js';
 
-import { Popup } from './popup.js';
+import Popup from './popup.js';
 
 export class PopupSave extends React.Component {
   constructor(props) {

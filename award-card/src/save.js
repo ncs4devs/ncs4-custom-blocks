@@ -1,8 +1,7 @@
 import React from 'react';
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 
-import { Popup } from '../../popup/src/popup.js';
-import {ReactComponent as DismissIcon} from '../../img/dismiss.svg';
+import Popup from '../../popup/src/popup.js';
 
 import { RecipientsSave } from './recipients';
 
@@ -38,16 +37,7 @@ export class AwardCardSave extends React.Component {
             <h1 className = "ncs4-award-card__popup-name">
               { attributes.name }
             </h1>
-            <a
-              href = "#!"
-              className = "ncs4-award-card__popup-dismiss-link"
-              title = "Dismiss"
-            >
-              <DismissIcon
-                className = "ncs4-award-card__popup-dismiss"
-                viewBox = "0 52.67 43 43"
-              />
-            </a>
+            <Popup.Dismiss/>
           </div>
           <div className = "ncs4-award-card__popup-content">
             <RichText.Content

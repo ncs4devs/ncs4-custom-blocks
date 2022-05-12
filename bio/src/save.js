@@ -2,7 +2,7 @@ import React from 'react';
 import { InnerBlocks } from '@wordpress/block-editor';
 
 import { ImageSave } from '../../js/ImageControl.js';
-import { Popup } from '../../popup/src/popup.js';
+import Popup from '../../popup/src/popup.js';
 
 export class BioSave extends React.Component {
 
@@ -120,6 +120,7 @@ function BioHeader(props) {
     <>
       <div className = "ncs4-bio-header">
         <BioProfile {...props}/>
+        <Popup.Dismiss/>
       </div>
       <hr class="ncs4-bio-header-seperator"/>
     </>

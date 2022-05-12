@@ -8,163 +8,167 @@ import {
 } from '@wordpress/components';
 import { OptionsControl } from '../../js/SelectControls.js';
 import { ColorSelector, createColorClass } from '../../js/ColorSelector.js';
+import {ReactComponent as DismissIcon} from '../../img/dismiss.svg';
 
 import * as selectors from './popupSelectors';
 import * as actions from './popupActions';
 
-// Should be included by all components that use Popup
-let classType = "ncs4-custom-blocks_popup-type";
-
 // stateless popup component, children are rendered as popup contents
-export class Popup extends React.Component {
-  static classType = classType;
-  static sizeOptions = [
-    { value: 'size-alert', label: 'Alert' },
-    { value: 'size-small', label: 'Small' },
-    { value: 'size-body', label: 'Medium (body size)' },
-    { value: 'size-large', label: 'Large' },
-  ];
-  static linkOptions = [
-    { value: '', label: 'Link'},
-    { value: 'ncs4-button ncs4-button__blue', label: 'Blue button'},
-    { value: 'ncs4-button ncs4-button__yellow', label: 'Yellow button'},
-    { value: 'ncs4-button ncs4-button__gold', label: 'Gold button'},
-  ];
+const Popup = (props) => {
+  let attrs = props.attributes;
+  let id = "popup-" + String(attrs.id);
+  let customBgColor = attrs.bgColor.slug ? null : attrs.bgColor.color;
+  let customColor = attrs.textColor.slug ? null : attrs.textColor.color;
+  let css = `
+    #${id}:target {
+      display: block;
+    }
+  `
 
-  render() {
-    let attrs = this.props.attributes;
-    let id = "popup-" + String(attrs.id);
-    let customBgColor = attrs.bgColor.slug ? null : attrs.bgColor.color;
-    let customColor = attrs.textColor.slug ? null : attrs.textColor.color;
-    let css = `
-      #${id}:target {
-        display: block;
-      }
-    `
-
-    return (
-      <>
-        { this.props.backend
-          ? <a
-              className = {
-                "ncs4-popup-button " + (this.props.className || "")
-                + " " + (attrs.linkStyle || "")
-              }
-              href="#"
-            >
-              { attrs.buttonTitle }
-            </a>
-          : <a
-              className = {
-                "ncs4-popup-button " + (this.props.className || "")
-                + " " + (attrs.linkStyle || "")
-              }
-              href= { "#" + id }
-            >
-              { attrs.buttonTitle }
-            </a>
-        }
+  return <>
+    { props.backend
+      ? <a
+          className = {
+            "ncs4-popup-button " + (props.className || "")
+            + " " + (attrs.linkStyle || "")
+          }
+          href="#"
+        >
+          { attrs.buttonTitle }
+        </a>
+      : <a
+          className = {
+            "ncs4-popup-button " + (props.className || "")
+            + " " + (attrs.linkStyle || "")
+          }
+          href= { "#" + id }
+        >
+          { attrs.buttonTitle }
+        </a>
+    }
+    <div
+      id = { id }
+      className = "ncs4-popup__wrapper"
+      style = {{
+        textAlign: "left",
+      }}
+    >
+      <a
+        className = "ncs4-popup-overlay"
+        href = "#!"
+        style ={{
+          opacity: attrs.overlayOpacity,
+        }}
+      />
+      <div className = "ncs4-popup-content__wrapper">
         <div
-          id = { id }
-          className = "ncs4-popup__wrapper"
+          className = {
+            [
+              "ncs4-popup-content",
+              createColorClass(attrs.bgColor.slug, "background-color"),
+              createColorClass(attrs.textColor.slug, "color"),
+              attrs.optionSize,
+            ].join(' ')
+          }
           style = {{
-            textAlign: "left",
+            backgroundColor: customBgColor,
+            ["--palette-bg-color"]: customBgColor,
+            color: customColor,
+            ["--palette-color"]: customColor,
           }}
         >
-          <a
-            className = "ncs4-popup-overlay"
-            href = "#!"
-            style ={{
-              opacity: attrs.overlayOpacity,
-            }}
-          />
-          <div className = "ncs4-popup-content__wrapper">
-            <div
-              className = {
-                [
-                  "ncs4-popup-content",
-                  createColorClass(attrs.bgColor.slug, "background-color"),
-                  createColorClass(attrs.textColor.slug, "color"),
-                  attrs.optionSize,
-                ].join(' ')
-              }
-              style = {{
-                backgroundColor: customBgColor,
-                ["--palette-bg-color"]: customBgColor,
-                color: customColor,
-                ["--palette-color"]: customColor,
-              }}
-            >
-              { this.props.children }
-            </div>
-          </div>
-          <style>{ css }</style>
+          { props.children }
         </div>
-      </>
-    );
-  }
-}
+      </div>
+      <style>{ css }</style>
+    </div>
+  </>
+};
+// Should be included by all components that use Popup
+Popup.classType = "ncs4-custom-blocks_popup-type";
+Popup.sizeOptions = [
+  { value: 'size-alert', label: 'Alert' },
+  { value: 'size-small', label: 'Small' },
+  { value: 'size-body', label: 'Medium (body size)' },
+  { value: 'size-large', label: 'Large' },
+];
+Popup.linkOptions = [
+  { value: '', label: 'Link'},
+  { value: 'ncs4-button ncs4-button__blue', label: 'Blue button'},
+  { value: 'ncs4-button ncs4-button__yellow', label: 'Yellow button'},
+  { value: 'ncs4-button ncs4-button__gold', label: 'Gold button'},
+];
+
+Popup.Dismiss = (props) => (
+  <a
+    href = "#!"
+    className = "ncs4-award-card__popup-dismiss-link"
+    title = "Dismiss"
+  >
+    <DismissIcon
+      className = "ncs4-award-card__popup-dismiss"
+      viewBox = "0 52.67 43 43"
+    />
+  </a>
+);
 
 // Used to create popup setting controls inside of InspectorControls
-export class PopupSettings extends React.Component {
-
-  render() {
-    let attrs = this.props.attributes;
-    let callback = this.props.callback;
-    return (
-      <>
-        <PanelBody
-          title = "Button settings"
-          initialOpen = { true }
-        >
-          <TextControl
-            label = "Button title"
-            placeholder = "Show"
-            value = { attrs.buttonTitle }
-            onChange = { v => { callback({ buttonTitle: v }) }}
-          />
-        </PanelBody>
-        <PanelBody
-          title = "Popup area settings"
-          initialOpen = { true }
-        >
-          <ColorSelector
-            label = "Popup background"
-            value = { attrs.bgColor.color }
-            onChange = { c => { callback({ bgColor: c }) }}
-          />
-          <ColorSelector
-            label = "Popup text"
-            value = { attrs.textColor.color }
-            onChange = { c => { callback({ textColor: c }) }}
-          />
-          <OptionsControl
-            options = {[
-              {
-                attribute: 'overlayOpacity',
-                label: 'Overlay opacity',
-                value: Math.round(100 * attrs.overlayOpacity),
-                min: 0,
-                max: 100,
-                step: 1,
-                markStep: 20,
-                markRender: (v) => String(v) + "%",
-                onChange: (v) => v / 100,
-              },
-              {
-                attribute: 'optionSize',
-                label: "Content size",
-                value: attrs.optionSize,
-                choices: Popup.sizeOptions,
-              },
-            ]}
-            onChange = { (v) => { callback(v) } }
-          />
-        </PanelBody>
-      </>
-    );
-  }
+Popup.Settings = (props) => {
+  let attrs = props.attributes;
+  let callback = props.callback;
+  return <>
+    <PanelBody
+      title = "Button settings"
+      initialOpen = { true }
+    >
+      <TextControl
+        label = "Button title"
+        placeholder = "Show"
+        value = { attrs.buttonTitle }
+        onChange = { v => { callback({ buttonTitle: v }) }}
+      />
+    </PanelBody>
+    <PanelBody
+      title = "Popup area settings"
+      initialOpen = { true }
+    >
+      <ColorSelector
+        label = "Popup background"
+        value = { attrs.bgColor.color }
+        onChange = { c => { callback({ bgColor: c }) }}
+      />
+      <ColorSelector
+        label = "Popup text"
+        value = { attrs.textColor.color }
+        onChange = { c => { callback({ textColor: c }) }}
+      />
+      <OptionsControl
+        options = {[
+          {
+            attribute: 'overlayOpacity',
+            label: 'Overlay opacity',
+            value: Math.round(100 * attrs.overlayOpacity),
+            min: 0,
+            max: 100,
+            step: 1,
+            markStep: 20,
+            markRender: (v) => String(v) + "%",
+            onChange: (v) => v / 100,
+          },
+          {
+            attribute: 'optionSize',
+            label: "Content size",
+            value: attrs.optionSize,
+            choices: Popup.sizeOptions,
+          },
+        ]}
+        onChange = { (v) => { callback(v) } }
+      />
+    </PanelBody>
+  </>
 }
+
+export default Popup;
 
 // Popup store
 

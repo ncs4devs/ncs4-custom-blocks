@@ -4,8 +4,7 @@ import { useInnerBlocksProps } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 
 import { ImageSave } from '../../js/ImageControl.js';
-import { Popup } from '../../popup/src/popup.js';
-import {ReactComponent as DismissIcon} from '../../img/dismiss.svg';
+import Popup from '../../popup/src/popup.js';
 
 export class DescriptionPopupSave extends React.Component {
 
@@ -50,16 +49,7 @@ export class DescriptionPopupSave extends React.Component {
               <h1 className = "ncs4-description-popup__popup-name">
                 { attributes.name }
               </h1>
-              <a
-                href = "#!"
-                className = "ncs4-description-popup__popup-dismiss-link"
-                title = "Dismiss"
-              >
-                <DismissIcon
-                  className = "ncs4-description-popup__popup-dismiss"
-                  viewBox = "0 52.67 43 43"
-                />
-              </a>
+              <Popup.Dismiss/>
             </div>
             <div className = "ncs4-description-popup__popup-content">
               <RichText.Content

@@ -17,7 +17,7 @@ import {
 } from '../../js/SelectControls.js';
 import { ImageEdit, onImageChange } from '../../js/ImageControl.js';
 
-import { PopupSettings, reserveId, deleteId } from '../../popup/src/popup.js';
+import Popup, { reserveId, deleteId } from '../../popup/src/popup.js';
 import { BioSave } from './save.js';
 
 export class BioEdit extends React.Component {
@@ -151,7 +151,7 @@ export class BioEdit extends React.Component {
               onChangeComplete = { (e) => this.setAttributes({ email: e.trim() }) }
             />
           </PanelBody>
-          <PopupSettings
+          <Popup.Settings
             attributes = { this.state }
             callback = { this.setStateAttributes }
           />
