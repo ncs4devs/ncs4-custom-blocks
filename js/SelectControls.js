@@ -181,7 +181,9 @@ export class OptionsControl extends React.Component {
     options.forEach( (o, i) => {
       choices[i] = {
         attribute: o.attribute,
-        value: o.value || o.default,
+        value: o.value == NaN || o.value == null
+          ? o.default
+          : o.value,
       };
     });
     return choices;
