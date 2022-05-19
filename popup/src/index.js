@@ -1,8 +1,21 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
+import { parseAttributes } from '../../js/utils';
+import { makeAttributes } from './popup';
 
-import { PopupEdit } from './edit.js';
-import { PopupSave } from './save.js';
+import Edit from './edit.js';
+import Save from './save.js';
+
+const attributes = Object.assign(
+  makeAttributes(),
+  {
+    popupTitle: {
+      type: "string",
+      source: "html",
+      selector: ".ncs4-popup__popup-title",
+    },
+  },
+);
 
 registerBlockType( 'ncs4-custom-blocks/popup', {
   apiVersion: 2,
@@ -10,51 +23,19 @@ registerBlockType( 'ncs4-custom-blocks/popup', {
   title: 'Popup',
   icon: 'testimonial',
   category: 'layout',
-  attributes: {
-    overlayOpacity: {
-      type: 'number',
-      default: 0.9,
-    },
-    bgColor: {
-      type: 'object',
-      default: {
-        color: null,
-        slug: 'white-bright',
-      },
-    },
-    textColor: {
-      type: 'object',
-      default: {
-        color: null,
-        slug: 'secondary-1c',
-      },
-    },
-    buttonTitle: {
-      type: 'string',
-      default: 'Show',
-    },
-    id: {
-      type: 'number',
-    },
-    optionSize: {
-      type: 'string',
-      default: 'size-body',
-    },
-    linkStyle: {
-      type: 'string',
-      default: '',
-    },
-  },
+  attributes,
 
   edit: (props) => (
-    <PopupEdit
+    <Edit
       { ...props }
+      attributes = { parseAttributes(attributes, props.attributes) }
       blockProps = { useBlockProps() }
     />
   ),
   save: (props) => (
-    <PopupSave
+    <Save
       { ...props }
+      attributes = { parseAttributes(attributes, props.attributes) }
       blockProps = { useBlockProps.save() }
     />
   ),

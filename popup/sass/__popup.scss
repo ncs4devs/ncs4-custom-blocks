@@ -1,12 +1,35 @@
-@mixin popup-style() {
+@import '../../sass/ncs4-pro-colors';
+
+.ncs4-popup {
   $dismiss-icon-spread: 10px;
   $dismiss-icon-scale: 1.1;
 
-  display: flex;
-  flex-direction: column;
-  background-color: $color_white-dark;
-  padding: 1.5rem 2.5rem;
-  height: 100%;
+  &__wrapper {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999999;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+
+    &:focus-within .ncs4-popup-overlay {
+      display: block;
+    }
+  }
+
+  &-overlay {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #000;
+    pointer-events: all;
+
+    &:hover {
+      cursor: default;
+    }
+  }
 
   &__name {
     text-transform: none;
@@ -49,32 +72,76 @@
     }
   }
 
-  .ncs4-popup-button {
+  &-button {
     align-self: end;
     margin-top: auto;
   }
 
-  .ncs4-popup-content {
+  &-content {
+    $max-vw: 80vw;
+
     display: flex;
+    overflow: hidden auto;
+    pointer-events: all;
     flex-direction: column;
+    max-height: 80vh;
+    width: 100%;
+    margin: 0 auto;
+    padding: 3.2rem;
     padding-top: 0;
-    overflow: hidden;
+    overflow: hidden auto;
+    border: 16px solid var(--palette-bg-color, #fff);
+    border-radius: 16px;
+
+    &.size-alert {
+      max-width: min(30ch, #{$max-vw});
+    }
+
+    &.size-small {
+      max-width: min(600px, #{$max-vw});
+    }
+
+    &.size-body {
+      max-width: min(1000px, #{$max-vw});
+    }
+
+    &.size-large {
+      max-width: min(1720px, #{$max-vw});
+    }
+
+    &__wrapper {
+      display: flex;
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      flex-direction: column;
+      justify-content: center;
+    }
   }
 
-  &__popup-name {
+  &__popup-title {
     text-transform: none;
-    margin: 0;
+    margin: 0 0 0.25em 0;
     color: $color_link-1;
   }
 
   &__popup-header {
     display: flex;
+    gap: 0.5em;
+    flex-direction: row;
+    flex-wrap: wrap-reverse;
     margin-top: $dismiss-icon-spread * $dismiss-icon-scale + 1px;
   }
 
-  &__popup-content {
+  &__popup-body {
     overflow: hidden auto;
-    box-shadow: inset 0 8px 16px -16px $color_secondary-0c;
     padding: 1em;
+    padding-left: 0;
   }
+
+  .popup-has-shadow &__popup-body {
+    padding-left: 1em;
+    box-shadow: inset 0 8px 16px -16px $color_secondary-0c;
+  }
+
 }

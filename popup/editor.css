@@ -1,9 +1,25 @@
+/* These colors are kept for compatibility reasons and should not be used */
+/* These colors may be used */
+/* Colors are swapped around to be in order from darkest to lightest */
+/* Navy */
+/* Dark Blue */
+/* Yellow */
+/* Grey */
+/* Links */
+.ncs4-popup {
+  width: 100%;
+  height: 100%;
+  padding: 1.5rem 2.5rem;
+  background-color: #e6e6e6;
+}
 .ncs4-popup .ncs4-popup-overlay {
-  display: none;
+  display: none !important;
 }
 .ncs4-popup .ncs4-popup-content {
   overflow-y: visible;
   max-height: unset;
+  min-height: 64px;
+  min-width: 32px;
   padding: 0;
   border: none;
   border-radius: 0;

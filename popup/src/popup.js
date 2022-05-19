@@ -1,24 +1,114 @@
 // Library of generic popup classes
 
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { select, dispatch, registerStore } from '@wordpress/data';
-import {
-  PanelBody,
-  TextControl,
-} from '@wordpress/components';
-import { OptionsControl } from '../../js/SelectControls.js';
-import { ColorSelector, createColorClass } from '../../js/ColorSelector.js';
+import { PanelBody, TextControl } from '@wordpress/components';
+import { OptionsControl } from '../../js/SelectControls';
+import { useColor, fromColorAttribute } from '../../js/ColorSelector';
 import {ReactComponent as DismissIcon} from '../../img/dismiss.svg';
 
 import * as selectors from './popupSelectors';
 import * as actions from './popupActions';
 
-// stateless popup component, children are rendered as popup contents
+/* Exports:
+  (default) Popup - main component. Requires "backend" and "attributes" props.
+    Popup.Dismiss - "X" for closing the popup (unnecessary if using
+      Popup.Header)
+    Popup.Header - Container for the top of the popup (includes Popup.Dismiss)
+    Popup.Title - Displays a title inside the popup (accepts a "title" prop)
+    Popup.Body - Container for popup contents
+
+    Popup.className - class for all blocks which use Popup
+    Popup.sizeOptions - list of all valid size options. Rarely needed.
+    Popup.linkOptions - list of all valid popup button options. Rarely needed.
+
+  POPUP_STORE - string name for the popup ID store. Rarely needed.
+  (hook) usePopup - manages popup ID & colors and returns a control panel for
+    use in an <Interface> component.
+  makeAttributes( [Object: defaults] ) - returns an attributes object
+    containing all the necessary popup attributes (prefixed by "popup").
+    Accepts an optional "defaults" object.
+
+Example usage:
+// edit.js:
+
+export default function Edit(props) {
+  let [state, setAttribute, setState] = withAttributes(
+    props.attributes,
+    props.setAttributes,
+    { ...props.attributes },
+    {
+      popupButtonTitle: (s) => s.trim(),
+      popupTitle: (s) => s.trim(),
+    },
+  );
+
+  let disabledSettings = {};
+  let popupPanel = usePopup(state, setAttribute, disabledSettings);
+
+  return (
+    <Interface
+      { ...props }
+      save = { Save }
+      state = { state }
+      setAttribute = { setAttribute }
+      controlPanels = {[
+        popupPanel,
+      ]}
+    />
+  );
+}
+
+// save.js:
+
+export default function Save(props) {
+  return (
+    <div { ...props.blockProps }
+      className = { [
+        props.blockProps.className,
+        "ncs4-popup",
+        Popup.className,
+      ].join(' ')}
+    >
+      <Popup
+        backend = { props.backend }
+        attributes = { props.attributes }
+      >
+        { props.backend
+          ?
+          <>
+            <RichText
+              tagName="h1"
+              value = { props.attributes.popupTitle }
+              onChange = { props.setAttribute("popupTitle") }
+              placeholder = "Popup"
+            />
+            <InnerBlocks/>
+          </>
+          :
+          <>
+            <Popup.Header>
+              <Popup.Title title={ props.attributes.popupTitle }/>
+            </Popup.Header>
+            <Popup.Body>
+              <InnerBlocks.Content/>
+            </Popup.Body>
+          </>
+        }
+      </Popup>
+    </div>
+  );
+}
+
+*/
+
+/***** Components *****/
+
 const Popup = (props) => {
   let attrs = props.attributes;
-  let id = "popup-" + String(attrs.id);
-  let customBgColor = attrs.bgColor.slug ? null : attrs.bgColor.color;
-  let customColor = attrs.textColor.slug ? null : attrs.textColor.color;
+  let id = "popup-" + String(attrs.popupId);
+  let bgColor = fromColorAttribute(attrs.popupBgColor, true);
+  let textColor = fromColorAttribute(attrs.popupTextColor, false);
   let css = `
     #${id}:target {
       display: block;
@@ -28,25 +118,27 @@ const Popup = (props) => {
   return <>
     { props.backend
       ? <a
+          data-popup-link-style = { attrs.popupLinkStyle }
           className = {
             "ncs4-popup-button " + (props.className || "")
-            + " " + (attrs.linkStyle || "")
+            + " " + (attrs.popupLinkStyle || "")
           }
-          href="#"
         >
-          { attrs.buttonTitle }
+          { attrs.popupButtonTitle }
         </a>
       : <a
+          data-popup-link-style = { attrs.popupLinkStyle }
           className = {
             "ncs4-popup-button " + (props.className || "")
-            + " " + (attrs.linkStyle || "")
+            + " " + (attrs.popupLinkStyle || "")
           }
           href= { "#" + id }
         >
-          { attrs.buttonTitle }
+          { attrs.popupButtonTitle }
         </a>
     }
     <div
+      data-popup-id = { attrs.popupId }
       id = { id }
       className = "ncs4-popup__wrapper"
       style = {{
@@ -54,27 +146,31 @@ const Popup = (props) => {
       }}
     >
       <a
+        data-popup-opacity = { attrs.popupOverlayOpacity }
         className = "ncs4-popup-overlay"
         href = "#!"
         style ={{
-          opacity: attrs.overlayOpacity,
+          opacity: String(attrs.popupOverlayOpacity) + "%",
         }}
       />
       <div className = "ncs4-popup-content__wrapper">
         <div
+          data-popup-background = { JSON.stringify(bgColor.data) }
+          data-popup-color = { JSON.stringify(textColor.data) }
+          data-popup-size = { attrs.popupSize }
+          data-popup-shadow = { attrs.popupShadow }
           className = {
             [
               "ncs4-popup-content",
-              createColorClass(attrs.bgColor.slug, "background-color"),
-              createColorClass(attrs.textColor.slug, "color"),
-              attrs.optionSize,
+              bgColor.className,
+              textColor.className,
+              attrs.popupSize,
+              attrs.popupShadow ? "popup-has-shadow" : null,
             ].join(' ')
           }
           style = {{
-            backgroundColor: customBgColor,
-            ["--palette-bg-color"]: customBgColor,
-            color: customColor,
-            ["--palette-color"]: customColor,
+            ...bgColor.style,
+            ...textColor.style,
           }}
         >
           { props.children }
@@ -84,8 +180,45 @@ const Popup = (props) => {
     </div>
   </>
 };
+
+Popup.Dismiss = (props) => (
+  <a
+  href = "#!"
+  className = "ncs4-popup__popup-dismiss-link"
+  title = "Dismiss"
+  >
+  <DismissIcon
+  className = "ncs4-popup__popup-dismiss"
+  viewBox = "0 52.67 43 43"
+  />
+  </a>
+);
+
+Popup.Header = (props) => (
+  <div className = "ncs4-popup__popup-header">
+  <div className = "ncs4-popup__header-content">
+  { props.children }
+  </div>
+  <Popup.Dismiss/>
+  </div>
+);
+
+Popup.Title = (props) => (
+  <h1 className = "ncs4-popup__popup-title">
+  { props.title }
+  </h1>
+);
+
+Popup.Body = (props) => (
+  <div className = "ncs4-popup__popup-body">
+  { props.children }
+  </div>
+);
+
+/***** Settings *****/
+
 // Should be included by all components that use Popup
-Popup.classType = "ncs4-custom-blocks_popup-type";
+Popup.className = "ncs4-custom-blocks_popup-type";
 Popup.sizeOptions = [
   { value: 'size-alert', label: 'Alert' },
   { value: 'size-small', label: 'Small' },
@@ -99,78 +232,9 @@ Popup.linkOptions = [
   { value: 'ncs4-button ncs4-button__gold', label: 'Gold button'},
 ];
 
-Popup.Dismiss = (props) => (
-  <a
-    href = "#!"
-    className = "ncs4-award-card__popup-dismiss-link"
-    title = "Dismiss"
-  >
-    <DismissIcon
-      className = "ncs4-award-card__popup-dismiss"
-      viewBox = "0 52.67 43 43"
-    />
-  </a>
-);
-
-// Used to create popup setting controls inside of InspectorControls
-Popup.Settings = (props) => {
-  let attrs = props.attributes;
-  let callback = props.callback;
-  return <>
-    <PanelBody
-      title = "Button settings"
-      initialOpen = { true }
-    >
-      <TextControl
-        label = "Button title"
-        placeholder = "Show"
-        value = { attrs.buttonTitle }
-        onChange = { v => { callback({ buttonTitle: v }) }}
-      />
-    </PanelBody>
-    <PanelBody
-      title = "Popup area settings"
-      initialOpen = { true }
-    >
-      <ColorSelector
-        label = "Popup background"
-        value = { attrs.bgColor.color }
-        onChange = { c => { callback({ bgColor: c }) }}
-      />
-      <ColorSelector
-        label = "Popup text"
-        value = { attrs.textColor.color }
-        onChange = { c => { callback({ textColor: c }) }}
-      />
-      <OptionsControl
-        options = {[
-          {
-            attribute: 'overlayOpacity',
-            label: 'Overlay opacity',
-            value: Math.round(100 * attrs.overlayOpacity),
-            min: 0,
-            max: 100,
-            step: 1,
-            markStep: 20,
-            markRender: (v) => String(v) + "%",
-            onChange: (v) => v / 100,
-          },
-          {
-            attribute: 'optionSize',
-            label: "Content size",
-            value: attrs.optionSize,
-            choices: Popup.sizeOptions,
-          },
-        ]}
-        onChange = { (v) => { callback(v) } }
-      />
-    </PanelBody>
-  </>
-}
-
 export default Popup;
 
-// Popup store
+/***** ID store management *****/
 
 export const POPUP_STORE = "ncs4/popup";
 
@@ -219,24 +283,153 @@ registerStore(
   }
 );
 
-// popup id functions
+/***** Popup hook *****/
 
-export function reserveId(callback, id = -1) { // -1 guarantees it is unavailable
-  let popupStore = select("ncs4/popup");
+const manageId = (id, callback) => useEffect(() => {
   let { createId, deleteId } = dispatch("ncs4/popup");
-  let resp = popupStore.requestId(id);
+  let resp = select("ncs4/popup").requestId(id);
+  resp === -1 ? resp = id : resp;
+  callback(resp);
+  createId(resp);
 
-  if (resp !== -1) {
-    // current id is invalid
-    callback(resp);
-    createId(resp);
-  } else {
-    callback(id);
-    createId(id);
+  return () => {
+    dispatch("ncs4/popup").deleteId(id);
+  }
+}, [id]);
+
+export function usePopup(state, setAttribute, disabledSettings) {
+  manageId(state.popupId, setAttribute("popupId"));
+  useColor(state.popupBgColor, setAttribute("popupBgColor"));
+  useColor(state.popupTextColor, setAttribute("popupTextColor"));
+
+  return {
+    label: "Popup settings",
+    controls: makeSettings(disabledSettings),
+  };
+}
+
+/***** Setup functions *****/
+
+export function makeAttributes(defaults) {
+  defaults = Object.assign({
+    popupOverlayOpacity: 90,
+    popupBgColor: {color: null, slug: 'white-bright'},
+    popupTextColor: {color: null, slug: 'secondary-1c'},
+    popupButtonTitle: 'Show',
+    popupId: 0,
+    popupSize: 'size-body',
+    popupLinkStyle: '',
+    popupShadow: false,
+  }, defaults);
+  return {
+    popupOverlayOpacity: {
+      type: 'number',
+      source: "attribute",
+      attribute: "data-popup-opacity",
+      selector: ".ncs4-popup__popup-overlay",
+      default: defaults.popupOverlayOpacity,
+    },
+    popupBgColor: {
+      type: 'json',
+      source: "attribute",
+      attribute: "data-popup-background",
+      selector: ".ncs4-popup-content",
+      default: defaults.popupBgColor,
+    },
+    popupTextColor: {
+      type: 'json',
+      source: "attribute",
+      attribute: "data-popup-color",
+      selector: ".ncs4-popup-content",
+      default: defaults.popupTextColor,
+    },
+    popupButtonTitle: {
+      type: 'string',
+      source: "text",
+      selector: ".ncs4-popup-button",
+      default: defaults.popupButtonTitle,
+    },
+    popupId: {
+      type: 'number',
+      source: "attribute",
+      attribute: "data-popup-id",
+      selector: ".ncs4-popup__wrapper",
+      default: defaults.popupId,
+    },
+    popupSize: {
+      type: 'string',
+      source: "attribute",
+      attribute: "data-popup-size",
+      selector: ".ncs4-popup-content",
+      default: defaults.popupSize,
+    },
+    popupLinkStyle: {
+      type: 'string',
+      source: "attribute",
+      attribute: "data-popup-link-style",
+      selector: ".ncs4-popup-button",
+      default: defaults.popupLinkStyle,
+    },
+    popupShadow: {
+      type: 'boolean',
+      source: "attribute",
+      attribute: "data-popup-shadow",
+      selector: ".ncs4-popup-content",
+      default: defaults.popupShadow,
+    },
   }
 }
 
-export function deleteId(id) {
-  let { deleteId } = dispatch("ncs4/popup");
-  deleteId(id);
+function makeSettings(disableds) {
+  return [
+    {
+      type: "text",
+      label: "Button title",
+      placeholder: "Show",
+      attribute: "popupButtonTitle",
+      disabled: disableds.popupButtonTitle,
+    },
+    {
+      type: "color",
+      label: "Popup background",
+      attribute: "popupBgColor",
+      disabled: disableds.popupBgColor,
+    },
+    {
+      type: "color",
+      label: "Popup text",
+      attribute: "popupTextColor",
+      disabled: disableds.popupTextColor,
+    },
+    {
+      type: "choice",
+      label: "Use shadow below header",
+      attribute: "popupShadow",
+      disabled: disableds.popupShadow,
+    },
+    {
+      type: "choice",
+      label: "Overlay opacity",
+      attribute: "popupOverlayOpacity",
+      min: 0,
+      max: 100,
+      step: 1,
+      markStep: 20,
+      markRender: (v) => String(v) + "%",
+      disabled: disableds.popupOverlayOpacity,
+    },
+    {
+      type: "choice",
+      label: "Content size",
+      attribute: "popupSize",
+      choices: Popup.sizeOptions,
+      disabled: disableds.popupSize,
+    },
+    {
+      type: "choice",
+      label: "Link style",
+      attribute: "popupLinkStyle",
+      choices: Popup.linkOptions,
+    },
+  ];
 }

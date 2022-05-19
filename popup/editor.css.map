@@ -1,1 +1,1 @@
-{"version":3,"sourceRoot":"","sources":["sass/editor.scss"],"names":[],"mappings":"AAGI;EACE;;AAGF;EACE;EACA;EACA;EACA;EACA;;AAEA;EACE;EACA;;AAGJ;EACE;EACA;EACA;EACA","file":"editor.css"}
+{"version":3,"sourceRoot":"","sources":["../sass/_ncs4-pro-colors.scss","sass/__popup-edit.scss"],"names":[],"mappings":"AAEA;AAuBA;AAGA;AAEA;AAOA;AAOA;AAOA;AASA;AC1DA;EACI;EACA;EACA;EACA,kBD6De;;AC3Df;EACE;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;EACA;;AAGJ;EACE;EACA;EACA;EACA","file":"editor.css"}

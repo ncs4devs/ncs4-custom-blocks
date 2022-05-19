@@ -1,126 +1,32 @@
-import React from 'react';
+import Save from './save';
 
-import { select } from '@wordpress/data';
-import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody } from '@wordpress/components';
-import { OptionsControl } from '../../js/SelectControls';
-import Popup, { reserveId, deleteId } from './popup.js';
-import { verifyColor } from '../../js/ColorSelector.js';
+import { usePopup } from './popup.js';
+import Interface from '../../js/edit-component';
+import { withAttributes } from '../../js/hooks';
 
-export class PopupEdit extends React.Component {
-  constructor(props) {
-    super(props);
-    this.attributes = props.attributes;
-    this.clientId = props.clientId;
-    this.setAttributes = props.setAttributes;
+export default function Edit(props) {
+  let [state, setAttribute, setState] = withAttributes(
+    props.attributes,
+    props.setAttributes,
+    { ...props.attributes },
+    {
+      popupButtonTitle: (s) => s.trim(),
+      popupTitle: (s) => s.trim(),
+    },
+  );
 
-    this.setStateAttributes = this.setStateAttributes.bind(this);
-    this.handleSelected = this.handleSelected.bind(this);
+  let disabledSettings = {};
+  let popupPanel = usePopup(state, setAttribute, disabledSettings);
 
-    this.state = {
-      showModal: false,
-      overlayOpacity: this.attributes.overlayOpacity,
-      bgColor: this.attributes.bgColor,
-      textColor: this.attributes.textColor,
-      buttonTitle: this.attributes.buttonTitle,
-      id: this.attributes.id,
-      optionSize: this.attributes.optionSize,
-      linkStyle: this.attributes.linkStyle,
-    }
-
-    if (!this.state.optionSize) {
-      this.setStateAttributes({ optionSize: sizeOptions.default() });
-    }
-
-    wp.data.subscribe(this.handleSelected);
-  }
-
-  componentDidMount() {
-    reserveId(
-      (x) => this.setStateAttributes({ id: x }),
-      this.state.id,
-    );
-    this.setStateAttributes({ bgColor: {
-        color: verifyColor(this.state.bgColor),
-        slug: this.state.bgColor.slug,
-      }
-    });
-    this.setStateAttributes({ textColor: {
-        color: verifyColor(this.state.textColor),
-        slug: this.state.textColor.slug,
-      }
-    });
-  }
-
-  componentWillUnmount() {
-    deleteId(this.state.id);
-  }
-
-  createClassName(classes) {
-    return [
-      'ncs4-popup',
-      Popup.classType,
-      // for some reason, selection isn't working
-      // (Doesn't add this class after reload)
-      this.state.showModal ? 'is-selected' : null,
-    ].join(' ') + ' ' + classes;
-  }
-
-  setStateAttributes(attrs) {
-    this.setState(
-      attrs,
-      () => { this.setAttributes( attrs ) }
-    );
-  }
-
-  handleSelected() {
-    let selectedBlock =
-       select("core/block-editor")
-      .getSelectedBlock()
-    ;
-    if (!selectedBlock) { return }
-
-    if ( !this.state.showModal && selectedBlock.clientId === this.clientId ) {
-      this.setState( { showModal: true } );
-    } else if ( this.state.showModal && selectedBlock.clientId !== this.clientId ) {
-      this.setState( { showModal: false } );
-    }
-  }
-
-  render() {
-    return (
-      <div { ...this.props.blockProps }
-        className = { this.createClassName(this.props.blockProps.className) }
-      >
-        <Popup
-          attributes = { this.state }
-        >
-          <InnerBlocks/>
-        </Popup>
-        <InspectorControls>
-          <Popup.Settings
-            attributes = { this.state }
-            callback = { this.setStateAttributes }
-          />
-          <PanelBody
-            title = "Link settings"
-            initialOpen = { true }
-          >
-            <OptionsControl
-              options = {[
-                {
-                  attribute: 'linkStyle',
-                  label: 'Link style',
-                  default: '',
-                  value: this.state.linkStyle,
-                  choices: Popup.linkOptions,
-                },
-              ]}
-              onChange = { this.setStateAttributes }
-            />
-          </PanelBody>
-        </InspectorControls>
-      </div>
-    );
-  }
+  return (
+    <Interface
+      { ...props }
+      save = { Save }
+      state = { state }
+      setAttribute = { setAttribute }
+      controlPanels = {[
+        popupPanel,
+      ]}
+    />
+  );
 }

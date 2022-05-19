@@ -6,9 +6,6 @@
 /* Yellow */
 /* Grey */
 /* Links */
-.ncs4-popup a:focus-within .ncs4-popup-overlay {
-  display: block;
-}
 .ncs4-popup__wrapper {
   display: none;
   position: fixed;
@@ -18,6 +15,9 @@
   width: 100vw;
   height: 100vh;
   pointer-events: none;
+}
+.ncs4-popup__wrapper:focus-within .ncs4-popup-overlay {
+  display: block;
 }
 .ncs4-popup-overlay {
   position: absolute;
@@ -29,13 +29,54 @@
 .ncs4-popup-overlay:hover {
   cursor: default;
 }
+.ncs4-popup__name {
+  text-transform: none;
+  margin-top: 0;
+  color: #037fff;
+}
+.ncs4-popup__popup-dismiss-link {
+  margin-left: auto;
+  margin-bottom: auto;
+  transition: transform 0.1s ease-in-out;
+}
+.ncs4-popup__popup-dismiss-link:hover, .ncs4-popup__popup-dismiss-link:focus, .ncs4-popup__popup-dismiss-link:focus-visible {
+  border-radius: 50%;
+  box-shadow: 0 0 10px 3px #037fff;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ncs4-popup__popup-dismiss-link:hover, .ncs4-popup__popup-dismiss-link:focus, .ncs4-popup__popup-dismiss-link:focus-visible {
+    transform: scale(1.1);
+  }
+}
+.ncs4-popup__popup-dismiss-link:focus-visible, .ncs4-popup__popup-dismiss-link:visited:focus-visible {
+  outline: none;
+}
+.ncs4-popup__popup-dismiss {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+.ncs4-popup__popup-dismiss .dismiss_svg__cls-1 {
+  fill: #e6e6e6;
+}
+.ncs4-popup__popup-dismiss .dismiss_svg__cls-2 {
+  stroke: #037fff;
+}
+.ncs4-popup-button {
+  align-self: end;
+  margin-top: auto;
+}
 .ncs4-popup-content {
-  overflow-y: auto;
+  display: flex;
+  overflow: hidden auto;
   pointer-events: all;
+  flex-direction: column;
   max-height: 80vh;
+  width: 100%;
   margin: 0 auto;
   padding: 3.2rem;
-  width: 100%;
+  padding-top: 0;
+  overflow: hidden auto;
   border: 16px solid var(--palette-bg-color, #fff);
   border-radius: 16px;
 }
@@ -58,6 +99,27 @@
   width: 100%;
   flex-direction: column;
   justify-content: center;
+}
+.ncs4-popup__popup-title {
+  text-transform: none;
+  margin: 0 0 0.25em 0;
+  color: #037fff;
+}
+.ncs4-popup__popup-header {
+  display: flex;
+  gap: 0.5em;
+  flex-direction: row;
+  flex-wrap: wrap-reverse;
+  margin-top: 12px;
+}
+.ncs4-popup__popup-body {
+  overflow: hidden auto;
+  padding: 1em;
+  padding-left: 0;
+}
+.popup-has-shadow .ncs4-popup__popup-body {
+  padding-left: 1em;
+  box-shadow: inset 0 8px 16px -16px #040303;
 }
 
 /*# sourceMappingURL=style.css.map */

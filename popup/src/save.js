@@ -1,34 +1,42 @@
-import React from 'react';
-import { InnerBlocks } from '@wordpress/block-editor';
-import { createColorClass } from '../../js/ColorSelector.js';
+import { InnerBlocks, RichText } from '@wordpress/block-editor';
 
 import Popup from './popup.js';
 
-export class PopupSave extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.visible = props.visible || props.attributes.showOnLoad || false;
-  }
-
-  createClassName(classes) {
-    return [
-      'ncs4-popup',
-      Popup.classType,
-    ].join(' ') + ' ' + classes;
-  }
-
-  render() {
-    return (
-      <div { ...this.props.blockProps }
-        className = { this.createClassName(this.props.blockProps.className) }
+export default function Save(props) {
+  return (
+    <div { ...props.blockProps }
+      className = { [
+        props.blockProps.className,
+        "ncs4-popup",
+        Popup.className,
+      ].join(' ')}
+    >
+      <Popup
+        backend = { props.backend }
+        attributes = { props.attributes }
       >
-        <Popup
-          attributes = { this.props.attributes }
-        >
-          <InnerBlocks.Content/>
-        </Popup>
-      </div>
-    );
-  }
+        { props.backend
+          ?
+          <>
+            <RichText
+              tagName="h1"
+              value = { props.attributes.popupTitle }
+              onChange = { props.setAttribute("popupTitle") }
+              placeholder = "Popup"
+            />
+            <InnerBlocks/>
+          </>
+          :
+          <>
+            <Popup.Header>
+              <Popup.Title title={ props.attributes.popupTitle }/>
+            </Popup.Header>
+            <Popup.Body>
+              <InnerBlocks.Content/>
+            </Popup.Body>
+          </>
+        }
+      </Popup>
+    </div>
+  );
 }
