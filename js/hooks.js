@@ -6,14 +6,18 @@ export function useToggle(initialState = false) {
 }
 
 
-const storeSetter = (state, setState) => (attr) => (value) => setState(
-  Object.assign( {}, state, { [attr]: value } )
-)
+// shallow merges objects into a state object
+// React's setState(Object) does NOT work for this, despite what the docs say.
+const setStore = (setState) => (value) => {
+  setState(
+    (state, _props) => Object.assign({}, state, value)
+  );
+}
 export function useStore(initialState = {}) {
   let [state, setState] = useState(initialState);
   return [
     state,
-    storeSetter(state, setState),
+    setStore(setState),
   ];
 }
 
@@ -29,12 +33,14 @@ export function withAttributes(
   ) {
   let [state, setState] = useStore(initialState);
   let setAttribute = (attr) => (value) => {
-    setState(attr)(value);
-    storeSetter({}, setAttributes)(attr)(
-      typeof reducers[attr] === "function" && reducers[attr].length <= 2
-        ? reducers[attr](value, attributes)
-        : value
-    )
+    setState({ [attr]: value });
+    setAttributes( {
+      [attr]:
+        typeof reducers[attr] === "function" && reducers[attr].length <= 2
+          ? reducers[attr](value, attributes)
+          : value
+      }
+    );
   };
 
   return [
