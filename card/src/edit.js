@@ -1,6 +1,6 @@
-import Save from './save.js';
+import Save from './save';
 
-import Interface, { colorToAttribute } from '../../js/edit-component';
+import Interface from '../../js/edit-component';
 import { withAttributes } from '../../js/hooks';
 
 export default function Edit(props) {
