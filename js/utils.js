@@ -17,6 +17,7 @@ export function parseAttributes(table, data) {
           break;
         }
 
+        case "int":
         case "integer":
         case "number":
         case "json": {
