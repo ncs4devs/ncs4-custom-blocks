@@ -151,6 +151,9 @@ function ControlPanel(props) {
       initialOpen = { initialOpen }
     >
       { props.controls.map( (control, key) => {
+        if (control.disabled) {
+          return null;
+        }
         switch (control.type) {
           case "text": {
             return (
