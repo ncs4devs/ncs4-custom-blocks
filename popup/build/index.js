@@ -1030,6 +1030,10 @@ function ControlPanel(props) {
     title: props.label,
     initialOpen: initialOpen
   }, props.controls.map((control, key) => {
+    if (control.disabled) {
+      return null;
+    }
+
     switch (control.type) {
       case "text":
         {
@@ -1197,6 +1201,7 @@ function parseAttributes(table, data) {
             break;
           }
 
+        case "int":
         case "integer":
         case "number":
         case "json":
@@ -1504,7 +1509,7 @@ function Edit(props) {
     popupTitle: s => s.trim()
   });
   let disabledSettings = {};
-  let popupPanel = (0,_popup_js__WEBPACK_IMPORTED_MODULE_3__.usePopup)(state, setAttribute, disabledSettings);
+  let popupPanel = (0,_popup_js__WEBPACK_IMPORTED_MODULE_3__.usePopup)(props.blockProps.clientId, state, setAttribute, disabledSettings);
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_js_edit_component__WEBPACK_IMPORTED_MODULE_4__["default"], (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, {
     save: _save__WEBPACK_IMPORTED_MODULE_2__["default"],
     state: state,
@@ -1715,7 +1720,7 @@ Popup.Body = props => (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createE
 // Should be included by all components that use Popup
 
 
-Popup.className = "ncs4-custom-blocks_popup-type";
+Popup.className = "ncs4-popup";
 Popup.sizeOptions = [{
   value: 'size-alert',
   label: 'Alert'
@@ -1799,22 +1804,25 @@ const popupReducer = function () {
 });
 /***** Popup hook *****/
 
-const manageId = (id, callback) => (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
+const manageId = (popupId, blockId, callback) => (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
+  //console.log("Requesting id: ", popupId);
   let {
     createId,
     deleteId
   } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.dispatch)("ncs4/popup");
-  let resp = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.select)("ncs4/popup").requestId(id);
-  resp === -1 ? resp = id : resp;
+  let resp = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.select)("ncs4/popup").requestId(popupId);
+  resp === -1 ? resp = popupId : resp; //console.log("Reserving id: ", resp);
+
   callback(resp);
   createId(resp);
   return () => {
-    (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.dispatch)("ncs4/popup").deleteId(id);
+    //console.log("Freeing id: ", resp);
+    (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.dispatch)("ncs4/popup").deleteId(resp);
   };
-}, [id]);
+}, [blockId]);
 
-function usePopup(state, setAttribute, disabledSettings) {
-  manageId(state.popupId, setAttribute("popupId"));
+function usePopup(blockId, state, setAttribute, disabledSettings) {
+  manageId(state.popupId, blockId, setAttribute("popupId"));
   (0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__.useColor)(state.popupBgColor, setAttribute("popupBgColor"));
   (0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__.useColor)(state.popupTextColor, setAttribute("popupTextColor"));
   return {
@@ -1843,7 +1851,7 @@ function makeAttributes(defaults) {
   }, defaults);
   return {
     popupOverlayOpacity: {
-      type: 'number',
+      type: 'int',
       source: "attribute",
       attribute: "data-popup-opacity",
       selector: ".ncs4-popup__popup-overlay",
@@ -1870,7 +1878,7 @@ function makeAttributes(defaults) {
       default: defaults.popupButtonTitle
     },
     popupId: {
-      type: 'number',
+      type: 'int',
       source: "attribute",
       attribute: "data-popup-id",
       selector: ".ncs4-popup__wrapper",

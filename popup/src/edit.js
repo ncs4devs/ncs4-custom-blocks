@@ -16,7 +16,12 @@ export default function Edit(props) {
   );
 
   let disabledSettings = {};
-  let popupPanel = usePopup(state, setAttribute, disabledSettings);
+  let popupPanel = usePopup(
+    props.blockProps.clientId,
+    state,
+    setAttribute,
+    disabledSettings
+  );
 
   return (
     <Interface
