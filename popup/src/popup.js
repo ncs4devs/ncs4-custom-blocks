@@ -218,7 +218,7 @@ Popup.Body = (props) => (
 /***** Settings *****/
 
 // Should be included by all components that use Popup
-Popup.className = "ncs4-custom-blocks_popup-type";
+Popup.className = "ncs4-popup";
 Popup.sizeOptions = [
   { value: 'size-alert', label: 'Alert' },
   { value: 'size-small', label: 'Small' },
@@ -285,20 +285,23 @@ registerStore(
 
 /***** Popup hook *****/
 
-const manageId = (id, callback) => useEffect(() => {
+const manageId = (popupId, blockId, callback) => useEffect(() => {
+  //console.log("Requesting id: ", popupId);
   let { createId, deleteId } = dispatch("ncs4/popup");
-  let resp = select("ncs4/popup").requestId(id);
-  resp === -1 ? resp = id : resp;
+  let resp = select("ncs4/popup").requestId(popupId);
+  resp === -1 ? resp = popupId : resp;
+  //console.log("Reserving id: ", resp);
   callback(resp);
   createId(resp);
 
   return () => {
-    dispatch("ncs4/popup").deleteId(id);
+    //console.log("Freeing id: ", resp);
+    dispatch("ncs4/popup").deleteId(resp);
   }
-}, [id]);
+}, [blockId]);
 
-export function usePopup(state, setAttribute, disabledSettings) {
-  manageId(state.popupId, setAttribute("popupId"));
+export function usePopup(blockId, state, setAttribute, disabledSettings) {
+  manageId(state.popupId, blockId, setAttribute("popupId"));
   useColor(state.popupBgColor, setAttribute("popupBgColor"));
   useColor(state.popupTextColor, setAttribute("popupTextColor"));
 
@@ -323,7 +326,7 @@ export function makeAttributes(defaults) {
   }, defaults);
   return {
     popupOverlayOpacity: {
-      type: 'number',
+      type: 'int',
       source: "attribute",
       attribute: "data-popup-opacity",
       selector: ".ncs4-popup__popup-overlay",
@@ -350,7 +353,7 @@ export function makeAttributes(defaults) {
       default: defaults.popupButtonTitle,
     },
     popupId: {
-      type: 'number',
+      type: 'int',
       source: "attribute",
       attribute: "data-popup-id",
       selector: ".ncs4-popup__wrapper",

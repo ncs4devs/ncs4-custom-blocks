@@ -1,3 +1,40 @@
+/* These colors are kept for compatibility reasons and should not be used */
+/* These colors may be used */
+/* Colors are swapped around to be in order from darkest to lightest */
+/* Navy */
+/* Dark Blue */
+/* Yellow */
+/* Grey */
+/* Links */
+.ncs4-custom-blocks__popup-type {
+  width: 100%;
+  height: 100%;
+  padding: 1.5rem 2.5rem;
+  background-color: #e6e6e6;
+}
+.ncs4-custom-blocks__popup-type .ncs4-custom-blocks__popup-type-overlay {
+  display: none !important;
+}
+.ncs4-custom-blocks__popup-type .ncs4-custom-blocks__popup-type-content {
+  overflow-y: visible;
+  max-height: unset;
+  min-height: 64px;
+  min-width: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+}
+.ncs4-custom-blocks__popup-type .ncs4-custom-blocks__popup-type-content__wrapper {
+  display: block;
+  position: static;
+}
+.ncs4-custom-blocks__popup-type .ncs4-custom-blocks__popup-type__wrapper {
+  display: block;
+  position: static;
+  width: auto;
+  height: auto;
+}
+
 .ncs4-award-recipient__edit-delete.toggled {
   color: red;
 }

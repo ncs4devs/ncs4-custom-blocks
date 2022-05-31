@@ -4,18 +4,15 @@ import { mapValues } from 'lodash';
 
 import { RichText } from '@wordpress/block-editor';
 import { TextControl, RadioControl } from '@wordpress/components';
+import { register, useSelect, useDispatch } from '@wordpress/data';
 
-import {
-  createReduxStore,
-  register,
-  useSelect,
-  useDispatch,
-  useRegistry,
-} from '@wordpress/data';
 import * as selectors from './recipientSelectors';
 import * as actions from './recipientActions';
 import * as actionTypes from './recipientActionTypes';
-import reducer, { traverseRecipients, reduceOverRecipients } from './recipientReducers';
+import reducer, {
+  traverseRecipients,
+  reduceOverRecipients
+} from './recipientReducers';
 
 /*
   Sorting is done by splitting Recipients into a tree with the field being
@@ -84,79 +81,102 @@ import reducer, { traverseRecipients, reduceOverRecipients } from './recipientRe
 
 */
 
+const useSafeDispatch = (name) => {
+  let storeActions = useDispatch(name);
+  let nil = {};
+  for (let action in actions) {
+    nil[action] = () => null;
+  }
 
+  return storeActions == null ? nil : storeActions;
+}
 
-export const recipientStoreName = "ncs4/recipient-store";
+const useSafeSelect = (f) => {
+  let select = useSelect( x => x );
+  let safeSelect = (name) => {
+    let storeSelectors = select(name);
+    let nil = {};
+    for (let selector in selectors) {
+      nil[selector] = () => null;
+    }
+
+    return storeSelectors == null ? nil : storeSelectors;
+  }
+  return f(safeSelect);
+}
+
+const recipientStoreName = "ncs4/recipient-store";
 
 // Create redux store with middleware and then add to WP registry
 // WordPress store, wrapper around redux store
 
-export const store = ({
-  name: recipientStoreName,
-  instantiate: () => {
-    let listeners = new Set();
+export function registerStore(name) {
+  register({
+    name,
+    instantiate: () => {
+      let listeners = new Set();
 
-    // Middleware
+      // Middleware
 
-    const logger = (store) => (next) => (action) => {
-      //console.log("Dispatching", action);
-      let result = next(action);
-      //console.log("Next state", store.getState());
-      return result;
-    }
-
-    const asyncDispatchMiddleware = (store) => (next) => (action) => {
-      let syncActivityFinished = false;
-      let actionQueue = [];
-
-      function flushQueue() {
-        actionQueue.forEach((a) => store.dispatch(a)); // flush queue
-        actionQueue = [];
+      const logger = (store) => (next) => (action) => {
+        //console.log("Dispatching", action);
+        next(action);
+        //console.log("Next state", store.getState());
       }
 
-      function asyncDispatch(asyncAction) {
-        actionQueue = actionQueue.concat([asyncAction]);
+      const asyncDispatchMiddleware = (store) => (next) => (action) => {
+        let syncActivityFinished = false;
+        let actionQueue = [];
 
-        if (syncActivityFinished) {
-          flushQueue();
+        function flushQueue() {
+          actionQueue.forEach((a) => store.dispatch(a)); // flush queue
+          actionQueue = [];
         }
+
+        function asyncDispatch(asyncAction) {
+          actionQueue = actionQueue.concat([asyncAction]);
+
+          if (syncActivityFinished) {
+            flushQueue();
+          }
+        }
+
+        const actionWithAsyncDispatch = Object.assign({}, action, { asyncDispatch });
+
+        next(actionWithAsyncDispatch);
+        syncActivityFinished = true;
+        flushQueue();
       }
 
-      const actionWithAsyncDispatch = Object.assign({}, action, { asyncDispatch });
+      const reduxStore = createStore(
+        reducer,
+        applyMiddleware(
+          logger,
+          asyncDispatchMiddleware,
+        ),
+      );
 
-      next(actionWithAsyncDispatch);
-      syncActivityFinished = true;
-      flushQueue();
-    }
+      const boundActions = mapValues(
+        actions,
+        (action) => (...args) => reduxStore.dispatch(action(...args)),
+      )
+      const boundSelectors = mapValues(
+        selectors,
+        (selector) => (...args) => selector(reduxStore.getState(), ...args),
+      );
 
-    const reduxStore = createStore(
-      reducer,
-      applyMiddleware(
-        logger,
-        asyncDispatchMiddleware,
-      ),
-    );
-
-    const boundActions = mapValues(
-      actions,
-      (action) => (...args) => reduxStore.dispatch(action(...args)),
-    )
-    const boundSelectors = mapValues(
-      selectors,
-      (selector) => (...args) => selector(reduxStore.getState(), ...args),
-    );
-
-    return {
-      actions,
-      selectors,
-      subscribe: (listener) => reduxStore.subscribe(listener),
-      reducer,
-      getSelectors: () => boundSelectors,
-      getActions: () => boundActions,
-      store: reduxStore,
-    };
-  }
-});
+      return {
+        actions,
+        selectors,
+        subscribe: (listener) => reduxStore.subscribe(listener),
+        reducer,
+        getSelectors: () => boundSelectors,
+        getActions: () => boundActions,
+        store: reduxStore,
+      };
+    },
+  });
+}
 
 // Constants
 
@@ -184,28 +204,21 @@ const industrySegments = {
 };
 
 
- // create a default recipient and set it to editMode
-export function addRecipient(registry) {
-  let { createRecipient } = registry.dispatch(recipientStoreName);
-  createRecipient({
-    year: (new Date()).getFullYear(),
-    id: registry.select(recipientStoreName).getNextId(),
-    industry: "other",
-    editMode: true,
-    cancelDisabled: true,
-  });
+export function storeName(blockId) {
+  return recipientStoreName + "@" + blockId;
 }
 
-export function initializeStore(registry, recipients, useOrgs) {
-  let actions = registry.dispatch(recipientStoreName);
-  let organizations = registry.select(recipientStoreName).getOrganizations();
+export function initializeStore(name, registry, recipients, useOrgs) {
+  let actions = registry.stores[name].getActions();
+  let store = registry.stores[name].getSelectors();
+  let organizations = store.getOrganizations();
   actions.setUseOrgs(useOrgs);
 
   traverseRecipients(recipients, (r) => {
     actions.updateCurrentYear(r.year);
     actions.createRecipient({
       ...r,
-      id: registry.select(recipientStoreName).getNextId(),
+      id: store.getNextId(),
       industry: r.industry || "other",
     });
     if (r.organization && !organizations.includes(r.organization)) {
@@ -215,9 +228,10 @@ export function initializeStore(registry, recipients, useOrgs) {
 }
 
 // returns all data necessary to save recipients to DB
-export function getRecipientData(registry) {
-  let recipients = registry.select(recipientStoreName).getRecipients();
-  var currentYear = registry.select(recipientStoreName).getCurrentYear();
+export function getRecipientData(registry, name) {
+  let store = registry.stores[name].getSelectors();
+  let recipients = store.getRecipients();
+  let currentYear = store.getCurrentYear();
 
   let excludeFields = [
     "editMode",
@@ -242,7 +256,7 @@ export function getRecipientData(registry) {
     }
   );
 
-  return {recipients: newRecipients};
+  return newRecipients;
 }
 
 // tests if the recipient can be saved
@@ -257,37 +271,25 @@ function isRecipientValid(data) {
 }
 
 
-
-/***** Components *****/
-
-
-
 const RecipientsSectionContext = React.createContext({
   backend: false,
   onChange: null,
   recipients: [],
   useOrgs: false,
   actions: null,
+  store: null,
   currentYear: null,
 })
 
-export default function Recipients(props) {
+/***** Components *****/
 
-  /*****  Constants *****/
-
-  const actions = useDispatch(recipientStoreName);
-  const recipients = useSelect( (select) =>
-     select(recipientStoreName)
-    .getRecipients()
-  );
-  const currentYear = useSelect( (select) =>
-    select(recipientStoreName)
-    .getCurrentYear()
-  );
-  const useOrgs = useSelect( (select) =>
-    select(recipientStoreName).getUseOrgs()
-  );
-
+const Recipients = (props) => {
+  const name = storeName(props.awardId);
+  const actions = useSafeDispatch(name);
+  const store = useSafeSelect( (select) => select(name));
+  const recipients = store.getRecipients();
+  const currentYear = store.getCurrentYear();
+  const useOrgs = store.getUseOrgs();
 
   if (!recipients || !recipients.current) {
     return null;
@@ -295,29 +297,30 @@ export default function Recipients(props) {
 
   return (
     <RecipientsSectionContext.Provider
-      value = {{
-        backend: true,
-        onChange: actions.editRecipient,
-        recipients,
-        useOrgs,
-        actions,
-        currentYear,
-      }}
+    value = {{
+      backend: true,
+      onChange: actions.editRecipient,
+      recipients,
+      useOrgs,
+      actions,
+      store,
+      currentYear,
+    }}
     >
-      <RecipientsSectionContext.Consumer>
-        { context => (
-          <RecipientsTree
-            recipients = { context.recipients }
-            currentYear = { context.currentYear }
-            depth = { 0 }
-          />
-        )}
-      </RecipientsSectionContext.Consumer>
+    <RecipientsSectionContext.Consumer>
+    { context => (
+      <RecipientsTree
+      recipients = { context.recipients }
+      currentYear = { context.currentYear }
+      depth = { 0 }
+      />
+    )}
+    </RecipientsSectionContext.Consumer>
     </RecipientsSectionContext.Provider>
   );
 }
 
-export function RecipientsSave(props) {
+Recipients.Save = (props) => {
   let recipients = props.recipients;
   if (!recipients || !recipients.current || !recipients.previous || !recipients.current[0]) {
     return null; // malformed database attribute
@@ -346,6 +349,33 @@ export function RecipientsSave(props) {
     </RecipientsSectionContext.Provider>
   )
 }
+
+Recipients.Add = (props) => {
+  let name = storeName(props.blockId);
+  let { createRecipient } = useSafeDispatch(name);
+  let id = useSafeSelect( (select) => select(name).getNextId() );
+
+  let addRecipient = () => createRecipient({
+    year: (new Date()).getFullYear(),
+    id,
+    industry: "other",
+    editMode: true,
+    cancelDisabled: true,
+  });
+
+  return (
+    <div className = "ncs4-award-card__edit-recipients">
+    <p>Recipients</p>
+    <span
+    className = "dashicons dashicons-plus"
+    title = "Add recipients"
+    onClick = { addRecipient }
+    />
+    </div>
+  );
+}
+
+export default Recipients;
 
 function RecipientsTree(props) {
   let leaves = [];
@@ -451,20 +481,18 @@ function RecipientsList(props) {
   return (
     <>
       { props.recipients.map(recipient => (
-        <RecipientsSectionContext.Consumer>
+        <RecipientsSectionContext.Consumer key= { recipient.id }>
           { context => (
             <>
               { context.backend
                 ? <Recipient
                     { ...context }
                     recipient = { recipient }
-                    key = { recipient.id }
                     displayYear = { props.displayYear }
                   />
                 : <RecipientSave
                     { ...context }
                     recipient = { recipient }
-                    key = { recipient.id }
                     displayYear = { props.displayYear }
                   />
               }
@@ -481,15 +509,13 @@ function Recipient(props) {
   let [ isEditing, setEditing ] = useState(Boolean(initData.editMode));
   let actions = props.actions;
 
-  let orgs = useSelect( (select) => (
-    select(recipientStoreName).getOrganizations()
-  ));
+  let orgs = props.store.getOrganizations();
   let { addOrganization } = props.actions;
 
   return (
     <>
       { isEditing
-        ? <RecipientEditer
+        ? <RecipientEditor
             { ...props }
             initialState = { initData }
             delete = { () => actions.deleteRecipient(initData) }
@@ -548,7 +574,7 @@ function RecipientSave(props) {
   )
 }
 
-function RecipientEditer(props) {
+function RecipientEditor(props) {
 
   let [dataState, setDataState] = useState(props.initialState);
 
@@ -598,9 +624,7 @@ function RecipientEditer(props) {
     }
   }
 
-  let organizations = useSelect( (select) => (
-    select(recipientStoreName).getOrganizations()
-  ));
+  let organizations = props.store.getOrganizations();
 
   const deleteClass = "dashicons dashicons-trash ncs4-award-recipient__edit-delete";
   const cancelClass = "dashicons dashicons-no ncs4-award-recipient__edit-cancel";

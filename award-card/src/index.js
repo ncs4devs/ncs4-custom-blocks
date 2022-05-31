@@ -1,48 +1,18 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
+import { parseAttributes } from '../../js/utils';
+import { makeAttributes } from '../../popup/src/popup';
 
-import { AwardCardEdit } from './edit.js';
-import { AwardCardSave } from './save.js';
+import Edit from './edit.js';
+import Save from './save.js';
 
-registerBlockType( 'ncs4-custom-blocks/award-card', {
-  apiVersion: 2,
-
-  title: 'Award Card',
-  icon: 'awards',
-  category: 'layout',
-  attributes: {
-    overlayOpacity: {
-      type: 'number',
-      default: 0.9,
-    },
-    bgColor: {
-      type: 'object',
-      default: {
-        color: null,
-        slug: 'white-bright',
-      },
-    },
-    textColor: {
-      type: 'object',
-      default: {
-        color: null,
-        slug: 'secondary-1c',
-      },
-    },
-    id: {
-      type: 'number',
-    },
-    customId: {
-      type: 'string',
-    },
-    optionSize: {
-      type: 'string',
-      default: 'size-body',
-    },
-    buttonTitle: {
-      type: 'string',
-      default: 'Read More',
-    },
+const defaults = {
+  popupButtonTitle: "Read More",
+  popupShadow: true,
+}
+const attributes = Object.assign(
+  makeAttributes(defaults),
+  {
     name: {
       type: 'string',
       default: 'Award',
@@ -66,16 +36,27 @@ registerBlockType( 'ncs4-custom-blocks/award-card', {
       default: false,
     },
   },
+)
+
+registerBlockType( 'ncs4-custom-blocks/award-card', {
+  apiVersion: 2,
+
+  title: 'Award Card',
+  icon: 'awards',
+  category: 'layout',
+  attributes,
 
   edit: (props) => (
-    <AwardCardEdit
+    <Edit
       { ...props }
+      attributes = { parseAttributes(attributes, props.attributes) }
       blockProps = { useBlockProps() }
     />
   ),
   save: (props) => (
-    <AwardCardSave
+    <Save
       { ...props }
+      attributes = { parseAttributes(attributes, props.attributes) }
       blockProps = { useBlockProps.save() }
     />
   ),
