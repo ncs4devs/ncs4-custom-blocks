@@ -5,7 +5,12 @@
 
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, TextControl } from '@wordpress/components';
-import { UnitControl, OptionsControl } from './SelectControls';
+import {
+  UnitControl,
+  OptionsControl,
+  PhoneControl,
+  EmailControl,
+} from './SelectControls';
 import ColorSelector from './ColorSelector';
 import { ImageEdit, onImageChange } from './ImageControl';
 
@@ -245,6 +250,30 @@ function ControlPanel(props) {
                 }
               />
             );
+
+            break;
+          }
+
+          case "phone": {
+            return <PhoneControl
+              { ...control }
+              key = { key }
+              value = { state[control.attribute] }
+              onChange = { setAttribute(control.attribute) }
+            />
+
+            break;
+          }
+
+          case "email": {
+            return <EmailControl
+              { ...control }
+              key = { key }
+              value = { state[control.attribute] }
+              onChange = { setAttribute(control.attribute) }
+            />
+
+            break;
           }
 
           default: {
