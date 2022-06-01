@@ -1,7 +1,7 @@
-import Save from './save.js';
+import Save from './save';
 import Interface from '../../js/edit-component';
 
-import { createContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   RegistryProvider,
   createRegistry,
@@ -11,7 +11,7 @@ import {
 } from '@wordpress/data';
 
 import { normalizeStringLength } from '../../js/utils';
-import { usePopup } from '../../popup/src/popup.js';
+import { usePopup } from '../../popup/src/popup';
 import { withAttributes, useOnce } from '../../js/hooks';
 import {
   registerStore,
@@ -59,8 +59,6 @@ export default function Edit(props) {
   }, [state.desc]);
 
   // Award recipients store
-  // Don't replace with useEffect! This needs to run at the same time as the
-  // initial render, useEffect runs at the *end* of the render
   let registry = useRegistry();
   let name = storeName(props.blockProps.id);
   useEffect( () => {

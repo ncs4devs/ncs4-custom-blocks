@@ -3,8 +3,8 @@ import { useBlockProps } from '@wordpress/block-editor';
 import { parseAttributes } from '../../js/utils';
 import { makeAttributes } from '../../popup/src/popup';
 
-import Edit from './edit.js';
-import Save from './save.js';
+import Edit from './edit';
+import Save from './save';
 
 const defaults = {
   popupButtonTitle: "Read More",
