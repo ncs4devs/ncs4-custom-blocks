@@ -1,155 +1,94 @@
-import React from 'react';
-import { InspectorControls, RichText, InnerBlocks } from '@wordpress/block-editor';
-import {
-  PanelBody,
-  TextControl,
-  CheckboxControl,
-} from '@wordpress/components';
-import { verifyColor } from '../../js/ColorSelector';
-import { normalizeStringLength } from '../../js/utils';
-import { ImageEdit, onImageChange } from '../../js/ImageControl.js';
+import Save from './save';
+import Interface from '../../js/edit-component';
 
-import Popup, { reserveId, deleteId } from '../../popup/src/popup.js';
-import { DescriptionPopupSave } from './save.js';
+import { useEffect } from 'react';
+import { normalizeStringLength } from '../../js/utils';
+import { withAttributes } from '../../js/hooks';
+import { usePopup } from '../../popup/src/popup.js';
 
 const normalizedDescLength = 400; // Number of chars for the short description
 
-export class DescriptionPopupEdit extends React.Component {
-  constructor(props) {
-    super(props);
-    this.attributes = props.attributes;
-    this.setAttributes = props.setAttributes;
+export default function Edit(props) {
+  let [state, setAttribute, setState] = withAttributes(
+    props.attributes,
+    props.setAttributes,
+    { ...props.attributes },
+    {
+      name: (s) => s.trim(),
+      desc: (s) => s.trim(),
+      buttonText: (s) => s.trim(),
+    },
+  );
 
-    this.setStateAttributes = this.setStateAttributes.bind(this);
-    this.trimStateAttribute = this.trimStateAttribute.bind(this);
-    this.handleDescription = this.handleDescription.bind(this);
+  let disabledSettings = {
+    popupOverlayOpacity: true,
+  };
 
-    // normalize description if length is wrong or it doesn't exist
-    if (
-           this.attributes.desc
-        && ( !this.attributes.normalizedDesc
-        || this.attributes.normalizedDesc.length !== normalizedDescLength )
-    ) {
-      this.handleDescription(this.attributes.desc);
+  let popupPanel = usePopup(
+    props.blockProps.clientId,
+    state,
+    setAttribute,
+    disabledSettings,
+  );
+
+  // Normalize the description
+  useEffect( () => {
+    if (!state.desc) {
+      state.desc = "";
     }
+    setAttribute("normalizedDesc")(normalizeStringLength(
+      state.desc.trim(),
+      normalizedDescLength,
+    ));
+  }, [state.desc]);
 
-    this.state = {
-      ...this.attributes,
-    };
-  }
-
-  componentDidMount() {
-    reserveId(
-      (x) => this.setStateAttributes({ id: x }),
-      this.state.id,
-    );
-    this.setStateAttributes({ bgColor: {
-        color: verifyColor(this.state.bgColor),
-        slug: this.state.bgColor.slug,
-      }
-    });
-    this.setStateAttributes({ textColor: {
-        color: verifyColor(this.state.textColor),
-        slug: this.state.textColor.slug,
-      }
-    });
-  }
-
-  componentWillUnmount() {
-    deleteId(this.state.id);
-  }
-
-  setStateAttributes(attrs) {
-    this.setState(
-      attrs,
-      () => { this.setAttributes( attrs ) }
-    );
-  }
-
-  // returns (x) => null
-  trimStateAttribute(attr) {
-    return (x) => {
-        this.setState(
-        { [attr]: x },
-        () => { this.setAttributes({ [attr]: x.trim() }) }
-      )
-    }
-  }
-
-  handleDescription(str) {
-    str = str.trim();
-    this.setStateAttributes({ "desc": str });
-    this.setAttributes(
-      { "normalizedDesc": normalizeStringLength(str, normalizedDescLength)
-    });
-  }
-
-  render() {
-    let blockProps = this.props.blockProps;
-    let ImageEditor = <ImageEdit
-      onChange = { (i) => onImageChange(
-        i,
-        (_i) => this.setStateAttributes({img: _i })
-      ) }
-      img = { this.state.img }
-      useInlineSvg = { false }
-    />;
-
-    return (
-      <>
-        <DescriptionPopupSave
-          blockProps = { blockProps }
-          attributes = {{
-            ...this.attributes,
-            ...this.state,
-            normalizedDesc: this.state.desc,
-          }}
-          backend = { true }
-          imageEdit = { ImageEditor }
-          onDescChange = { this.handleDescription }
-          setAttributes = { this.setAttributes }
-        />
-        <InspectorControls>
-          <PanelBody
-            title = "General info"
-            initialOpen = { true }
-          >
-            <TextControl
-              value = { this.state.name }
-              label = "Title"
-              placeholder = "Best Practices Guide"
-              onChange = { this.trimStateAttribute("name") }
-            />
-            <CheckboxControl
-              label = "Use footer button"
-              checked = { this.state.showButton }
-              help = { this.state.showButton
+  return (
+    <Interface
+      { ...props }
+      save = { Save }
+      state = { state }
+      setAttribute = { setAttribute }
+      controlPanels = {[
+        {
+          label: "Block settings",
+          controls: [
+            {
+              type: "text",
+              label: "Title",
+              placeholder: "Best Practices Guide",
+              attribute: "name",
+            },
+            {
+              type: "image",
+              label: "Footer image",
+              attribute: "img",
+            },
+            {
+              type: "choice",
+              label: "Use footer button",
+              help: state.showButton
                 ? "Footer button visible"
-                : "Footer button invisible"
-              }
-              onChange = { (b) => this.setStateAttributes({ showButton: b }) }
-            />
-            <TextControl
-              label = "Footer button text"
-              value = { this.state.buttonText }
-              disabled = { !this.state.showButton }
-              onChange = { this.trimStateAttribute("buttonText") }
-              help = "The text displayed by the button"
-            />
-            <TextControl
-              label = "Footer button link"
-              value = { this.state.buttonLink }
-              disabled = { !this.state.showButton }
-              onChange = { this.trimStateAttribute("buttonLink") }
-              help = "The link for the button"
-            />
-          </PanelBody>
-          <Popup.Settings
-            attributes = { this.state }
-            callback = { this.setStateAttributes }
-          />
-        </InspectorControls>
-      </>
-    );
-  }
+                : "Footer button invisible",
+              attribute: "showButton",
+            },
+            {
+              type: "text",
+              label: "Footer button text",
+              help: "The text displayed by the button",
+              attribute: "buttonText",
+              disabled: !state.showButton,
+            },
+            {
+              type: "text",
+              label: "Footer button link",
+              help: "The link for the button",
+              attribute: "buttonLink",
+              disabled: !state.showButton,
+            },
+          ]
+        },
+        popupPanel,
+      ]}
+    />
+  );
 }
