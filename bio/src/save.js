@@ -12,7 +12,7 @@ export default function Save(props) {
       className = {
         [
           "ncs4-bio",
-          Popup.classType,
+          Popup.className,
           blockProps.className,
         ].join(' ')
       }
