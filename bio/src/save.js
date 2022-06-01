@@ -1,43 +1,41 @@
-import React from 'react';
 import { InnerBlocks } from '@wordpress/block-editor';
 
 import { ImageSave } from '../../js/ImageControl.js';
 import Popup from '../../popup/src/popup.js';
 
-export class BioSave extends React.Component {
+export default function Save(props) {
+  let blockProps = props.blockProps;
+  let attributes = props.attributes;
 
-  render() {
-    let blockProps = this.props.blockProps;
-    let attributes = this.props.attributes;
-
-    return (
-      <div {...blockProps }
-        className = {
-          [
-            "ncs4-bio",
-            Popup.classType,
-            blockProps.className,
-          ].join(' ')
-        }
-        style = {{
-          textAlign: (attributes.alignment != "none") ? attributes.alignment : null,
-        }}
+  return (
+    <div {...blockProps }
+      className = {
+        [
+          "ncs4-bio",
+          Popup.classType,
+          blockProps.className,
+        ].join(' ')
+      }
+      style = {{
+        textAlign: (attributes.alignment != "none") ? attributes.alignment : null,
+      }}
+    >
+      <BioProfile
+        img = { attributes.img }
+        //name = { attributes.name }
+        name = { attributes.fullName }
+        position = { attributes.position }
+        credentials = { attributes.credentials }
+        //phone = { attributes.phone }
+        //email = { attributes.email }
+        alignment = { attributes.alignment }
+      />
+      <Popup
+        className = "ncs4-button ncs4-button__blue"
+        attributes = { attributes }
+        backend = { props.backend }
       >
-        <BioProfile
-          img = { attributes.img }
-          //name = { attributes.name }
-          name = { attributes.fullName }
-          position = { attributes.position }
-          credentials = { attributes.credentials }
-          //phone = { attributes.phone }
-          //email = { attributes.email }
-          alignment = { attributes.alignment }
-        />
-        <Popup
-          className = "ncs4-button ncs4-button__blue"
-          attributes = { attributes }
-          backend = { this.props.backend }
-        >
+        <Popup.Header>
           <BioHeader
             img = { attributes.img }
             name = { attributes.fullName }
@@ -46,16 +44,18 @@ export class BioSave extends React.Component {
             phone = { attributes.phone }
             email = { attributes.email }
           />
-          { !this.props.backend &&
+        </Popup.Header>
+        <Popup.Body>
+          { !props.backend &&
             <InnerBlocks.Content/>
           }
-        </Popup>
-        { this.props.backend &&
-          <InnerBlocks/>
-        }
-      </div>
-    );
-  }
+        </Popup.Body>
+      </Popup>
+      { props.backend &&
+        <InnerBlocks/>
+      }
+    </div>
+  );
 }
 
 
@@ -120,7 +120,6 @@ function BioHeader(props) {
     <>
       <div className = "ncs4-bio-header">
         <BioProfile {...props}/>
-        <Popup.Dismiss/>
       </div>
       <hr class="ncs4-bio-header-seperator"/>
     </>
