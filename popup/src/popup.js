@@ -374,7 +374,7 @@ export function makeAttributes(defaults) {
       default: defaults.popupLinkStyle,
     },
     popupShadow: {
-      type: 'boolean',
+      type: 'bool',
       source: "attribute",
       attribute: "data-popup-shadow",
       selector: ".ncs4-popup-content",

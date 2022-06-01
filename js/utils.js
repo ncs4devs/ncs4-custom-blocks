@@ -17,6 +17,7 @@ export function parseAttributes(table, data) {
           break;
         }
 
+        case "bool":
         case "int":
         case "integer":
         case "number":
