@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useReducer, useState } from 'react';
 
 const toggler = state => !state;
 export function useToggle(initialState = false) {
-  return React.useReducer(toggler, initialState);
+  return useReducer(toggler, initialState);
 }
 
 
