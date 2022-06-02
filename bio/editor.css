@@ -1,5 +1,5 @@
-.ncs4-popup-overlay {
-  display: none;
+.ncs4-popup__wrapper {
+  display: none !important;
 }
 .ncs4-popup-content {
   overflow-y: visible;

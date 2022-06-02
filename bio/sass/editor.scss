@@ -1,7 +1,7 @@
 .ncs4-popup {
 
-  &-overlay {
-    display: none;
+  &__wrapper {
+    display: none !important;
   }
 
   &-content {
