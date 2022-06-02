@@ -1,8 +1,8 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
 
-import { FluidLayoutEdit } from './edit.js';
-import { FluidLayoutSave } from './save.js';
+import Edit from './edit';
+import Save from './save';
 
 registerBlockType( 'ncs4-custom-blocks/fluid-layout', {
   apiVersion: 2,
@@ -52,7 +52,7 @@ registerBlockType( 'ncs4-custom-blocks/fluid-layout', {
     maxWidth: {
       type: "object",
       default: {
-        useMaxWidth: false,
+        enabled: false,
         value: 0,
         unit: "%",
         asString: "0%",
@@ -85,13 +85,13 @@ registerBlockType( 'ncs4-custom-blocks/fluid-layout', {
   },
 
   edit: (props) => (
-    <FluidLayoutEdit
+    <Edit
       { ...props }
       blockProps = { useBlockProps() }
     />
   ),
   save: (props) => (
-    <FluidLayoutSave
+    <Save
       { ...props }
       blockProps = { useBlockProps.save() }
     />
