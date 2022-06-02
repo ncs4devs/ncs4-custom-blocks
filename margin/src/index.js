@@ -1,8 +1,8 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
 
-import { MarginEdit } from './edit.js';
-import { MarginSave } from './save.js';
+import Edit from './edit';
+import Save from './save';
 
 registerBlockType( 'ncs4-custom-blocks/margin', {
   apiVersion: 2,
@@ -48,14 +48,14 @@ registerBlockType( 'ncs4-custom-blocks/margin', {
   },
 
   edit: (props) => (
-    <MarginEdit
+    <Edit
       { ...props }
       blockProps = { useBlockProps() }
     />
   ),
 
   save: (props) => (
-    <MarginSave
+    <Save
       { ...props }
       blockProps = { useBlockProps.save() }
     />

@@ -1,47 +1,37 @@
-import React from 'react';
 import { InnerBlocks } from '@wordpress/block-editor';
-import { createColorClass, createColorStyle } from '../../js/ColorSelector.js';
+import { fromColorAttribute } from '../../js/ColorSelector.js';
 
-export class MarginSave extends React.Component {
+export default function Save(props) {
+  let attrs = props.attributes;
+  let bgColor = fromColorAttribute(attrs.bgColor, true);
+  let textColor = fromColorAttribute(attrs.textColor, false);
 
-  render() {
-    let attrs = this.props.attributes;
-    let backend = this.props.backend || false;
-    let colorStyle = createColorStyle( [
-      { color: attrs.bgColor,
-        props: [ "background-color", "--palette-bg-color" ],
-      },
-      { color: attrs.textColor,
-        props: [ "color", "--palette-color" ],
-      },
-    ] );
-
-    return (
-      <div { ...this.props.blockProps }
-        className = {
-          [
-            "ncs4-site-margin",
-            createColorClass(attrs.bgColor.slug, "background-color"),
-            createColorClass(attrs.textColor.slug, "color"),
-            attrs.noPadding ? "no-padding" : null,
-            "ncs4-site-margin__size-" + attrs.optionSize,
-            this.props.blockProps.className,
-          ].join(' ')
-        }
-        style = {{
-          ...colorStyle,
-          textAlign: (attrs.alignment != "none") ? attrs.alignment : null,
-          paddingTop: attrs.verticalPadding[0] + "rem",
-          paddingBottom: attrs.verticalPadding[1] + "rem",
-          marginTop: attrs.verticalMargin[0] + "rem",
-          marginBottom: attrs.verticalMargin[1] + "rem",
-        }}
-      >
-        { backend
-          ? <InnerBlocks/>
-          : <InnerBlocks.Content/>
-        }
-      </div>
-    );
-  }
+  return (
+    <div { ...props.blockProps }
+      className = {
+        [
+          "ncs4-site-margin",
+          bgColor.className,
+          textColor.className,
+          attrs.noPadding ? "no-padding" : null,
+          "ncs4-site-margin__size-" + attrs.optionSize,
+          props.blockProps.className,
+        ].join(' ')
+      }
+      style = {{
+        ...bgColor.style,
+        ...textColor.style,
+        textAlign: (attrs.alignment != "none") ? attrs.alignment : null,
+        paddingTop: attrs.verticalPadding[0] + "rem",
+        paddingBottom: attrs.verticalPadding[1] + "rem",
+        marginTop: attrs.verticalMargin[0] + "rem",
+        marginBottom: attrs.verticalMargin[1] + "rem",
+      }}
+    >
+      { props.backend
+        ? <InnerBlocks/>
+        : <InnerBlocks.Content/>
+      }
+    </div>
+  );
 }
