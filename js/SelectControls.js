@@ -480,41 +480,57 @@ export class UnitControl extends React.Component {
         return unit;
       }
     }
+    return props.units[0];
   }
 
   render() {
     let label = this.props.label;
     let help = this.props.help;
     let disabled = this.props.disabled;
-    let onChange = this.props.onChange;
 
     let toggleProps = this.props.toggleSelector; // may be undefined
     let unitProps = this.props.unitSelector;
     let sliderProps = this.props.slider;
     let toggleAttr = toggleProps && toggleProps.attribute;
 
-    let toggleValue = !toggleProps ||
-      ( toggleProps.value || toggleProps.default );
+    let toggleValue =
+      toggleProps == null || Object.keys(toggleProps).length === 0
+        ? true
+        : toggleProps.value || toggleProps.default;
     let unitValue = unitProps.value || unitProps.default;
     let sliderValue = !isNaN(sliderProps.value)
       ? sliderProps.value
       : sliderProps.default;
 
+      let setAttributes = (attrs) => this.props.onChange(
+        Object.assign(
+          {
+            [toggleAttr]: toggleValue,
+            unit: unitValue,
+            value: sliderValue,
+            asString: String(sliderValue) + unitValue,
+          },
+          attrs,
+        )
+      );
+
     // Set default values
     if (
-      (toggleProps && typeof toggleProps.value === "undefined")
-      || typeof unitProps.value === "undefined"
-      || isNaN(sliderProps.value)
+         toggleAttr != undefined
+      && toggleProps
+      && typeof toggleProps.value === "undefined"
     ) {
-      onChange({
-        [toggleAttr]: toggleValue,
-        unit: unitValue,
-        value: sliderValue,
-        asString: String(sliderValue) + unitValue,
-      });
+      setAttributes({ [toggleAttr]: toggleValue });
+    }
+    if (typeof unitProps.value === "undefined") {
+      setAttributes({ unit: unitValue });
+    }
+    if (isNaN(sliderProps.value)) {
+      setAttributes({ value: sliderValue });
+      setAttributes({ asString: String(sliderValue) + unitValue });
     }
 
-    let selectorsDisabled = disabled || !toggleValue
+    let selectorsDisabled = disabled || !toggleValue;
 
     let unitSettings = this.getUnitSettings(unitProps);
     return (
@@ -530,43 +546,29 @@ export class UnitControl extends React.Component {
           { toggleAttr && (
             <OptionControl { ...toggleProps }
               value = { toggleValue }
-              callback = { (v) => onChange(
-                {
-                  [toggleAttr]: v,
-                  unit: unitValue,
-                  value: sliderValue,
-                  asString: String(sliderValue) + unitValue,
-                }
-              ) }
+              callback = { v => setAttributes({ [toggleAttr]: v }) }
+              disabled = { disabled }
             />
           )}
           <OptionControl { ...unitProps }
             multiple = { false }
             choices = { unitProps.units }
-            disabled = { disabled || !toggleValue }
+            disabled = { selectorsDisabled }
             callback = { (v) => {
-              let props = {
-                ...unitProps,
-                value: v,
-              };
-              let unitSettings = this.getUnitSettings(props);
-              onChange(
-              {
-                [toggleAttr]: toggleValue,
+              let unitSettings = this.getUnitSettings(
+                { ...unitProps, value: v }
+              );
+              let value = this.clamp(
+                sliderValue,
+                unitSettings.min,
+                unitSettings.max,
+              );
+              setAttributes({
                 unit: v,
-                value: this.clamp(
-                  sliderValue,
-                  unitSettings.min,
-                  unitSettings.max
-                ),
-                asString: this.clamp(
-                  sliderValue,
-                  unitSettings.min,
-                  unitSettings.max
-                ) + v,
-              })
-            }
-          }
+                value,
+                asString: String(value) + v,
+              });
+            }}
           />
         </PanelRow>
         <SliderControl { ...sliderProps }
@@ -578,19 +580,14 @@ export class UnitControl extends React.Component {
           tooltipRender = {
             (v) => String(v) + (unitSettings.label || unitSettings.value)
           }
-          disabled = { disabled || !toggleValue }
-          callback = { (v) => onChange(
-            {
-              [toggleAttr]: toggleValue,
-              unit: unitValue,
-              value: this.clamp(v, unitSettings.min, unitSettings.max),
-              asString: this.clamp(
-                v,
-                unitSettings.min,
-                unitSettings.max
-              ) + unitValue,
-            }
-          ) }
+          disabled = { selectorsDisabled }
+          callback = { (v) => {
+            let value = this.clamp(v, unitSettings.min, unitSettings.max);
+            setAttributes({
+              value,
+              asString: String(value) + unitValue,
+            });
+          }}
         />
         { help && (
           <p
