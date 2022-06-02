@@ -183,23 +183,21 @@ function ControlPanel(props) {
                     attribute: "enabled",
                     label: control.toggleLabel,
                     help: control.toggleHelp,
-                    value: state[control.attribute.enabled],
+                    value: state[control.attribute].enabled,
                   }
                   : {}
                 }
                 unitSelector = {{
                   label: control.selectorLabel,
-                  value: state[control.attribute.unit],
+                  value: state[control.attribute].unit,
                   units: control.selectorChoices,
                 }}
                 slider = {{
                   label: control.sliderLabel,
                   help: control.sliderHelp,
-                  value: state[control.attribute.value],
+                  value: state[control.attribute].value,
                 }}
-                onChange = { (obj) =>
-                  setAttribute(control.attribute)(obj[control.attribute])
-                }
+                onChange = { setAttribute(control.attribute) }
               />
             );
 
