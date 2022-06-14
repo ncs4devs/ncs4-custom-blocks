@@ -43,3 +43,4 @@ include 'icon/index.php';
 include 'button/index.php';
 include 'container/index.php';
 include 'card/index.php';
+include 'forum-feed/index.php';
