@@ -241,6 +241,7 @@ function ControlPanel(props) {
                     value: state[control.attribute],
                   }
                 ] }
+                maxRadioOptions = { control.maxRadioOptions }
                 key = { key }
                 type = { control.type }
                 onChange = { (obj) =>

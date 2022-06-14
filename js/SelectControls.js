@@ -199,7 +199,9 @@ export class OptionsControl extends React.Component {
   }
 
   render() {
-    let maxRadioOptions = this.props.maxRadioOptions || 5;
+    let maxRadioOptions = isNaN(this.props.maxRadioOptions)
+      ? 5
+      : this.props.maxRadioOptions;
     let options = this.props.options;
     let onChange = this.props.onChange;
 
@@ -269,7 +271,7 @@ export class OptionControl extends React.Component {
       { Array.isArray(value)
         ? <OptionGroup { ...this.props }/>
         : !choices
-          ? !( isNaN(min) || isNaN(max) || isNaN(step) )
+          ? !( isNaN(min) || isNaN(max))
             ? <SliderControl
                 label = { label }
                 help = { help }
