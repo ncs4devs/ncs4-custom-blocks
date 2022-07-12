@@ -3,8 +3,8 @@ export function parseAttributes(table, data) {
   let out = {};
   for (let attr in data) {
     if (
-        typeof data[attr] === "string" && table[attr] &&
-        typeof table[attr] === "object" && table[attr].type
+        (typeof data[attr] === "string" || table[attr].type === "image")
+        && table[attr] && typeof table[attr] === "object" && table[attr].type
       ) {
       switch (table[attr].type) {
         case "string": {
@@ -14,6 +14,11 @@ export function parseAttributes(table, data) {
 
         case "boolean": {
           out[attr] = Boolean(data[attr]);
+          break;
+        }
+
+        case "image": {
+          out[attr] = data[attr][0] || data[attr];
           break;
         }
 
