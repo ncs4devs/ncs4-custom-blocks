@@ -23,14 +23,12 @@ export default function Save(props) {
             className = "ncs4-description-popup__description"
             tagName = "p"
             value = { props.attributes.desc }
-            onChange = { props.onDescChange }
+            onChange = { props.setAttribute("desc") }
             placeHolder = "Description"
           />
-        : <RichText.Content
+        : <p
             className = "ncs4-description-popup__description"
-            tagName = "p"
-            value = { props.attributes.normalizedDesc }
-          />
+          >{ props.attributes.normalizedDesc }</p>
       }
       { !props.backend &&
         <Popup

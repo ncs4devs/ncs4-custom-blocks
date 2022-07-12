@@ -170,13 +170,11 @@ function Save(props) {
     className: "ncs4-description-popup__description",
     tagName: "p",
     value: props.attributes.desc,
-    onChange: props.onDescChange,
+    onChange: props.setAttribute("desc"),
     placeHolder: "Description"
-  }) : (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.RichText.Content, {
-    className: "ncs4-description-popup__description",
-    tagName: "p",
-    value: props.attributes.normalizedDesc
-  }), !props.backend && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"], {
+  }) : (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("p", {
+    className: "ncs4-description-popup__description"
+  }, props.attributes.normalizedDesc), !props.backend && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"], {
     attributes: props.attributes,
     backend: props.backend
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"].Header, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"].Title, {
