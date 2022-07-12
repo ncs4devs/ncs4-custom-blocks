@@ -6,16 +6,16 @@
 /* Yellow */
 /* Grey */
 /* Links */
-.ncs4-custom-blocks__popup-type {
+.ncs4-popup {
   width: 100%;
   height: 100%;
   padding: 1.5rem 2.5rem;
   background-color: #e6e6e6;
 }
-.ncs4-custom-blocks__popup-type .ncs4-custom-blocks__popup-type-overlay {
+.ncs4-popup .ncs4-popup-overlay {
   display: none !important;
 }
-.ncs4-custom-blocks__popup-type .ncs4-custom-blocks__popup-type-content {
+.ncs4-popup .ncs4-popup-content {
   overflow-y: visible;
   max-height: unset;
   min-height: 64px;
@@ -24,15 +24,29 @@
   border: none;
   border-radius: 0;
 }
-.ncs4-custom-blocks__popup-type .ncs4-custom-blocks__popup-type-content__wrapper {
+.ncs4-popup .ncs4-popup-content__wrapper {
   display: block;
   position: static;
 }
-.ncs4-custom-blocks__popup-type .ncs4-custom-blocks__popup-type__wrapper {
+.ncs4-popup .ncs4-popup__wrapper {
   display: block;
   position: static;
   width: auto;
   height: auto;
+}
+
+.ncs4-award-card .ncs4-popup__popup-header {
+  display: none;
+}
+.ncs4-award-card .ncs4-popup-content {
+  background-color: transparent !important;
+}
+.ncs4-award-card .ncs4-popup__popup-body {
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+.ncs4-award-card .ncs4-popup__popup-body .ncs4-award-card__popup-description {
+  display: none;
 }
 
 .ncs4-award-recipient__edit-delete.toggled {

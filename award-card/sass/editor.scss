@@ -1,5 +1,24 @@
 @import '../../popup/sass/__popup-edit';
 
+.ncs4-award-card {
+  .ncs4-popup__popup-header {
+    display: none;
+  }
+
+  .ncs4-popup-content {
+    background-color: transparent !important;
+  }
+
+  .ncs4-popup__popup-body {
+    padding: 0 !important;
+    box-shadow: none !important;
+
+    .ncs4-award-card__popup-description {
+      display: none;
+    }
+  }
+}
+
 .ncs4-award-recipient__edit-delete {
   &.toggled {
     color: red;
