@@ -2,6 +2,43 @@ import React from 'react';
 import { MediaUploadCheck, MediaUpload } from '@wordpress/block-editor';
 import { Button } from '@wordpress/components';
 
+export const imageAttribute = (selector) => ({
+  type: "image",
+  source: "query",
+  selector,
+  default: [],
+  query: {
+    url: {
+      type: "string",
+      source: "attribute",
+      attribute: "src",
+    },
+    alt: {
+      type: "string",
+      source: "attribute",
+      attribute: "alt",
+      default: "",
+    },
+    mime: {
+      type: "string",
+      source: "attribute",
+      attribute: "type",
+    },
+    width: {
+      type: "int",
+      source: "attribute",
+      attribute: "width",
+      default: null,
+    },
+    height: {
+      type: "int",
+      source: "attribute",
+      attribute: "height",
+      default: null,
+    },
+  }
+});
+
 // Be careful that you only use trusted SVGs as they are not secure!
 export function Svg(props) {
   return <>
@@ -22,7 +59,7 @@ export function Svg(props) {
 // Image object format:
 /*
 img: {
-  mine = "image/svg+xml",
+  mime = "image/svg+xml",
   url = "..."
   data = {svg data}
   ...
@@ -40,23 +77,43 @@ const imageStyle = (props) => ({
 export function ImageEdit(props) {
   props.useInlineSvg = props.useInlineSvg == null ? true : props.useInlineSvg;
 
+  const onSelect = (media) => {
+    let img = {
+      url: media.url,
+      mime: media.mime,
+      inline: media.mime === "image/svg+xml" && props.useInlineSvg
+        ? true
+        : undefined,
+      width: media.width,
+      height: media.height,
+    }
+    props.onChange(img);
+  }
+
+  const noImage = !props.img
+    || (typeof props.img == "object" && Object.keys(props.img).length == 0);
+
   return (
     <MediaUploadCheck>
       <MediaUpload
-        onSelect = { props.onChange }
+        onSelect = { onSelect }
         value = { props.img ? props.img.id : null }
         allowedTypes = { ['image'] }
         render = { ( {open} ) => (
           <Button
             className = {
-              props.img
-                ? 'editor-post-featured-image__preview'
-                : 'editor-post-featured-image__toggle'
+              noImage
+                ? 'editor-post-featured-image__toggle'
+                : 'editor-post-featured-image__preview'
             }
+            style = {{
+              marginBottom: "24px",
+            }}
             onClick = { open }
           >
-            { props.img
-              ? (props.img.mime === "image/svg+xml" && props.img.data
+            { noImage
+              ? "Choose an image"
+              : (props.img.mime === "image/svg+xml" && props.img.data
                   ? <Svg
                       img = { props.img }
                       useInlineSvg = { props.useInlineSvg }
@@ -67,7 +124,6 @@ export function ImageEdit(props) {
                       style = { imageStyle(props) }
                     />
                 )
-              : "Choose an image"
             }
           </Button>
         )}
@@ -78,16 +134,24 @@ export function ImageEdit(props) {
 
 // Front-end image display
 export function ImageSave(props) {
-  let isSvg = props.img && props.img.mime === "image/svg+xml" && props.img.data;
-  props.useInlineSvg = props.useInlineSvg == null ? true : props.useInlineSvg;
+  let isSvg = props.img && props.img.mime === "image/svg+xml";
 
   return <>
-    { isSvg && !props.useInlineSvg
+    { isSvg && !props.img.inline
       ? <embed
-          type = { props.img.mine }
+          className = "component-image"
+          type = { props.img.mime }
           src = { props.img.url }
         />
       : <div {...props}
+        className = {
+          [
+            props.className,
+            "component-image",
+          ].join(' ')
+        }
+        type = { props.img.mime }
+        src = { props.img.url }
         { ...(
           isSvg
             ? { dangerouslySetInnerHTML: {
@@ -100,8 +164,12 @@ export function ImageSave(props) {
       >
         { props.img && !isSvg
           ? <img
+              className = "component-image"
+              type = { props.img.mime }
               src = { props.img.url }
               style = { imageStyle(props) }
+              width = { props.img.width }
+              height = { props.img.height }
             />
           : null
         }
