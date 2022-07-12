@@ -1,17 +1,17 @@
-.ncs4-popup {
+.ncs4-bio {
 
-  &__wrapper {
+  .ncs4-popup__wrapper {
     display: none !important;
   }
 
-  &-content {
+  .ncs4-popup-content {
     overflow-y: visible;
     max-height: unset;
     padding: 0;
     border: none;
     border-radius: 0;
 
-    &__wrapper {
+    .ncs4-popup-content__wrapper {
       display: block;
       position: static;
     }
