@@ -2,6 +2,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
 import { parseAttributes } from '../../js/utils';
 import { makeAttributes } from '../../popup/src/popup';
+import { imageAttribute } from '../../js/ImageControl';
 
 import Edit from './edit';
 import Save from './save';
@@ -29,42 +30,7 @@ const attributes = Object.assign(
       source: "html",
       selector: ".ncs4-description-popup__description",
     },
-    img: {
-      type: "image",
-      source: "query",
-      selector: ".component-image",
-      default: [],
-      query: {
-        url: {
-          type: "string",
-          source: "attribute",
-          attribute: "src",
-        },
-        alt: {
-          type: "string",
-          source: "attribute",
-          attribute: "alt",
-          default: "",
-        },
-        mime: {
-          type: "string",
-          source: "attribute",
-          attribute: "type",
-        },
-        width: {
-          type: "int",
-          source: "attribute",
-          attribute: "width",
-          default: null,
-        },
-        height: {
-          type: "int",
-          source: "attribute",
-          attribute: "height",
-          default: null,
-        },
-      },
-    },
+    img: imageAttribute(".component-image"),
     showButton: {
       type: "boolean",
       default: true,

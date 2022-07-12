@@ -358,6 +358,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ImageEdit": function() { return /* binding */ ImageEdit; },
 /* harmony export */   "ImageSave": function() { return /* binding */ ImageSave; },
 /* harmony export */   "Svg": function() { return /* binding */ Svg; },
+/* harmony export */   "imageAttribute": function() { return /* binding */ imageAttribute; },
 /* harmony export */   "onImageChange": function() { return /* binding */ onImageChange; }
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/esm/extends.js");
@@ -373,7 +374,43 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // Be careful that you only use trusted SVGs as they are not secure!
+
+const imageAttribute = selector => ({
+  type: "image",
+  source: "query",
+  selector,
+  default: [],
+  query: {
+    url: {
+      type: "string",
+      source: "attribute",
+      attribute: "src"
+    },
+    alt: {
+      type: "string",
+      source: "attribute",
+      attribute: "alt",
+      default: ""
+    },
+    mime: {
+      type: "string",
+      source: "attribute",
+      attribute: "type"
+    },
+    width: {
+      type: "int",
+      source: "attribute",
+      attribute: "width",
+      default: null
+    },
+    height: {
+      type: "int",
+      source: "attribute",
+      attribute: "height",
+      default: null
+    }
+  }
+}); // Be careful that you only use trusted SVGs as they are not secure!
 
 function Svg(props) {
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.Fragment, null, props.useInlineSvg ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {
@@ -2433,8 +2470,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _js_utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../js/utils */ "../js/utils.js");
 /* harmony import */ var _popup_src_popup__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../popup/src/popup */ "../popup/src/popup.js");
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./edit */ "./src/edit.js");
-/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./save */ "./src/save.js");
+/* harmony import */ var _js_ImageControl__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../js/ImageControl */ "../js/ImageControl.js");
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./edit */ "./src/edit.js");
+/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./save */ "./src/save.js");
+
 
 
 
@@ -2464,42 +2503,7 @@ const attributes = Object.assign((0,_popup_src_popup__WEBPACK_IMPORTED_MODULE_5_
     source: "html",
     selector: ".ncs4-description-popup__description"
   },
-  img: {
-    type: "image",
-    source: "query",
-    selector: ".component-image",
-    default: [],
-    query: {
-      url: {
-        type: "string",
-        source: "attribute",
-        attribute: "src"
-      },
-      alt: {
-        type: "string",
-        source: "attribute",
-        attribute: "alt",
-        default: ""
-      },
-      mime: {
-        type: "string",
-        source: "attribute",
-        attribute: "type"
-      },
-      width: {
-        type: "int",
-        source: "attribute",
-        attribute: "width",
-        default: null
-      },
-      height: {
-        type: "int",
-        source: "attribute",
-        attribute: "height",
-        default: null
-      }
-    }
-  },
+  img: (0,_js_ImageControl__WEBPACK_IMPORTED_MODULE_6__.imageAttribute)(".component-image"),
   showButton: {
     type: "boolean",
     default: true
@@ -2523,11 +2527,11 @@ const attributes = Object.assign((0,_popup_src_popup__WEBPACK_IMPORTED_MODULE_5_
   icon: 'format-aside',
   category: 'layout',
   attributes,
-  edit: props => (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_edit__WEBPACK_IMPORTED_MODULE_6__["default"], (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, {
+  edit: props => (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_edit__WEBPACK_IMPORTED_MODULE_7__["default"], (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, {
     attributes: (0,_js_utils__WEBPACK_IMPORTED_MODULE_4__.parseAttributes)(attributes, props.attributes),
     blockProps: (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__.useBlockProps)()
   })),
-  save: props => (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_save__WEBPACK_IMPORTED_MODULE_7__["default"], (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, {
+  save: props => (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_save__WEBPACK_IMPORTED_MODULE_8__["default"], (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, {
     attributes: (0,_js_utils__WEBPACK_IMPORTED_MODULE_4__.parseAttributes)(attributes, props.attributes),
     blockProps: _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__.useBlockProps.save()
   }))
