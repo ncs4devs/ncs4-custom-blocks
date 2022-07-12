@@ -30,7 +30,40 @@ const attributes = Object.assign(
       selector: ".ncs4-description-popup__description",
     },
     img: {
-      type: "object",
+      type: "image",
+      source: "query",
+      selector: ".component-image",
+      default: [],
+      query: {
+        url: {
+          type: "string",
+          source: "attribute",
+          attribute: "src",
+        },
+        alt: {
+          type: "string",
+          source: "attribute",
+          attribute: "alt",
+          default: "",
+        },
+        mime: {
+          type: "string",
+          source: "attribute",
+          attribute: "type",
+        },
+        width: {
+          type: "int",
+          source: "attribute",
+          attribute: "width",
+          default: null,
+        },
+        height: {
+          type: "int",
+          source: "attribute",
+          attribute: "height",
+          default: null,
+        },
+      },
     },
     showButton: {
       type: "boolean",

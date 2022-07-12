@@ -62,6 +62,7 @@ export default function Edit(props) {
               type: "image",
               label: "Footer image",
               attribute: "img",
+              useInlineSvg: false,
             },
             {
               type: "choice",
