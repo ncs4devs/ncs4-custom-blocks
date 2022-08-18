@@ -36,8 +36,8 @@ const industrySegments = {
 };
 
 const orgFields = [
-  "industry",
-  "organization",
+  //"industry",
+  //"organization",
 ];
 
 /***** Helper functions *****/
@@ -83,6 +83,7 @@ function addToRecipientTree(root, recipient, useOrgs, currentYear) {
   if (recipient.year === currentYear) {
     tree.current = sortedInsert(tree.current, recipient, compare);
   } else {
+    /*
     if (useOrgs) {
       tree.previous = buildSubtree(
         tree.previous,
@@ -99,12 +100,15 @@ function addToRecipientTree(root, recipient, useOrgs, currentYear) {
     } else {
       tree.previous = sortedInsert(tree.previous, recipient, compare);
     }
+    */
+    tree.previous = sortedInsert(tree.previous, recipient, compare);
   }
 
   return tree;
 }
 
 function buildSubtree(root, fields, recipient, compare, useOrgs = true) {
+  useOrgs = false; // Disable useOrgs
   if (fields.length > 0) {
     let field = recipient[fields[0]];
     if (fields[0] === "organization" && !field) {
@@ -131,7 +135,9 @@ function buildSubtree(root, fields, recipient, compare, useOrgs = true) {
       root[field] = root[field] || [];
     }
 
+    /*
     if (
+          false && // Disable Industry segments
            fields[0] === "industry"
         && industrySegments[field]
       ) {
@@ -150,6 +156,7 @@ function buildSubtree(root, fields, recipient, compare, useOrgs = true) {
         compare,
       );
     }
+    */
 
     return root;
   } else {
@@ -345,7 +352,9 @@ const ids = (state = [], action) => {
 const useOrgs = (state = false, action) => {
   switch(action.type) {
     case actionTypes.SetUseOrgs: {
-      return action.useOrgs;
+      // Disable useOrgs option
+      return false;
+      //return action.useOrgs;
 
       break;
     }

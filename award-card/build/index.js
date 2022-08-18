@@ -270,11 +270,12 @@ function useColor(colorAttr, isBg, callback) {
 /*!*****************************!*\
   !*** ../js/ImageControl.js ***!
   \*****************************/
-/*! exports provided: Svg, ImageEdit, ImageSave, onImageChange */
+/*! exports provided: imageAttribute, Svg, ImageEdit, ImageSave, onImageChange */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "imageAttribute", function() { return imageAttribute; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Svg", function() { return Svg; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ImageEdit", function() { return ImageEdit; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ImageSave", function() { return ImageSave; });
@@ -293,7 +294,43 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // Be careful that you only use trusted SVGs as they are not secure!
+
+const imageAttribute = selector => ({
+  type: "image",
+  source: "query",
+  selector,
+  default: [],
+  query: {
+    url: {
+      type: "string",
+      source: "attribute",
+      attribute: "src"
+    },
+    alt: {
+      type: "string",
+      source: "attribute",
+      attribute: "alt",
+      default: ""
+    },
+    mime: {
+      type: "string",
+      source: "attribute",
+      attribute: "type"
+    },
+    width: {
+      type: "int",
+      source: "attribute",
+      attribute: "width",
+      default: null
+    },
+    height: {
+      type: "int",
+      source: "attribute",
+      attribute: "height",
+      default: null
+    }
+  }
+}); // Be careful that you only use trusted SVGs as they are not secure!
 
 function Svg(props) {
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, props.useInlineSvg ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
@@ -308,7 +345,7 @@ function Svg(props) {
 
 /*
 img: {
-  mine = "image/svg+xml",
+  mime = "image/svg+xml",
   url = "..."
   data = {svg data}
   ...
@@ -325,8 +362,21 @@ const imageStyle = props => ({
 
 function ImageEdit(props) {
   props.useInlineSvg = props.useInlineSvg == null ? true : props.useInlineSvg;
+
+  const onSelect = media => {
+    let img = {
+      url: media.url,
+      mime: media.mime,
+      inline: media.mime === "image/svg+xml" && props.useInlineSvg ? true : undefined,
+      width: media.width,
+      height: media.height
+    };
+    props.onChange(img);
+  };
+
+  const noImage = !props.img || typeof props.img == "object" && Object.keys(props.img).length == 0;
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["MediaUploadCheck"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["MediaUpload"], {
-    onSelect: props.onChange,
+    onSelect: onSelect,
     value: props.img ? props.img.id : null,
     allowedTypes: ['image'],
     render: _ref => {
@@ -334,34 +384,45 @@ function ImageEdit(props) {
         open
       } = _ref;
       return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["Button"], {
-        className: props.img ? 'editor-post-featured-image__preview' : 'editor-post-featured-image__toggle',
+        className: noImage ? 'editor-post-featured-image__toggle' : 'editor-post-featured-image__preview',
+        style: {
+          marginBottom: "24px"
+        },
         onClick: open
-      }, props.img ? props.img.mime === "image/svg+xml" && props.img.data ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Svg, {
+      }, noImage ? "Choose an image" : props.img.mime === "image/svg+xml" && props.img.data ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Svg, {
         img: props.img,
         useInlineSvg: props.useInlineSvg,
         style: imageStyle(props)
       }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("img", {
         src: props.img.url,
         style: imageStyle(props)
-      }) : "Choose an image");
+      }));
     }
   }));
 } // Front-end image display
 
 function ImageSave(props) {
-  let isSvg = props.img && props.img.mime === "image/svg+xml" && props.img.data;
-  props.useInlineSvg = props.useInlineSvg == null ? true : props.useInlineSvg;
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, isSvg && !props.useInlineSvg ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("embed", {
-    type: props.img.mine,
+  let isSvg = props.img && props.img.mime === "image/svg+xml";
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, isSvg && !props.img.inline ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("embed", {
+    className: "component-image",
+    type: props.img.mime,
     src: props.img.url
-  }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, isSvg ? {
+  }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+    className: [props.className, "component-image"].join(' '),
+    type: props.img.mime,
+    src: props.img.url
+  }, isSvg ? {
     dangerouslySetInnerHTML: {
       __html: props.img.data,
       style: imageStyle(props)
     }
   } : {}), props.img && !isSvg ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("img", {
+    className: "component-image",
+    type: props.img.mime,
     src: props.img.url,
-    style: imageStyle(props)
+    style: imageStyle(props),
+    width: props.img.width,
+    height: props.img.height
   }) : null));
 } // Generic image change handler
 
@@ -598,7 +659,7 @@ class OptionsControl extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Compon
   }
 
   render() {
-    let maxRadioOptions = this.props.maxRadioOptions || 5;
+    let maxRadioOptions = isNaN(this.props.maxRadioOptions) ? 5 : this.props.maxRadioOptions;
     let options = this.props.options;
     let onChange = this.props.onChange; // array of {attribute: attr, value: val}}
 
@@ -651,7 +712,7 @@ class OptionControl extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Compone
     let invertValue = this.props.invertValue || false;
     let disabled = this.props.disabled;
     let callback = this.props.callback;
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["Fragment"], null, Array.isArray(value) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(OptionGroup, this.props) : !choices ? !(isNaN(min) || isNaN(max) || isNaN(step)) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(SliderControl, {
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["Fragment"], null, Array.isArray(value) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(OptionGroup, this.props) : !choices ? !(isNaN(min) || isNaN(max)) ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(SliderControl, {
       label: label,
       help: help,
       value: value,
@@ -834,27 +895,48 @@ class UnitControl extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Component
         return unit;
       }
     }
+
+    return props.units[0];
   }
 
   render() {
     let label = this.props.label;
     let help = this.props.help;
     let disabled = this.props.disabled;
-    let onChange = this.props.onChange;
     let toggleProps = this.props.toggleSelector; // may be undefined
 
     let unitProps = this.props.unitSelector;
     let sliderProps = this.props.slider;
     let toggleAttr = toggleProps && toggleProps.attribute;
-    let toggleValue = !toggleProps || toggleProps.value || toggleProps.default;
+    let toggleValue = toggleProps == null || Object.keys(toggleProps).length === 0 ? true : toggleProps.value || toggleProps.default;
     let unitValue = unitProps.value || unitProps.default;
-    let sliderValue = !isNaN(sliderProps.value) ? sliderProps.value : sliderProps.default; // Set default values
+    let sliderValue = !isNaN(sliderProps.value) ? sliderProps.value : sliderProps.default;
 
-    if (toggleProps && typeof toggleProps.value === "undefined" || typeof unitProps.value === "undefined" || isNaN(sliderProps.value)) {
-      onChange({
-        [toggleAttr]: toggleValue,
-        unit: unitValue,
-        value: sliderValue,
+    let setAttributes = attrs => this.props.onChange(Object.assign({
+      [toggleAttr]: toggleValue,
+      unit: unitValue,
+      value: sliderValue,
+      asString: String(sliderValue) + unitValue
+    }, attrs)); // Set default values
+
+
+    if (toggleAttr != undefined && toggleProps && typeof toggleProps.value === "undefined") {
+      setAttributes({
+        [toggleAttr]: toggleValue
+      });
+    }
+
+    if (typeof unitProps.value === "undefined") {
+      setAttributes({
+        unit: unitValue
+      });
+    }
+
+    if (isNaN(sliderProps.value)) {
+      setAttributes({
+        value: sliderValue
+      });
+      setAttributes({
         asString: String(sliderValue) + unitValue
       });
     }
@@ -865,26 +947,23 @@ class UnitControl extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Component
       className: "components-base-control__label css-pezhm9-StyledLabel e1puf3u2"
     }, label), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelRow"], null, toggleAttr && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(OptionControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, toggleProps, {
       value: toggleValue,
-      callback: v => onChange({
-        [toggleAttr]: v,
-        unit: unitValue,
-        value: sliderValue,
-        asString: String(sliderValue) + unitValue
-      })
+      callback: v => setAttributes({
+        [toggleAttr]: v
+      }),
+      disabled: disabled
     })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(OptionControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, unitProps, {
       multiple: false,
       choices: unitProps.units,
-      disabled: disabled || !toggleValue,
+      disabled: selectorsDisabled,
       callback: v => {
-        let props = { ...unitProps,
+        let unitSettings = this.getUnitSettings({ ...unitProps,
           value: v
-        };
-        let unitSettings = this.getUnitSettings(props);
-        onChange({
-          [toggleAttr]: toggleValue,
+        });
+        let value = this.clamp(sliderValue, unitSettings.min, unitSettings.max);
+        setAttributes({
           unit: v,
-          value: this.clamp(sliderValue, unitSettings.min, unitSettings.max),
-          asString: this.clamp(sliderValue, unitSettings.min, unitSettings.max) + v
+          value,
+          asString: String(value) + v
         });
       }
     }))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])(SliderControl, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, sliderProps, {
@@ -894,13 +973,14 @@ class UnitControl extends react__WEBPACK_IMPORTED_MODULE_3___default.a.Component
       step: unitSettings.step,
       markStep: unitSettings.markStep || unitSettings.step,
       tooltipRender: v => String(v) + (unitSettings.label || unitSettings.value),
-      disabled: disabled || !toggleValue,
-      callback: v => onChange({
-        [toggleAttr]: toggleValue,
-        unit: unitValue,
-        value: this.clamp(v, unitSettings.min, unitSettings.max),
-        asString: this.clamp(v, unitSettings.min, unitSettings.max) + unitValue
-      })
+      disabled: selectorsDisabled,
+      callback: v => {
+        let value = this.clamp(v, unitSettings.min, unitSettings.max);
+        setAttributes({
+          value,
+          asString: String(value) + unitValue
+        });
+      }
     })), help && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__["createElement"])("p", {
       className: "components-base-control__help css-1gbp77-StyledHelp e1puf3u3"
     }, help));
@@ -1139,19 +1219,19 @@ function ControlPanel(props) {
               attribute: "enabled",
               label: control.toggleLabel,
               help: control.toggleHelp,
-              value: state[control.attribute.enabled]
+              value: state[control.attribute].enabled
             } : {},
             unitSelector: {
               label: control.selectorLabel,
-              value: state[control.attribute.unit],
+              value: state[control.attribute].unit,
               units: control.selectorChoices
             },
             slider: {
               label: control.sliderLabel,
               help: control.sliderHelp,
-              value: state[control.attribute.value]
+              value: state[control.attribute].value
             },
-            onChange: obj => setAttribute(control.attribute)(obj[control.attribute])
+            onChange: setAttribute(control.attribute)
           }));
           break;
         }
@@ -1181,10 +1261,32 @@ function ControlPanel(props) {
             options: [{ ...control,
               value: state[control.attribute]
             }],
+            maxRadioOptions: control.maxRadioOptions,
             key: key,
             type: control.type,
             onChange: obj => setAttribute(control.attribute)(obj[control.attribute])
           });
+          break;
+        }
+
+      case "phone":
+        {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_SelectControls__WEBPACK_IMPORTED_MODULE_4__["PhoneControl"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, control, {
+            key: key,
+            value: state[control.attribute],
+            onChange: setAttribute(control.attribute)
+          }));
+          break;
+        }
+
+      case "email":
+        {
+          return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_SelectControls__WEBPACK_IMPORTED_MODULE_4__["EmailControl"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, control, {
+            key: key,
+            value: state[control.attribute],
+            onChange: setAttribute(control.attribute)
+          }));
+          break;
         }
 
       default:
@@ -1217,7 +1319,7 @@ const toggler = state => !state;
 
 function useToggle() {
   let initialState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.useReducer(toggler, initialState);
+  return Object(react__WEBPACK_IMPORTED_MODULE_0__["useReducer"])(toggler, initialState);
 } // shallow merges objects into a state object
 // React's setState(Object) does NOT work for this, despite what the docs say.
 
@@ -1273,7 +1375,7 @@ function parseAttributes(table, data) {
   let out = {};
 
   for (let attr in data) {
-    if (typeof data[attr] === "string" && table[attr] && typeof table[attr] === "object" && table[attr].type) {
+    if ((typeof data[attr] === "string" || table[attr].type === "image") && table[attr] && typeof table[attr] === "object" && table[attr].type) {
       switch (table[attr].type) {
         case "string":
           {
@@ -1283,10 +1385,17 @@ function parseAttributes(table, data) {
 
         case "boolean":
           {
-            out[attr] = Boolean(data[attr]);
+            out[attr] = JSON.parse(data[attr]);
             break;
           }
 
+        case "image":
+          {
+            out[attr] = data[attr][0] || data[attr];
+            break;
+          }
+
+        case "bool":
         case "int":
         case "integer":
         case "number":
@@ -1631,19 +1740,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "POPUP_STORE", function() { return POPUP_STORE; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "usePopup", function() { return usePopup; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeAttributes", function() { return makeAttributes; });
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _js_SelectControls__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../js/SelectControls */ "../js/SelectControls.js");
-/* harmony import */ var _js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../js/ColorSelector */ "../js/ColorSelector.js");
-/* harmony import */ var _img_dismiss_svg__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../img/dismiss.svg */ "../img/dismiss.svg");
-/* harmony import */ var _popupSelectors__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./popupSelectors */ "../popup/src/popupSelectors.js");
-/* harmony import */ var _popupActions__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./popupActions */ "../popup/src/popupActions.js");
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js");
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _js_SelectControls__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../js/SelectControls */ "../js/SelectControls.js");
+/* harmony import */ var _js_ColorSelector__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../js/ColorSelector */ "../js/ColorSelector.js");
+/* harmony import */ var _img_dismiss_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../img/dismiss.svg */ "../img/dismiss.svg");
+/* harmony import */ var _popupSelectors__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./popupSelectors */ "../popup/src/popupSelectors.js");
+/* harmony import */ var _popupActions__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./popupActions */ "../popup/src/popupActions.js");
+
 
 // Library of generic popup classes
 
@@ -1750,38 +1862,39 @@ export default function Save(props) {
 
 const Popup = props => {
   let attrs = props.attributes;
+  let noLink = props.noLink == null ? false : props.noLink;
   let id = "popup-" + String(attrs.popupId);
-  let bgColor = Object(_js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__["fromColorAttribute"])(attrs.popupBgColor, true);
-  let textColor = Object(_js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__["fromColorAttribute"])(attrs.popupTextColor, false);
+  let bgColor = Object(_js_ColorSelector__WEBPACK_IMPORTED_MODULE_6__["fromColorAttribute"])(attrs.popupBgColor, true);
+  let textColor = Object(_js_ColorSelector__WEBPACK_IMPORTED_MODULE_6__["fromColorAttribute"])(attrs.popupTextColor, false);
   let css = `
     #${id}:target {
       display: block;
     }
   `;
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, props.backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("a", {
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, !noLink && (props.backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
     "data-popup-link-style": attrs.popupLinkStyle,
     className: "ncs4-popup-button " + (props.className || "") + " " + (attrs.popupLinkStyle || "")
-  }, attrs.popupButtonTitle) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("a", {
+  }, attrs.popupButtonTitle) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
     "data-popup-link-style": attrs.popupLinkStyle,
     className: "ncs4-popup-button " + (props.className || "") + " " + (attrs.popupLinkStyle || ""),
     href: "#" + id
-  }, attrs.popupButtonTitle), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
+  }, attrs.popupButtonTitle)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
     "data-popup-id": attrs.popupId,
     id: id,
-    className: "ncs4-popup__wrapper",
+    className: ["ncs4-popup__wrapper", props.className].join(' '),
     style: {
       textAlign: "left"
     }
-  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("a", {
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
     "data-popup-opacity": attrs.popupOverlayOpacity,
     className: "ncs4-popup-overlay",
     href: "#!",
     style: {
       opacity: String(attrs.popupOverlayOpacity) + "%"
     }
-  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
     className: "ncs4-popup-content__wrapper"
-  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
     "data-popup-background": JSON.stringify(bgColor.data),
     "data-popup-color": JSON.stringify(textColor.data),
     "data-popup-size": attrs.popupSize,
@@ -1790,29 +1903,40 @@ const Popup = props => {
     style: { ...bgColor.style,
       ...textColor.style
     }
-  }, props.children)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("style", null, css)));
+  }, props.children)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("style", null, css)));
+}; // Handles just the <a> element
+
+
+Popup.Link = props => {
+  let id = "popup-" + String(props.attributes.popupId);
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, props.backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+    className: ["ncs4-popup-link", props.className].join(' ')
+  }), props.children) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+    className: ["ncs4-popup-link", props.className].join(' '),
+    href: "#" + id
+  }), props.children));
 };
 
-Popup.Dismiss = props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("a", {
+Popup.Dismiss = props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("a", {
   href: "#!",
   className: "ncs4-popup__popup-dismiss-link",
   title: "Dismiss"
-}, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_img_dismiss_svg__WEBPACK_IMPORTED_MODULE_6__["ReactComponent"], {
+}, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_img_dismiss_svg__WEBPACK_IMPORTED_MODULE_7__["ReactComponent"], {
   className: "ncs4-popup__popup-dismiss",
   viewBox: "0 52.67 43 43"
 }));
 
-Popup.Header = props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
+Popup.Header = props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
   className: "ncs4-popup__popup-header"
-}, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
+}, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
   className: "ncs4-popup__header-content"
-}, props.children), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(Popup.Dismiss, null));
+}, props.children), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(Popup.Dismiss, null));
 
-Popup.Title = props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("h1", {
+Popup.Title = props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h1", {
   className: "ncs4-popup__popup-title"
 }, props.title);
 
-Popup.Body = props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
+Popup.Body = props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
   className: "ncs4-popup__popup-body"
 }, props.children);
 /***** Settings *****/
@@ -1896,34 +2020,34 @@ const popupReducer = function () {
   }
 };
 
-Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__["registerStore"])(POPUP_STORE, {
-  selectors: _popupSelectors__WEBPACK_IMPORTED_MODULE_7__,
-  actions: _popupActions__WEBPACK_IMPORTED_MODULE_8__,
+Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["registerStore"])(POPUP_STORE, {
+  selectors: _popupSelectors__WEBPACK_IMPORTED_MODULE_8__,
+  actions: _popupActions__WEBPACK_IMPORTED_MODULE_9__,
   reducer: popupReducer
 });
 /***** Popup hook *****/
 
-const manageId = (popupId, blockId, callback) => Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(() => {
+const manageId = (popupId, blockId, callback) => Object(react__WEBPACK_IMPORTED_MODULE_2__["useEffect"])(() => {
   //console.log("Requesting id: ", popupId);
   let {
     createId,
     deleteId
-  } = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__["dispatch"])("ncs4/popup");
-  let resp = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__["select"])("ncs4/popup").requestId(popupId);
+  } = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["dispatch"])("ncs4/popup");
+  let resp = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["select"])("ncs4/popup").requestId(popupId);
   resp === -1 ? resp = popupId : resp; //console.log("Reserving id: ", resp);
 
   callback(resp);
   createId(resp);
   return () => {
     //console.log("Freeing id: ", resp);
-    Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__["dispatch"])("ncs4/popup").deleteId(resp);
+    Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["dispatch"])("ncs4/popup").deleteId(resp);
   };
 }, [blockId]);
 
 function usePopup(blockId, state, setAttribute, disabledSettings) {
   manageId(state.popupId, blockId, setAttribute("popupId"));
-  Object(_js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__["useColor"])(state.popupBgColor, setAttribute("popupBgColor"));
-  Object(_js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__["useColor"])(state.popupTextColor, setAttribute("popupTextColor"));
+  Object(_js_ColorSelector__WEBPACK_IMPORTED_MODULE_6__["useColor"])(state.popupBgColor, setAttribute("popupBgColor"));
+  Object(_js_ColorSelector__WEBPACK_IMPORTED_MODULE_6__["useColor"])(state.popupTextColor, setAttribute("popupTextColor"));
   return {
     label: "Popup settings",
     controls: makeSettings(disabledSettings)
@@ -1998,7 +2122,7 @@ function makeAttributes(defaults) {
       default: defaults.popupLinkStyle
     },
     popupShadow: {
-      type: 'boolean',
+      type: 'bool',
       source: "attribute",
       attribute: "data-popup-shadow",
       selector: ".ncs4-popup-content",
@@ -2951,14 +3075,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
+/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./save */ "./src/save.js");
 /* harmony import */ var _js_edit_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../js/edit-component */ "../js/edit-component.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _js_utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../js/utils */ "../js/utils.js");
-/* harmony import */ var _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../popup/src/popup.js */ "../popup/src/popup.js");
+/* harmony import */ var _popup_src_popup__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../popup/src/popup */ "../popup/src/popup.js");
 /* harmony import */ var _js_hooks__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../js/hooks */ "../js/hooks.js");
 /* harmony import */ var _recipients__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./recipients */ "./src/recipients.js");
 
@@ -2985,29 +3109,43 @@ function Edit(props) {
     popupShadow: true,
     popupOverlayOpacity: true
   };
-  let popupPanel = Object(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_7__["usePopup"])(props.blockProps.clientId, state, setAttribute, disabledSettings); // Normalize the description
+  let popupPanel = Object(_popup_src_popup__WEBPACK_IMPORTED_MODULE_7__["usePopup"])(props.blockProps.clientId, state, setAttribute, disabledSettings); // Normalize the description
 
   Object(react__WEBPACK_IMPORTED_MODULE_4__["useEffect"])(() => {
     if (!state.desc) {
       state.desc = "";
     }
 
-    setAttribute("normalizedDesc")(Object(_js_utils__WEBPACK_IMPORTED_MODULE_6__["normalizeStringLength"])(state.desc.trim(), normalizedDescLength));
+    setAttribute("normalizedDesc")(Object(_js_utils__WEBPACK_IMPORTED_MODULE_6__["normalizeStringLength"])(state.desc.trim(), normalizedDescLength)); // Disable useOrgs
+
+    if (state.useOrgs) {
+      setAttribute("useOrgs")(false);
+    }
   }, [state.desc]); // Award recipients store
-  // Don't replace with useEffect! This needs to run at the same time as the
-  // initial render, useEffect runs at the *end* of the render
 
   let registry = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useRegistry"])();
   let name = Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["storeName"])(props.blockProps.id);
   Object(react__WEBPACK_IMPORTED_MODULE_4__["useEffect"])(() => {
     Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["registerStore"])(name);
-    Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["initializeStore"])(name, registry, props.attributes.recipients, props.attributes.useOrgs); // using wo.data.subscribe calls the function when
+    Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["initializeStore"])(name, registry, props.attributes.recipients, props.attributes.useOrgs);
+    let recipientsDB = Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["getRecipientData"])(registry, name);
+
+    if (JSON.stringify(recipientsDB) != JSON.stringify(props.attributes.recipients)) {
+      setAttribute("recipients")(recipientsDB);
+    } // using wo.data.subscribe calls the function when
     // *any* registered store updates
+
 
     registry.stores[name].subscribe(() => setAttribute("recipients")(Object(_recipients__WEBPACK_IMPORTED_MODULE_9__["getRecipientData"])(registry, name)));
   }, []);
+  Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_5__["useSelect"])(select => {
+    if (!select) {
+      return;
+    } //console.log(select(name).getState());
+
+  });
   return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_js_edit_component__WEBPACK_IMPORTED_MODULE_3__["default"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
-    save: _save_js__WEBPACK_IMPORTED_MODULE_2__["default"],
+    save: _save__WEBPACK_IMPORTED_MODULE_2__["default"],
     state: state,
     setAttribute: setAttribute,
     controlPanels: [{
@@ -3018,12 +3156,16 @@ function Edit(props) {
         help: "Name of the award",
         placeholder: "World's Best Web Dev",
         attribute: "name"
-      }, {
+      }
+      /*
+      {
         type: "choice",
         label: "Split past recipients by organization",
         help: "Leave checked to organize past recipients by their organization",
-        attribute: "useOrgs"
-      }]
+        attribute: "useOrgs",
+      },
+      */
+      ]
     }, popupPanel]
   }));
 }
@@ -3049,8 +3191,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _js_utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../js/utils */ "../js/utils.js");
 /* harmony import */ var _popup_src_popup__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../popup/src/popup */ "../popup/src/popup.js");
-/* harmony import */ var _edit_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./edit.js */ "./src/edit.js");
-/* harmony import */ var _save_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./save.js */ "./src/save.js");
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./edit */ "./src/edit.js");
+/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./save */ "./src/save.js");
 
 
 
@@ -3093,11 +3235,11 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('ncs
   icon: 'awards',
   category: 'layout',
   attributes,
-  edit: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_edit_js__WEBPACK_IMPORTED_MODULE_6__["default"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+  edit: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_edit__WEBPACK_IMPORTED_MODULE_6__["default"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
     attributes: Object(_js_utils__WEBPACK_IMPORTED_MODULE_4__["parseAttributes"])(attributes, props.attributes),
     blockProps: Object(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["useBlockProps"])()
   })),
-  save: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_save_js__WEBPACK_IMPORTED_MODULE_7__["default"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+  save: props => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_save__WEBPACK_IMPORTED_MODULE_7__["default"], _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
     attributes: Object(_js_utils__WEBPACK_IMPORTED_MODULE_4__["parseAttributes"])(attributes, props.attributes),
     blockProps: _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__["useBlockProps"].save()
   }))
@@ -3272,7 +3414,9 @@ const industrySegments = {
     useOrgs: true
   }
 };
-const orgFields = ["industry", "organization"];
+const orgFields = [//"industry",
+  //"organization",
+];
 /***** Helper functions *****/
 // no particular order
 
@@ -3318,12 +3462,25 @@ function addToRecipientTree(root, recipient, useOrgs, currentYear) {
   if (recipient.year === currentYear) {
     tree.current = Object(_sort__WEBPACK_IMPORTED_MODULE_2__["sortedInsert"])(tree.current, recipient, compare);
   } else {
+    /*
     if (useOrgs) {
-      tree.previous = buildSubtree(tree.previous, orgFields, recipient, compare, useOrgs = recipient.organization && industrySegments[recipient.organization] ? industrySegments[recipient.organization].useOrgs : useOrgs);
-      tree.previous.length = tree.previous.length ? tree.previous.length + 1 : 1;
+      tree.previous = buildSubtree(
+        tree.previous,
+        orgFields,
+        recipient,
+        compare,
+        useOrgs = recipient.organization && industrySegments[recipient.organization]
+          ? industrySegments[recipient.organization].useOrgs
+          : useOrgs
+      );
+      tree.previous.length = tree.previous.length
+        ? tree.previous.length + 1
+        : 1;
     } else {
-      tree.previous = Object(_sort__WEBPACK_IMPORTED_MODULE_2__["sortedInsert"])(tree.previous, recipient, compare);
+      tree.previous = sortedInsert(tree.previous, recipient, compare);
     }
+    */
+    tree.previous = Object(_sort__WEBPACK_IMPORTED_MODULE_2__["sortedInsert"])(tree.previous, recipient, compare);
   }
 
   return tree;
@@ -3331,6 +3488,7 @@ function addToRecipientTree(root, recipient, useOrgs, currentYear) {
 
 function buildSubtree(root, fields, recipient, compare) {
   let useOrgs = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
+  useOrgs = false; // Disable useOrgs
 
   if (fields.length > 0) {
     let field = recipient[fields[0]];
@@ -3352,12 +3510,29 @@ function buildSubtree(root, fields, recipient, compare) {
     } else {
       root[field] = root[field] || [];
     }
-
-    if (fields[0] === "industry" && industrySegments[field]) {
-      root[field] = buildSubtree(root[field], fields.slice(1), recipient, compare, industrySegments[field].useOrgs);
+    /*
+    if (
+          false && // Disable Industry segments
+           fields[0] === "industry"
+        && industrySegments[field]
+      ) {
+      root[field] = buildSubtree(
+        root[field],
+        fields.slice(1),
+        recipient,
+        compare,
+        industrySegments[field].useOrgs,
+      );
     } else {
-      root[field] = buildSubtree(root[field], fields.slice(1), recipient, compare);
+      root[field] = buildSubtree(
+        root[field],
+        fields.slice(1),
+        recipient,
+        compare,
+      );
     }
+    */
+
 
     return root;
   } else {
@@ -3542,7 +3717,9 @@ const useOrgs = function () {
   switch (action.type) {
     case _recipientActionTypes__WEBPACK_IMPORTED_MODULE_1__["SetUseOrgs"]:
       {
-        return action.useOrgs;
+        // Disable useOrgs option
+        return false; //return action.useOrgs;
+
         break;
       }
 
@@ -3676,12 +3853,13 @@ function combineReducersWithData(reducersWithData) {
 /*!***********************************!*\
   !*** ./src/recipientSelectors.js ***!
   \***********************************/
-/*! exports provided: getRecipients, getState, getUsedIds, getUseOrgs, getCurrentYear, getOrganizations, hasId, createRecipientData, getNextId */
+/*! exports provided: getRecipients, getRecipientsByYear, getState, getUsedIds, getUseOrgs, getCurrentYear, getOrganizations, hasId, createRecipientData, getNextId */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRecipients", function() { return getRecipients; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRecipientsByYear", function() { return getRecipientsByYear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getState", function() { return getState; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUsedIds", function() { return getUsedIds; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUseOrgs", function() { return getUseOrgs; });
@@ -3698,6 +3876,23 @@ const getRecipients = (state, ids) => {
   } else {
     return state.recipients;
   }
+}; // Returns [ {year: "yyyy", recipients: [Array Recipient] } ]
+// Assumes useOrgs is false and the "previous" section is sorted by year!
+
+const getRecipientsByYear = state => {
+  return [...state.recipients.current, ...state.recipients.previous].reduce((arr, recipient) => {
+    //console.log(arr);
+    let m = arr.length;
+    let out = arr; // create new year array
+
+    if (m === 0 || arr[m - 1][0].year != recipient.year) {
+      out.push([recipient]);
+    } else {
+      out[m - 1].push(recipient);
+    }
+
+    return out;
+  }, []);
 };
 const getState = state => state;
 const getUsedIds = state => state.ids;
@@ -4027,6 +4222,7 @@ const Recipients = props => {
   const actions = useSafeDispatch(name);
   const store = useSafeSelect(select => select(name));
   const recipients = store.getRecipients();
+  const recipientsByYear = store.getRecipientsByYear();
   const currentYear = store.getCurrentYear();
   const useOrgs = store.getUseOrgs();
 
@@ -4039,6 +4235,7 @@ const Recipients = props => {
       backend: true,
       onChange: actions.editRecipient,
       recipients,
+      recipientsByYear,
       useOrgs,
       actions,
       store,
@@ -4046,6 +4243,7 @@ const Recipients = props => {
     }
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSectionContext.Consumer, null, context => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsTree, {
     recipients: context.recipients,
+    recipientsByYear: context.recipientsByYear,
     currentYear: context.currentYear,
     depth: 0
   })));
@@ -4053,6 +4251,7 @@ const Recipients = props => {
 
 Recipients.Save = props => {
   let recipients = props.recipients;
+  let recipientsByYear = props.recipientsByYear;
 
   if (!recipients || !recipients.current || !recipients.previous || !recipients.current[0]) {
     return null; // malformed database attribute
@@ -4063,11 +4262,13 @@ Recipients.Save = props => {
     value: {
       backend: false,
       recipients,
+      recipientsByYear,
       useOrgs: props.useOrgs,
       currentYear: recipients.current[0].year
     }
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsSectionContext.Consumer, null, context => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsTree, {
     recipients: context.recipients,
+    recipientsByYear: context.recipientsByYear,
     currentYear: context.currentYear,
     depth: 0
   })));
@@ -4101,30 +4302,58 @@ Recipients.Add = props => {
 
 function RecipientsTree(props) {
   let leaves = [];
+  /*
   let recipients = props.recipients;
-  let fields = recipients.order || Object.keys(recipients).filter(field => field !== "order" && field !== "length");
-
-  for (let field of fields) {
+  let fields = recipients.order || Object.keys(recipients).filter(
+    (field) => field !== "order" && field !== "length"
+  );
+    for (let field of fields) {
     let recipients = props.recipients[field];
     let header;
-
-    if (industrySegments[field]) {
+      if (industrySegments[field]) {
       header = industrySegments[field].title;
     } else if (field === "current") {
-      header = recipients.length > 0 ? recipients[0].year + " Recipient" : null;
-      header = recipients.length > 1 ? header + "s" : header;
+      header = recipients.length > 0
+        ? recipients[0].year + " Recipient"
+        : null;
+      header = recipients.length > 1
+        ? header + "s"
+        : header;
     } else if (field === "previous") {
-      header = recipients.length > 0 ? "Previous Recipient" : null;
-      header = recipients.length > 1 ? header + "s" : header;
+        header = recipients.length > 0
+          ? "Previous Recipient"
+          : null;
+        header = recipients.length > 1
+          ? header + "s"
+          : header;
     } else {
       header = field;
     }
+      leaves.push(
+      <RecipientsLeaf
+        key = { field }
+        recipients = { recipients }
+        header = { header }
+        displayYear = { field !== "current" }
+        depth = { props.depth }
+      />
+    )
+  }
+  */
 
+  let recipients = props.recipientsByYear;
+
+  if (!recipients) {
+    return null;
+  }
+
+  for (let recipientYear of recipients) {
+    let header = String(recipientYear[0].year) + " Recipient" + (recipientYear.length > 1 ? "s" : "");
     leaves.push(Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(RecipientsLeaf, {
-      key: field,
-      recipients: recipients,
+      key: recipientYear[0].year,
+      recipients: recipientYear,
       header: header,
-      displayYear: field !== "current",
+      displayYear: false,
       depth: props.depth
     }));
   }
@@ -4207,7 +4436,7 @@ function RecipientSave(props) {
     className: "ncs4-award-recipient__position"
   }, recipient.position)), props.displayYear && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, ", ", Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
     className: "ncs4-award-recipient__year"
-  }, recipient.year)), props.useOrgs && recipient.organization && !props.displayYear && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, " (", recipient.organization, ")"), props.backend && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
+  }, recipient.year)), props.backend && Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("span", {
     className: "dashicons dashicons-edit ncs4-award-recipient__edit",
     onClick: () => props.setEditing(true)
   }));
@@ -4293,26 +4522,6 @@ function RecipientEditor(props) {
   }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
     className: "ncs4-award-recipient__field-row"
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
-    className: "ncs4-award-recipient__organization-container"
-  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("label", {
-    className: "ncs4-award-recipient__organization-label " + labelClasses,
-    for: "organization_award-" + props.awardId + "_recipient-" + props.id
-  }, "Organization"), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("input", {
-    type: "text",
-    className: "css-1kyqli5",
-    list: "organizations_award-" + props.awardId + "_recipient-" + props.id,
-    id: "organization_award-" + props.awardId + "_recipient-" + props.id,
-    value: dataState.organization,
-    placeholder: "NCS\u2074",
-    onChange: e => {
-      changeHandler("organization")(e.target.value);
-    }
-  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("datalist", {
-    id: "organizations_award-" + props.awardId + "_recipient-" + props.id
-  }, organizations.map(org => Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("option", {
-    value: org,
-    key: org
-  })))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", {
     className: "ncs4-award-recipient__year-container"
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("label", {
     className: "ncs4-award-recipient__year-label " + labelClasses,
@@ -4323,27 +4532,7 @@ function RecipientEditor(props) {
     className: "css-1kyqli5",
     value: dataState.year,
     onChange: e => changeHandler("year")(e.target.value)
-  })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__["RadioControl"], {
-    label: "Industry segment",
-    selected: dataState.industry,
-    options: [{
-      label: "Professional & Entertainment",
-      value: "pro"
-    }, {
-      label: "Intercollegiate",
-      value: "college"
-    }, {
-      label: "Interscholastic & After-School",
-      value: "hs"
-    }, {
-      label: "Marathon & Endurance",
-      value: "marathon"
-    }, {
-      label: "Miscellaneous",
-      value: "other"
-    }],
-    onChange: changeHandler("industry")
-  }))));
+  })))));
 }
 
 /***/ }),
@@ -4368,6 +4557,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../popup/src/popup.js */ "../popup/src/popup.js");
 /* harmony import */ var _recipients__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./recipients */ "./src/recipients.js");
+/* harmony import */ var _recipientSelectors__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./recipientSelectors */ "./src/recipientSelectors.js");
+
 
 
 
@@ -4377,9 +4568,22 @@ __webpack_require__.r(__webpack_exports__);
 // RichText content inside the tag.
 
 function Save(props) {
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props.blockProps, {
+  let recipients = props.attributes.recipients;
+  let recipientsByYear = [];
+
+  if (Array.isArray(recipients.previous)) {
+    recipientsByYear = Object(_recipientSelectors__WEBPACK_IMPORTED_MODULE_6__["getRecipientsByYear"])({
+      recipients
+    });
+  } //console.log(recipients);
+
+
+  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, props.backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props.blockProps, {
     className: ["ncs4-award-card", _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"].className, props.blockProps.className].join(' ')
-  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h2", {
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"].Link, {
+    backend: props.backend,
+    attributes: props.attributes
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h2", {
     className: "ncs4-award-card__name"
   }, props.attributes.name), props.backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__["RichText"], {
     tagName: "p",
@@ -4387,13 +4591,11 @@ function Save(props) {
     value: props.attributes.desc,
     onChange: props.setAttribute("desc"),
     placeholder: "Award description"
-  }) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__["RichText"].Content, {
-    tagName: "p",
-    className: "ncs4-award-card__description",
-    value: props.attributes.normalizedDesc
-  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"], {
+  }) : null), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"], {
     backend: props.backend,
-    attributes: props.attributes
+    className: "ncs4-award-card__popup",
+    attributes: props.attributes,
+    noLink: true
   }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"].Header, null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"].Title, {
     title: props.attributes.name
   })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"].Body, null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
@@ -4405,7 +4607,42 @@ function Save(props) {
     blockId: props.blockProps.id
   }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_5__["default"], {
     awardId: props.blockProps.id
-  })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_5__["default"].Save, props.attributes))));
+  })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_5__["default"].Save, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props.attributes, {
+    recipients: recipients,
+    recipientsByYear: recipientsByYear
+  }))))) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("div", _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props.blockProps, {
+    className: ["ncs4-award-card", _popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"].className, props.blockProps.className].join(' ')
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"].Link, {
+    backend: props.backend,
+    attributes: props.attributes
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("h6", {
+    className: "ncs4-award-card__name"
+  }, props.attributes.name), props.backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__["RichText"], {
+    tagName: "p",
+    className: "ncs4-award-card__description",
+    value: props.attributes.desc,
+    onChange: props.setAttribute("desc"),
+    placeholder: "Award description"
+  }) : null)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    backend: props.backend,
+    className: "ncs4-award-card__popup",
+    attributes: props.attributes,
+    noLink: true
+  }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"].Header, null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"].Title, {
+    title: props.attributes.name
+  })), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_popup_src_popup_js__WEBPACK_IMPORTED_MODULE_4__["default"].Body, null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])("p", {
+    className: "ncs4-award-card__popup-description",
+    dangerouslySetInnerHTML: {
+      __html: props.attributes.desc
+    }
+  }), props.backend ? Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_5__["default"].Add, {
+    blockId: props.blockProps.id
+  }), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    awardId: props.blockProps.id
+  })) : Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__["createElement"])(_recipients__WEBPACK_IMPORTED_MODULE_5__["default"].Save, _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props.attributes, {
+    recipients: recipients,
+    recipientsByYear: recipientsByYear
+  }))))));
 }
 
 /***/ }),

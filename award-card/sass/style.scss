@@ -3,16 +3,43 @@
 @import '../../popup/sass/__popup';
 
 .ncs4-award-card {
-  display: flex;
-  flex-direction: column;
-  background-color: $color_white-dark;
-  padding: 1.5rem 2.5rem;
   height: 100%;
+  background-color: $color_secondary-1;
+  background: linear-gradient(
+    180deg,
+    $color_secondary-1 0%,
+    $color_secondary-1 40%,
+    $color_secondary-4 100%
+  );
+  box-shadow:
+    0 1px 5px 0 rgba(0,0,0,.32),
+    0 2px 2px 0 rgba(0,0,0,.14),
+    0 3px 1px -2px rgba(0,0,0,.2)
+  ;
+  transition: transform 0.1s ease-in-out;
+
+  @media (prefers-reduced-motion: no-preference) {
+    &:hover, &:focus-within {
+      transform: scale(1.1);
+    }
+  }
+
+  .ncs4-popup-link {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 1.5rem 2.5rem;
+
+    &:hover, &:focus-visible {
+      text-decoration: none;
+    }
+  }
 
   &__name {
     text-transform: none;
     margin-top: 0;
-    color: $color_link-1;
+    color: $color_white;
   }
 
   &__description {
@@ -20,7 +47,9 @@
     text-overflow: ellipsis;
     overflow: hidden;
   }
+}
 
+.ncs4-award-card__popup {
   .ncs4-award-recipient {
 
     &__name {

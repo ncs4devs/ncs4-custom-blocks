@@ -288,6 +288,7 @@ const Recipients = (props) => {
   const actions = useSafeDispatch(name);
   const store = useSafeSelect( (select) => select(name));
   const recipients = store.getRecipients();
+  const recipientsByYear = store.getRecipientsByYear();
   const currentYear = store.getCurrentYear();
   const useOrgs = store.getUseOrgs();
 
@@ -301,6 +302,7 @@ const Recipients = (props) => {
       backend: true,
       onChange: actions.editRecipient,
       recipients,
+      recipientsByYear,
       useOrgs,
       actions,
       store,
@@ -310,9 +312,10 @@ const Recipients = (props) => {
     <RecipientsSectionContext.Consumer>
     { context => (
       <RecipientsTree
-      recipients = { context.recipients }
-      currentYear = { context.currentYear }
-      depth = { 0 }
+        recipients = { context.recipients }
+        recipientsByYear = { context.recipientsByYear }
+        currentYear = { context.currentYear }
+        depth = { 0 }
       />
     )}
     </RecipientsSectionContext.Consumer>
@@ -322,6 +325,7 @@ const Recipients = (props) => {
 
 Recipients.Save = (props) => {
   let recipients = props.recipients;
+  let recipientsByYear = props.recipientsByYear;
   if (!recipients || !recipients.current || !recipients.previous || !recipients.current[0]) {
     return null; // malformed database attribute
   }
@@ -333,6 +337,7 @@ Recipients.Save = (props) => {
       value = {{
         backend: false,
         recipients,
+        recipientsByYear,
         useOrgs: props.useOrgs,
         currentYear: recipients.current[0].year,
       }}
@@ -341,6 +346,7 @@ Recipients.Save = (props) => {
         { context => (
           <RecipientsTree
             recipients = { context.recipients }
+            recipientsByYear = { context.recipientsByYear }
             currentYear = { context.currentYear }
             depth = { 0 }
           />
@@ -379,8 +385,8 @@ export default Recipients;
 
 function RecipientsTree(props) {
   let leaves = [];
+  /*
   let recipients = props.recipients;
-
   let fields = recipients.order || Object.keys(recipients).filter(
     (field) => field !== "order" && field !== "length"
   );
@@ -419,6 +425,26 @@ function RecipientsTree(props) {
       />
     )
   }
+  */
+
+  let recipients = props.recipientsByYear;
+  if (!recipients) {
+    return null;
+  }
+  for (let recipientYear of recipients) {
+    let header = String(recipientYear[0].year)
+      + " Recipient" + (recipientYear.length > 1 ? "s" : "");
+    leaves.push(
+      <RecipientsLeaf
+        key = { recipientYear[0].year }
+        recipients = { recipientYear }
+        header = { header }
+        displayYear = { false }
+        depth = { props.depth }
+      />
+    )
+  }
+
 
   return (
     <>
@@ -561,9 +587,9 @@ function RecipientSave(props) {
           >{ recipient.year }</span>
         </>
       )}
-      { (props.useOrgs && recipient.organization && !props.displayYear) && (
+      {/* (props.useOrgs && recipient.organization && !props.displayYear) && (
         <> ({ recipient.organization })</>
-      )}
+      )*/}
       { props.backend && (
         <span
           className = "dashicons dashicons-edit ncs4-award-recipient__edit"
@@ -670,6 +696,7 @@ function RecipientEditor(props) {
           onChange = { changeHandler("position") }
         />
         <div className = "ncs4-award-recipient__field-row">
+          {/*
           <div className = "ncs4-award-recipient__organization-container">
             <label
               className = { "ncs4-award-recipient__organization-label " + labelClasses }
@@ -697,6 +724,7 @@ function RecipientEditor(props) {
               ))}
             </datalist>
           </div>
+          */}
           <div className = "ncs4-award-recipient__year-container">
             <label
               className = { "ncs4-award-recipient__year-label " + labelClasses }
@@ -710,6 +738,7 @@ function RecipientEditor(props) {
               onChange = { (e) => changeHandler("year")(e.target.value) }
             />
           </div>
+          {/*
           <RadioControl
             label = "Industry segment"
             selected = { dataState.industry }
@@ -722,6 +751,7 @@ function RecipientEditor(props) {
             ] }
             onChange = { changeHandler("industry") }
           />
+          */}
         </div>
       </div>
     </div>

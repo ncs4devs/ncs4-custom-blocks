@@ -56,6 +56,10 @@ export default function Edit(props) {
       state.desc.trim(),
       normalizedDescLength,
     ));
+    // Disable useOrgs
+    if (state.useOrgs) {
+      setAttribute("useOrgs")(false);
+    }
   }, [state.desc]);
 
   // Award recipients store
@@ -71,6 +75,14 @@ export default function Edit(props) {
       props.attributes.useOrgs,
     );
 
+    let recipientsDB = getRecipientData(registry, name);
+    if (
+         JSON.stringify(recipientsDB)
+      != JSON.stringify(props.attributes.recipients)
+    ) {
+      setAttribute("recipients")(recipientsDB);
+    }
+
     // using wo.data.subscribe calls the function when
     // *any* registered store updates
 
@@ -78,6 +90,13 @@ export default function Edit(props) {
       () => setAttribute("recipients")(getRecipientData(registry, name))
     );
   }, []);
+
+  useSelect( (select) => {
+    if (!select) {
+      return;
+    }
+    //console.log(select(name).getState());
+  })
 
   return (
     <Interface
@@ -96,12 +115,14 @@ export default function Edit(props) {
               placeholder: "World's Best Web Dev",
               attribute: "name",
             },
+            /*
             {
               type: "choice",
               label: "Split past recipients by organization",
               help: "Leave checked to organize past recipients by their organization",
               attribute: "useOrgs",
             },
+            */
           ],
         },
         popupPanel,

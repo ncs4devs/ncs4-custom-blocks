@@ -106,6 +106,7 @@ export default function Save(props) {
 
 const Popup = (props) => {
   let attrs = props.attributes;
+  let noLink = props.noLink == null ? false : props.noLink;
   let id = "popup-" + String(attrs.popupId);
   let bgColor = fromColorAttribute(attrs.popupBgColor, true);
   let textColor = fromColorAttribute(attrs.popupTextColor, false);
@@ -116,31 +117,38 @@ const Popup = (props) => {
   `
 
   return <>
-    { props.backend
-      ? <a
-          data-popup-link-style = { attrs.popupLinkStyle }
-          className = {
-            "ncs4-popup-button " + (props.className || "")
-            + " " + (attrs.popupLinkStyle || "")
-          }
-        >
-          { attrs.popupButtonTitle }
-        </a>
-      : <a
-          data-popup-link-style = { attrs.popupLinkStyle }
-          className = {
-            "ncs4-popup-button " + (props.className || "")
-            + " " + (attrs.popupLinkStyle || "")
-          }
-          href= { "#" + id }
-        >
-          { attrs.popupButtonTitle }
-        </a>
-    }
+    { !noLink && (
+      props.backend
+        ? <a
+            data-popup-link-style = { attrs.popupLinkStyle }
+            className = {
+              "ncs4-popup-button " + (props.className || "")
+              + " " + (attrs.popupLinkStyle || "")
+            }
+          >
+            { attrs.popupButtonTitle }
+          </a>
+        : <a
+            data-popup-link-style = { attrs.popupLinkStyle }
+            className = {
+              "ncs4-popup-button " + (props.className || "")
+              + " " + (attrs.popupLinkStyle || "")
+            }
+            href= { "#" + id }
+          >
+            { attrs.popupButtonTitle }
+          </a>
+
+    )}
     <div
       data-popup-id = { attrs.popupId }
       id = { id }
-      className = "ncs4-popup__wrapper"
+      className = {
+        [
+          "ncs4-popup__wrapper",
+          props.className,
+        ].join(' ')
+      }
       style = {{
         textAlign: "left",
       }}
@@ -180,6 +188,37 @@ const Popup = (props) => {
     </div>
   </>
 };
+
+// Handles just the <a> element
+Popup.Link = (props) => {
+  let id = "popup-" + String(props.attributes.popupId);
+
+  return <>
+    { props.backend
+      ? <span { ...props }
+          className = {
+            [
+              "ncs4-popup-link",
+              props.className,
+            ].join(' ')
+          }
+        >
+          { props.children }
+        </span>
+      : <a { ...props }
+          className = {
+            [
+              "ncs4-popup-link",
+              props.className,
+            ].join(' ')
+          }
+          href = { "#" + id }
+        >
+          { props.children }
+        </a>
+    }
+  </>
+}
 
 Popup.Dismiss = (props) => (
   <a

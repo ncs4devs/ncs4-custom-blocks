@@ -9,6 +9,27 @@ export const getRecipients = ( state, ids ) => {
   }
 }
 
+// Returns [ {year: "yyyy", recipients: [Array Recipient] } ]
+// Assumes useOrgs is false and the "previous" section is sorted by year!
+export const getRecipientsByYear = ( state ) => {
+  return [...state.recipients.current, ...state.recipients.previous]
+    .reduce(
+      (arr, recipient) => {
+        //console.log(arr);
+        let m = arr.length;
+        let out = arr;
+        // create new year array
+        if (m === 0 || arr[m - 1][0].year != recipient.year) {
+          out.push([recipient]);
+        } else {
+          out[m-1].push(recipient);
+        }
+        return out;
+      }
+      , []
+    );
+}
+
 export const getState = (state) => state;
 export const getUsedIds = (state) => state.ids;
 export const getUseOrgs = (state) => state.useOrgs;

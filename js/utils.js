@@ -13,7 +13,7 @@ export function parseAttributes(table, data) {
         }
 
         case "boolean": {
-          out[attr] = Boolean(data[attr]);
+          out[attr] = JSON.parse(data[attr]);
           break;
         }
 

@@ -131,56 +131,72 @@
 }
 
 .ncs4-award-card {
+  height: 100%;
+  background-color: #003B7C;
+  background: linear-gradient(180deg, #003B7C 0%, #003B7C 40%, #097BFB 100%);
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.32), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s ease-in-out;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ncs4-award-card:hover, .ncs4-award-card:focus-within {
+    transform: scale(1.1);
+  }
+}
+.ncs4-award-card .ncs4-popup-link {
   display: flex;
   flex-direction: column;
-  background-color: #e6e6e6;
-  padding: 1.5rem 2.5rem;
+  width: 100%;
   height: 100%;
+  padding: 1.5rem 2.5rem;
+}
+.ncs4-award-card .ncs4-popup-link:hover, .ncs4-award-card .ncs4-popup-link:focus-visible {
+  text-decoration: none;
 }
 .ncs4-award-card__name {
   text-transform: none;
   margin-top: 0;
-  color: #037fff;
+  color: #f4f4f4;
 }
 .ncs4-award-card__description {
   margin-bottom: 2em;
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.ncs4-award-card .ncs4-award-recipient__name {
+
+.ncs4-award-card__popup .ncs4-award-recipient__name {
   font-weight: bold;
 }
-.ncs4-award-card .ncs4-award-recipient__position, .ncs4-award-card .ncs4-award-recipient__year {
+.ncs4-award-card__popup .ncs4-award-recipient__position, .ncs4-award-card__popup .ncs4-award-recipient__year {
   font-style: italic;
 }
-.ncs4-award-card .ncs4-award-recipient__header {
+.ncs4-award-card__popup .ncs4-award-recipient__header {
   margin-top: 1.6em;
   font-weight: bold;
 }
-.ncs4-award-card .ncs4-award-recipient__header[depth="0"] {
+.ncs4-award-card__popup .ncs4-award-recipient__header[depth="0"] {
   background-color: #0061CD;
   color: #f4f4f4;
   padding: 0.4em 0.8em;
   margin-bottom: 0.4em;
   text-transform: uppercase;
 }
-.ncs4-award-card .ncs4-award-recipient__header[depth="1"] {
+.ncs4-award-card__popup .ncs4-award-recipient__header[depth="1"] {
   color: #0061CD;
   font-style: italic;
 }
-.ncs4-award-card .ncs4-award-recipient__header[depth="2"] {
+.ncs4-award-card__popup .ncs4-award-recipient__header[depth="2"] {
   text-decoration: underline;
 }
-.ncs4-award-card__popup-content p {
+.ncs4-award-card__popup__popup-content p {
   margin-top: 0;
 }
-.ncs4-award-card .ncs4-award-card__recipient-section-header {
+.ncs4-award-card__popup .ncs4-award-card__popup__recipient-section-header {
   text-transform: uppercase;
   font-weight: bold;
   color: #00499A;
   margin-top: 1.5em;
 }
-.ncs4-award-card .ncs4-award-card__recipient-section-org-header {
+.ncs4-award-card__popup .ncs4-award-card__popup__recipient-section-org-header {
   font-weight: bold;
   margin-top: 0.8em;
 }
