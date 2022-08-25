@@ -2,6 +2,7 @@ import Save from './save';
 
 import Interface from '../../js/edit-component';
 import { withAttributes } from '../../js/hooks';
+import { useColor, fromColorAttribute } from '../../js/ColorSelector';
 
 export default function Edit(props) {
   let [state, setAttribute, setState] = withAttributes(
@@ -11,6 +12,15 @@ export default function Edit(props) {
     {
       "bannerText": (s) => s.trim(),
     },
+  );
+
+  useColor(
+    fromColorAttribute(state.bannerBg, true),
+    setAttribute("bannerBg")
+  );
+  useColor(
+    fromColorAttribute(state.bannerColor, false),
+    setAttribute("bannerColor")
   );
 
   return (

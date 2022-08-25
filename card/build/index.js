@@ -18,6 +18,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./save */ "./src/save.js");
 /* harmony import */ var _js_edit_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../js/edit-component */ "../js/edit-component.js");
 /* harmony import */ var _js_hooks__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../js/hooks */ "../js/hooks.js");
+/* harmony import */ var _js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../js/ColorSelector */ "../js/ColorSelector.js");
+
 
 
 
@@ -28,6 +30,8 @@ function Edit(props) {
   }, {
     "bannerText": s => s.trim()
   });
+  (0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__.useColor)((0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__.fromColorAttribute)(state.bannerBg, true), setAttribute("bannerBg"));
+  (0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__.useColor)((0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_5__.fromColorAttribute)(state.bannerColor, false), setAttribute("bannerColor"));
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_js_edit_component__WEBPACK_IMPORTED_MODULE_3__["default"], (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, {
     save: _save__WEBPACK_IMPORTED_MODULE_2__["default"],
     state: state,
@@ -100,8 +104,8 @@ __webpack_require__.r(__webpack_exports__);
 function Save(props) {
   let blockProps = props.blockProps;
   let attributes = props.attributes;
-  let bgColor = (0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_3__.fromColorAttribute)(attributes.bannerBg, true);
-  let textColor = (0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_3__.fromColorAttribute)(attributes.bannerColor);
+  let bgColor = attributes.bannerBg;
+  let textColor = attributes.bannerColor;
   let imgResolution = attributes.img ? attributes.img.height / attributes.img.width : 9;
   let imgHeight = imgResolution * attributes.imgSize;
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, blockProps, {
