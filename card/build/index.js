@@ -104,8 +104,8 @@ __webpack_require__.r(__webpack_exports__);
 function Save(props) {
   let blockProps = props.blockProps;
   let attributes = props.attributes;
-  let bgColor = attributes.bannerBg;
-  let textColor = attributes.bannerColor;
+  let bgColor = (0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_3__.fromColorAttribute)(attributes.bannerBg, true);
+  let textColor = (0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_3__.fromColorAttribute)(attributes.bannerColor, false);
   let imgResolution = attributes.img ? attributes.img.height / attributes.img.width : 9;
   let imgHeight = imgResolution * attributes.imgSize;
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, blockProps, {
@@ -116,8 +116,8 @@ function Save(props) {
     },
     className: ["ncs4-card", blockProps.className].join(' ')
   }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {
-    "data-banner-background": JSON.stringify(bgColor),
-    "data-banner-color": JSON.stringify(textColor),
+    "data-banner-background": JSON.stringify(attributes.bannerBg),
+    "data-banner-color": JSON.stringify(attributes.bannerColor),
     "data-use-image": attributes.useImg,
     "data-image": JSON.stringify(attributes.img),
     "data-icon-width": attributes.imgSize,

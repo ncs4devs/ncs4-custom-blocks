@@ -5,8 +5,8 @@ import { ImageSave } from '../../js/ImageControl';
 export default function Save(props) {
   let blockProps = props.blockProps;
   let attributes = props.attributes;
-  let bgColor = attributes.bannerBg;
-  let textColor = attributes.bannerColor;
+  let bgColor = fromColorAttribute(attributes.bannerBg, true);
+  let textColor = fromColorAttribute(attributes.bannerColor, false);
 
   let imgResolution = attributes.img
     ? attributes.img.height / attributes.img.width
@@ -33,8 +33,8 @@ export default function Save(props) {
     >
       <div
         { ...{
-          "data-banner-background": JSON.stringify(bgColor),
-          "data-banner-color": JSON.stringify(textColor),
+          "data-banner-background": JSON.stringify(attributes.bannerBg),
+          "data-banner-color": JSON.stringify(attributes.bannerColor),
           "data-use-image": attributes.useImg,
           "data-image": JSON.stringify(attributes.img),
           "data-icon-width": attributes.imgSize,
