@@ -26,6 +26,7 @@
 .ncs4-fluid-layout__auto-grid .ncs4-fluid-layout-item {
   display: flex;
   justify-content: inherit;
+  justify-self: center;
 }
 .ncs4-fluid-layout__fixed-grid {
   display: grid;

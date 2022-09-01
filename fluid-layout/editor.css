@@ -41,6 +41,7 @@
 .ncs4-fluid-layout__auto-grid > .block-editor-inner-blocks > .block-editor-block-list__layout .ncs4-fluid-layout-item {
   display: flex;
   justify-content: inherit;
+  justify-self: center;
 }
 .ncs4-fluid-layout__fixed-grid {
   display: block;
