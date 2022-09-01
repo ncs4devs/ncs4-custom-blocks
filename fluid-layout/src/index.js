@@ -35,7 +35,7 @@ registerBlockType( 'ncs4-custom-blocks/fluid-layout', {
     },
     margin: {
       type: 'array',
-      default: [ 3, 3, 3, 3 ],
+      default: [ 0, 0, 0, 0 ],
     },
     optionLayout: {
       type: "string",

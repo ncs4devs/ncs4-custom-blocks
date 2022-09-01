@@ -433,6 +433,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ImageEdit": function() { return /* binding */ ImageEdit; },
 /* harmony export */   "ImageSave": function() { return /* binding */ ImageSave; },
 /* harmony export */   "Svg": function() { return /* binding */ Svg; },
+/* harmony export */   "imageAttribute": function() { return /* binding */ imageAttribute; },
 /* harmony export */   "onImageChange": function() { return /* binding */ onImageChange; }
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/esm/extends.js");
@@ -448,7 +449,43 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // Be careful that you only use trusted SVGs as they are not secure!
+
+const imageAttribute = selector => ({
+  type: "image",
+  source: "query",
+  selector,
+  default: [],
+  query: {
+    url: {
+      type: "string",
+      source: "attribute",
+      attribute: "src"
+    },
+    alt: {
+      type: "string",
+      source: "attribute",
+      attribute: "alt",
+      default: ""
+    },
+    mime: {
+      type: "string",
+      source: "attribute",
+      attribute: "type"
+    },
+    width: {
+      type: "int",
+      source: "attribute",
+      attribute: "width",
+      default: null
+    },
+    height: {
+      type: "int",
+      source: "attribute",
+      attribute: "height",
+      default: null
+    }
+  }
+}); // Be careful that you only use trusted SVGs as they are not secure!
 
 function Svg(props) {
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.Fragment, null, props.useInlineSvg ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {
@@ -463,7 +500,7 @@ function Svg(props) {
 
 /*
 img: {
-  mine = "image/svg+xml",
+  mime = "image/svg+xml",
   url = "..."
   data = {svg data}
   ...
@@ -480,8 +517,21 @@ const imageStyle = props => ({
 
 function ImageEdit(props) {
   props.useInlineSvg = props.useInlineSvg == null ? true : props.useInlineSvg;
+
+  const onSelect = media => {
+    let img = {
+      url: media.url,
+      mime: media.mime,
+      inline: media.mime === "image/svg+xml" && props.useInlineSvg ? true : undefined,
+      width: media.width,
+      height: media.height
+    };
+    props.onChange(img);
+  };
+
+  const noImage = !props.img || typeof props.img == "object" && Object.keys(props.img).length == 0;
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__.MediaUploadCheck, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__.MediaUpload, {
-    onSelect: props.onChange,
+    onSelect: onSelect,
     value: props.img ? props.img.id : null,
     allowedTypes: ['image'],
     render: _ref => {
@@ -489,34 +539,45 @@ function ImageEdit(props) {
         open
       } = _ref;
       return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__.Button, {
-        className: props.img ? 'editor-post-featured-image__preview' : 'editor-post-featured-image__toggle',
+        className: noImage ? 'editor-post-featured-image__toggle' : 'editor-post-featured-image__preview',
+        style: {
+          marginBottom: "24px"
+        },
         onClick: open
-      }, props.img ? props.img.mime === "image/svg+xml" && props.img.data ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(Svg, {
+      }, noImage ? "Choose an image" : props.img.mime === "image/svg+xml" && props.img.data ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(Svg, {
         img: props.img,
         useInlineSvg: props.useInlineSvg,
         style: imageStyle(props)
       }) : (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("img", {
         src: props.img.url,
         style: imageStyle(props)
-      }) : "Choose an image");
+      }));
     }
   }));
 } // Front-end image display
 
 function ImageSave(props) {
-  let isSvg = props.img && props.img.mime === "image/svg+xml" && props.img.data;
-  props.useInlineSvg = props.useInlineSvg == null ? true : props.useInlineSvg;
-  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.Fragment, null, isSvg && !props.useInlineSvg ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("embed", {
-    type: props.img.mine,
+  let isSvg = props.img && props.img.mime === "image/svg+xml";
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.Fragment, null, isSvg && !props.img.inline ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("embed", {
+    className: "component-image",
+    type: props.img.mime,
     src: props.img.url
-  }) : (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, isSvg ? {
+  }) : (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, {
+    className: [props.className, "component-image"].join(' '),
+    type: props.img.mime,
+    src: props.img.url
+  }, isSvg ? {
     dangerouslySetInnerHTML: {
       __html: props.img.data,
       style: imageStyle(props)
     }
   } : {}), props.img && !isSvg ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("img", {
+    className: "component-image",
+    type: props.img.mime,
     src: props.img.url,
-    style: imageStyle(props)
+    style: imageStyle(props),
+    width: props.img.width,
+    height: props.img.height
   }) : null));
 } // Generic image change handler
 
@@ -751,7 +812,7 @@ class OptionsControl extends (react__WEBPACK_IMPORTED_MODULE_3___default().Compo
   }
 
   render() {
-    let maxRadioOptions = this.props.maxRadioOptions || 5;
+    let maxRadioOptions = isNaN(this.props.maxRadioOptions) ? 5 : this.props.maxRadioOptions;
     let options = this.props.options;
     let onChange = this.props.onChange; // array of {attribute: attr, value: val}}
 
@@ -804,7 +865,7 @@ class OptionControl extends (react__WEBPACK_IMPORTED_MODULE_3___default().Compon
     let invertValue = this.props.invertValue || false;
     let disabled = this.props.disabled;
     let callback = this.props.callback;
-    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.Fragment, null, Array.isArray(value) ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.createElement)(OptionGroup, this.props) : !choices ? !(isNaN(min) || isNaN(max) || isNaN(step)) ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.createElement)(SliderControl, {
+    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.Fragment, null, Array.isArray(value) ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.createElement)(OptionGroup, this.props) : !choices ? !(isNaN(min) || isNaN(max)) ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.createElement)(SliderControl, {
       label: label,
       help: help,
       value: value,
@@ -1352,6 +1413,7 @@ function ControlPanel(props) {
             options: [{ ...control,
               value: state[control.attribute]
             }],
+            maxRadioOptions: control.maxRadioOptions,
             key: key,
             type: control.type,
             onChange: obj => setAttribute(control.attribute)(obj[control.attribute])
@@ -1686,7 +1748,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     margin: {
       type: 'array',
-      default: [3, 3, 3, 3]
+      default: [0, 0, 0, 0]
     },
     optionLayout: {
       type: "string",
