@@ -1,6 +1,8 @@
 @import '../../sass/ncs4-pro-colors';
 
 .ncs4-card {
+  display: flex;
+  flex-direction: column;
   box-shadow:
     0 1px 5px 0 rgba(0, 0, 0, 0.32),
     0 2px 2px 0 rgba(0, 0, 0, 0.14),
@@ -34,6 +36,7 @@
   }
 
   &__content {
+    flex: 1 0 auto;
     background-color: $color_white-dark;
     padding: 2em;
   }

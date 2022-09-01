@@ -66,6 +66,20 @@ export default function Edit(props) {
             },
             {
               type: "choice",
+              label: "Banner tag",
+              attribute: "bannerTag",
+              choices: [
+                { value: "p", label: "p" },
+                { value: "h6", label: "h6" },
+                { value: "h5", label: "h5" },
+                { value: "h4", label: "h4" },
+                { value: "h3", label: "h3" },
+                { value: "h2", label: "h2" },
+                { value: "h1", label: "h1" },
+              ],
+            },
+            {
+              type: "choice",
               label: [
                 "Margin Top (rem)",
                 "Margin Right (rem)",

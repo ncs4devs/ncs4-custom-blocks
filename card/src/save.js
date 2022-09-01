@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { fromColorAttribute } from '../../js/ColorSelector';
 import { ImageSave } from '../../js/ImageControl';
@@ -35,6 +36,7 @@ export default function Save(props) {
         { ...{
           "data-banner-background": JSON.stringify(attributes.bannerBg),
           "data-banner-color": JSON.stringify(attributes.bannerColor),
+          "data-banner-tag": attributes.bannerTag,
           "data-use-image": attributes.useImg,
           "data-image": JSON.stringify(attributes.img),
           "data-icon-width": attributes.imgSize,
@@ -62,14 +64,14 @@ export default function Save(props) {
         { props.backend
           ? <RichText
               className = "ncs4-card__banner-text"
-              tagName = "p"
+              tagName = { attributes.bannerTag }
               value = { attributes.bannerText }
               onChange = { props.setAttribute("bannerText") }
               placeholder = "Banner heading"
             />
           : <RichText.Content
+              tagName = { attributes.bannerTag }
               className = "ncs4-card__banner-text"
-              tagName = "p"
               value = { attributes.bannerText }
             />
         }

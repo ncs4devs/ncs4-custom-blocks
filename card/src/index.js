@@ -31,6 +31,13 @@ const attributes = {
     source: "html",
     selector: ".ncs4-card__banner-text",
   },
+  bannerTag: {
+    type: "string",
+    source: "attribute",
+    attribute: "data-banner-tag",
+    selector: ".ncs4-card__banner",
+    default: "p",
+  },
   margin: {
     type: "json",
     source: "attribute",
