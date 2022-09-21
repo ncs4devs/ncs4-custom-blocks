@@ -64,7 +64,7 @@ export class BPTopicEdit extends React.Component {
           ?
             <BPTopicEditMode
               attributes = { this.state }
-              onChange = { (v) => { this.setStateAttributes({ img: v }) }}
+              onChange = { this.setStateAttributes }
             />
           :
             <BPTopicSave
@@ -89,17 +89,17 @@ class BPTopicEditMode extends React.Component {
           label = "Topic"
           placeholder = "Best Practices Topic"
           value = { attrs.title }
-          onChange = { onChange }
+          onChange = { v => onChange({ title: v }) }
         />
         <TextControl
           label = "Topic page link"
           help = "Link to the topic page"
           placeholder = "/resources/best-practices/my-topic"
           value = { attrs.link }
-          onChange = { onChange }
+          onChange = { v => onChange({ link: v }) }
         />
         <ImageEdit
-          onChange = { (img) => onImageChange(img, onChange) }
+          onChange = { (img) => onImageChange(img, v => onChange({ img: v })) }
           img = { attrs.img }
         />
       </>

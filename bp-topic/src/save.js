@@ -52,10 +52,11 @@ class TopicIconArea extends React.Component {
 
   render() {
     let renderSvg = this.img && this.img.mime === "image/svg+xml" && this.svg;
+    let img = this.props.img || {};
     return (
       <ImageSave
         className = "ncs4-bp-topic__icon-area"
-        img = { this.props.img }
+        img = { img }
       />
     );
   }
