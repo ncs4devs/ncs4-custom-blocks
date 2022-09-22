@@ -112,6 +112,9 @@
   flex-wrap: wrap-reverse;
   margin-top: 12px;
 }
+.ncs4-popup__header-content {
+  width: 100%;
+}
 .ncs4-popup__popup-body {
   overflow: hidden auto;
   padding: 1em;
