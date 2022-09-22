@@ -8,16 +8,19 @@
     }
   }
 
-  function share(btn) {
+  async function share(btn) {
     const title = document.title;
 
     if (navigator.share) {
       // share api
-      navigator.share({
-        title: title,
-        url: btn.href,
-      })
-      .catch(console.error);
+      try {
+        await navigator.share({
+          title: title,
+          url: btn.href,
+        });
+      } catch(err) {
+        console.warn(err.name, err.message);
+      }
     } else {
       // no share api
       copyText(btn.href);
