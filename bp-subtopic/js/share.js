@@ -20,6 +20,8 @@
         });
       } catch(err) {
         console.warn(err.name, err.message);
+        copyText(btn.href);
+        shareBubble(btn);
       }
     } else {
       // no share api
