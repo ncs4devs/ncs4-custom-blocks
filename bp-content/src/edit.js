@@ -140,14 +140,14 @@ class HomePanel extends React.Component {
         <button
           id="ncs4-bp-content__subtopic-btn__0"
           className="ncs4-bp-content__widget-button ncs4-bp-content__subtopic-btn"
-          title="Home"
+          title="Back"
         >
           <span class="dashicons dashicons-undo"></span>
         </button>
         <a
           id="ncs4-bp-content__back-to-topics"
-          title="Back"
-          href = "/resources/best-practices/best-practices-demo/"
+          title="Home"
+          href = "/resources/best-practices/"
         >
           <span class="dashicons dashicons-admin-home"></span>
         </a>
