@@ -87,9 +87,16 @@ class HomePanel extends React.Component {
         id = "ncs4-bp-content__subtopics-widget-panel__0"
         className = "ncs4-bp-content__subtopics-panel"
       >
+        <button
+          id="ncs4-bp-content__subtopic-btn__0"
+          className="ncs4-bp-content__widget-button ncs4-bp-content__subtopic-btn"
+          title="Home"
+        >
+          <span class="dashicons dashicons-undo"></span>
+        </button>
         <a
           id="ncs4-bp-content__back-to-topics"
-          title="Back to Best Practices Topics"
+          title="Back"
           href = "/resources/best-practices/best-practices-demo/"
         >
           <span class="dashicons dashicons-admin-home"></span>
@@ -100,13 +107,6 @@ class HomePanel extends React.Component {
           onClick = "setPanel(1)"
         >
           <span class="dashicons dashicons-printer"></span>
-        </button>
-        <button
-          id="ncs4-bp-content__subtopic-btn__0"
-          className="ncs4-bp-content__widget-button ncs4-bp-content__subtopic-btn"
-          title="Topic Info"
-        >
-          <span class="dashicons dashicons-info"></span>
         </button>
       </div>
     );
