@@ -4,13 +4,13 @@ import functools
 import os
 import sys
 
-def patternToRegex(pattern: str) -> str:
+def patternToRegex(pattern):
     regex = re.sub("\.", "\.", pattern)
     regex = re.sub("\*", ".*", regex)
     return regex
 
 
-def createIncludeChecker(filePath: str) -> lambda str: bool:
+def createIncludeChecker(filePath):
     with open(filePath) as patternFile:
         patterns = patternFile.readlines()
         def checker(f):
@@ -27,13 +27,13 @@ def createIncludeChecker(filePath: str) -> lambda str: bool:
 
         return checker
 
-def getFileList(dir: str) -> list[str]:
+def getFileList(dir):
     for (path, _, fileNames) in os.walk(dir):
         for file in fileNames:
             yield os.path.join(path, file).replace("\\", "/")
 
 
-def makeZip(dir: str, zipFile: str, ignoreFile: str) -> None:
+def makeZip(dir, zipFile, ignoreFile):
     checker = createIncludeChecker(ignoreFile)
     files = filter(checker, getFileList(dir))
     with zipfile.ZipFile(zipFile, "w") as zip:
@@ -52,7 +52,7 @@ flags = {
     "zipFile": "--out",
 }
 
-def tokenizeArgs(args: dict, flags: dict) -> list[dict]:
+def tokenizeArgs(args, flags):
     tokens = []
     i = 1 # arg 0 is the program name
     while i < len(args):
