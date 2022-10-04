@@ -6,5 +6,43 @@
 /* Yellow */
 /* Grey */
 /* Links */
+[id^=bbpress-forums-].ncs4-forum-feed {
+  margin-bottom: 3rem;
+}
+[id^=bbpress-forums-].ncs4-forum-feed ul {
+  padding: 0;
+  margin: 0;
+}
+[id^=bbpress-forums-].ncs4-forum-feed li.bbp-topic-title, [id^=bbpress-forums-].ncs4-forum-feed li.bbp-body {
+  list-style: none;
+  float: none;
+}
+[id^=bbpress-forums-].ncs4-forum-feed .bbp-header {
+  background-color: #18243E;
+  color: #f4f4f4;
+  padding: 1em 2em;
+}
+[id^=bbpress-forums-].ncs4-forum-feed .bbp-header .bbp-topic-title {
+  font-weight: normal;
+  max-width: unset;
+  width: auto;
+}
+[id^=bbpress-forums-].ncs4-forum-feed .bbp-body {
+  background-color: #e6e6e6;
+  padding: 1em 2em 5rem 2em;
+}
+[id^=bbpress-forums-].ncs4-forum-feed .bbp-body .topic.type-topic {
+  border: none;
+}
+[id^=bbpress-forums-].ncs4-forum-feed .bbp-body .bbp-topic-title {
+  max-width: unset;
+  width: auto;
+}
+[id^=bbpress-forums-].ncs4-forum-feed .bbp-body .bbp-topic-title + .bbp-topic-title {
+  border-top: 1px solid #171717;
+}
+[id^=bbpress-forums-].ncs4-forum-feed .bbp-footer {
+  display: none;
+}
 
 /*# sourceMappingURL=style.css.map */

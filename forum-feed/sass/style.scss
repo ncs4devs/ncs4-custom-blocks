@@ -1,1 +1,49 @@
 @import '../../sass/ncs4-pro-colors';
+
+[id^="bbpress-forums-"].ncs4-forum-feed {
+  margin-bottom: 3rem;
+
+  ul {
+    padding: 0;
+    margin: 0;
+  }
+
+  li.bbp-topic-title, li.bbp-body {
+    list-style: none;
+    float: none;
+  }
+
+  .bbp-header {
+    background-color: $color_primary-1;
+    color: $color_white;
+    padding: 1em 2em;
+
+    .bbp-topic-title {
+      font-weight: normal;
+      max-width: unset;
+      width: auto;
+    }
+  }
+
+  .bbp-body {
+    background-color: $color_white-dark;
+    padding: 1em 2em 5rem 2em;
+
+    .topic.type-topic {
+      border: none;
+    }
+
+    .bbp-topic-title {
+      max-width: unset;
+      width: auto;
+
+      + .bbp-topic-title {
+        border-top: 1px solid $color_secondary-1c;
+      }
+    }
+  }
+
+  .bbp-footer {
+    display: none;
+  }
+}
