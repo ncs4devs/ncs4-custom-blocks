@@ -83,11 +83,13 @@ add_action('init', 'bbpress_enable_rest_api_support', 25);
 
 
 function ncs4_custom_blocks_render_forum_feed($attributes, $content) {
-  $markup = '<div id="bbpress-forums" class="ncs4-forum-feed">';
+  $markup .= sprintf(
+    '<div id="bbpress-forums-%d" class="ncs4-forum-feed drop-shadow">',
+    $attributes["ref"]);
   $topics = get_topics($attributes["ref"], $attributes["maxPosts"]);
 
   $markup .= sprintf('
-    <ul id="bbp-forum-%1" class="bbp-topics">
+    <ul id="bbp-forum-%d" class="bbp-topics">
     ',
     $attributes["ref"],
   );
@@ -140,6 +142,7 @@ function get_topics($fid, $num) {
   $posts = get_posts([
     'numberposts'   => $num,
     'post_type'     => 'topic',
+    'post_parent'   => $fid,
   ]);
   return $posts;
 }
