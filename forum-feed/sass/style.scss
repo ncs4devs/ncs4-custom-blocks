@@ -31,6 +31,10 @@
 
     .topic.type-topic {
       border: none;
+
+      + .topic.type-topic {
+        margin-top: 1em;
+      }
     }
 
     .bbp-topic-title {

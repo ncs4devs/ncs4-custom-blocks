@@ -34,6 +34,9 @@
 [id^=bbpress-forums-].ncs4-forum-feed .bbp-body .topic.type-topic {
   border: none;
 }
+[id^=bbpress-forums-].ncs4-forum-feed .bbp-body .topic.type-topic + .topic.type-topic {
+  margin-top: 1em;
+}
 [id^=bbpress-forums-].ncs4-forum-feed .bbp-body .bbp-topic-title {
   max-width: unset;
   width: auto;
