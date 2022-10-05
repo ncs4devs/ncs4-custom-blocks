@@ -88,6 +88,8 @@ function ncs4_custom_blocks_render_forum_feed($attributes, $content) {
     $attributes["ref"]);
   $topics = get_topics($attributes["ref"], $attributes["maxPosts"]);
 
+  console_log($topics);
+
   $markup .= sprintf('
     <ul id="bbp-forum-%d" class="bbp-topics">
     ',
@@ -143,6 +145,7 @@ function get_topics($fid, $num) {
     'numberposts'   => $num,
     'post_type'     => 'topic',
     'post_parent'   => $fid,
+    'post_status'   => array('publish', 'closed', )
   ]);
   return $posts;
 }
