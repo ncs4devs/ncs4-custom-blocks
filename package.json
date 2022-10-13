@@ -3,6 +3,7 @@
     "@wordpress/scripts": "^23.1.0"
   },
   "dependencies": {
-    "styled-components": "^5.3.5"
+    "nvm": "^0.0.4",
+    "styled-components": "^5.3.6"
   }
 }

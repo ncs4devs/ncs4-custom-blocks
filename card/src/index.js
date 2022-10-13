@@ -46,7 +46,7 @@ const attributes = {
     default: [3, 0, 3, 0],
   },
   useImg: {
-    type: "boolean",
+    type: "bool",
     source: "attribute",
     attribute: "data-use-image",
     selector: ".ncs4-card__banner",

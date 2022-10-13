@@ -118,13 +118,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/esm/extends.js");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _js_ColorSelector__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../js/ColorSelector */ "../js/ColorSelector.js");
-/* harmony import */ var _js_ImageControl__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../js/ImageControl */ "../js/ImageControl.js");
-
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _js_ColorSelector__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../js/ColorSelector */ "../js/ColorSelector.js");
+/* harmony import */ var _js_ImageControl__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../js/ImageControl */ "../js/ImageControl.js");
 
 
 
@@ -133,8 +130,8 @@ __webpack_require__.r(__webpack_exports__);
 function Save(props) {
   let blockProps = props.blockProps;
   let attributes = props.attributes;
-  let bgColor = (0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_4__.fromColorAttribute)(attributes.bannerBg, true);
-  let textColor = (0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_4__.fromColorAttribute)(attributes.bannerColor, false);
+  let bgColor = (0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_3__.fromColorAttribute)(attributes.bannerBg, true);
+  let textColor = (0,_js_ColorSelector__WEBPACK_IMPORTED_MODULE_3__.fromColorAttribute)(attributes.bannerColor, false);
   let imgResolution = attributes.img ? attributes.img.height / attributes.img.width : 9;
   let imgHeight = imgResolution * attributes.imgSize;
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, blockProps, {
@@ -158,22 +155,22 @@ function Save(props) {
       ...bgColor.style,
       ...textColor.style
     }
-  }, attributes.useImg && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_js_ImageControl__WEBPACK_IMPORTED_MODULE_5__.ImageSave, {
+  }, attributes.useImg && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_js_ImageControl__WEBPACK_IMPORTED_MODULE_4__.ImageSave, {
     className: "ncs4-card__icon",
     img: attributes.img
-  }), props.backend ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__.RichText, {
+  }), props.backend ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.RichText, {
     className: "ncs4-card__banner-text",
     tagName: attributes.bannerTag,
     value: attributes.bannerText,
     onChange: props.setAttribute("bannerText"),
     placeholder: "Banner heading"
-  }) : (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__.RichText.Content, {
+  }) : (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.RichText.Content, {
     tagName: attributes.bannerTag,
     className: "ncs4-card__banner-text",
     value: attributes.bannerText
   })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {
     className: "ncs4-card__content"
-  }, props.backend ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__.InnerBlocks, null) : (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__.InnerBlocks.Content, null)));
+  }, props.backend ? (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InnerBlocks, null) : (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InnerBlocks.Content, null)));
 }
 
 /***/ }),
@@ -1425,12 +1422,6 @@ function parseAttributes(table, data) {
             break;
           }
 
-        case "boolean":
-          {
-            out[attr] = JSON.parse(data[attr]);
-            break;
-          }
-
         case "image":
           {
             out[attr] = data[attr][0] || data[attr];
@@ -1966,7 +1957,7 @@ const attributes = {
     default: [3, 0, 3, 0]
   },
   useImg: {
-    type: "boolean",
+    type: "bool",
     source: "attribute",
     attribute: "data-use-image",
     selector: ".ncs4-card__banner",

@@ -12,11 +12,6 @@ export function parseAttributes(table, data) {
           break;
         }
 
-        case "boolean": {
-          out[attr] = JSON.parse(data[attr]);
-          break;
-        }
-
         case "image": {
           out[attr] = data[attr][0] || data[attr];
           break;

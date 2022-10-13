@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { fromColorAttribute } from '../../js/ColorSelector';
 import { ImageSave } from '../../js/ImageControl';
