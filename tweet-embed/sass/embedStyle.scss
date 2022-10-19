@@ -1,0 +1,21 @@
+@import '../../sass/ncs4-pro-colors';
+
+.timeline-Header {
+  display: block;
+  background-color: $color_primary-1;
+  padding: 1em 2em;
+
+  h1 {
+    color: $color_white;
+  }
+  * {
+    color: $color_white;
+  }
+
+}
+
+#__next, .timeline-Body  {
+    height: 100rem;
+    overflow: auto scroll;
+    margin-bottom: 10rem;
+  }

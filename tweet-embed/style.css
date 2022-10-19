@@ -1,0 +1,9 @@
+.ncs4-tweet-embed {
+  margin-bottom: 10rem;
+}
+.ncs4-tweet-embed iframe {
+  overflow: auto scroll;
+  max-height: 100rem;
+}
+
+/*# sourceMappingURL=style.css.map */

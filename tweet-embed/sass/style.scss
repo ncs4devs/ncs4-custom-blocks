@@ -1,0 +1,11 @@
+.ncs4-tweet-embed {
+  // max-height: 100rem;
+  // overflow: auto;
+  margin-bottom: 10rem;
+
+  iframe {
+    overflow: auto scroll;
+    max-height: 100rem;
+  }
+}
+
