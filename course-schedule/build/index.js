@@ -50,7 +50,6 @@ function Markup(props) {
   let blockProps = props.blockProps;
   let attributes = props.attributes;
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, blockProps, {
-    "csv-link": attributes.csvLink,
     "course-code": attributes.courseCode,
     className: ["ncs4-course-schedule", blockProps.className].join(' ')
   }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_editor__WEBPACK_IMPORTED_MODULE_5__.ServerSideRender, {

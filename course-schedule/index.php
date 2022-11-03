@@ -62,7 +62,7 @@ add_action( 'init', 'ncs4_custom_blocks_register_course_schedule');
 
 
 function ncs4_custom_blocks_render_course_schedule($attributes, $content) {
-  $csv = file_get_contents("https://ncs4.usm.edu/wp-content/uploads/2022/11/courses.csv");
+  $csv = file_get_contents(ABSPATH . "/wp-content/uploads/2022/11/courses.csv");
   $course_code = $attributes["courseCode"];
   $index = strpos($csv, $course_code) + strlen($course_code) + 3;
   $course_string = substr($csv, $index);

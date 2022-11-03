@@ -42,7 +42,6 @@ function Markup(props) {
   return (
     <div { ...blockProps }
       { ...{
-        "csv-link": attributes.csvLink,
         "course-code": attributes.courseCode,
       } }
       className = {
