@@ -45,3 +45,4 @@ include 'container/index.php';
 include 'card/index.php';
 include 'forum-feed/index.php';
 include 'tweet-embed/index.php';
+include 'course-schedule/index.php';

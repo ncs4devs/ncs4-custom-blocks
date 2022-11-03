@@ -80,4 +80,4 @@ for token in tokenizeArgs(sys.argv, flags):
         raise NotImplementedError
 
 
-makeZip(**args);
+makeZip(**args)
