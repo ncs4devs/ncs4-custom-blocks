@@ -74,7 +74,7 @@
   max-height: 80vh;
   width: 100%;
   margin: 0 auto;
-  padding: 3.2rem;
+  padding: 2.2rem;
   padding-top: 0;
   overflow: hidden auto;
   border: 16px solid var(--palette-bg-color, #fff);
@@ -119,6 +119,7 @@
   overflow: hidden auto;
   padding: 1em;
   padding-left: 0;
+  min-height: 5em;
 }
 .popup-has-shadow .ncs4-popup__popup-body {
   padding-left: 1em;
