@@ -55,4 +55,25 @@ call npm run build
 cd ../icon
 call npm run build
 
+cd ../button
+call npm run build
+
+cd ../container
+call npm run build
+
+cd ../card
+call npm run build
+
+cd ../forum-feed
+call npm run build
+
+cd ../tweet-embed
+call npm run build
+
+cd ../course-schedule
+call npm run build
+
+cd ../ncs4-publication-search
+call npm run build
+
 cd ../

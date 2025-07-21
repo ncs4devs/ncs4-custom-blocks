@@ -10,14 +10,14 @@
  * License URI: https://www.gnu.org/licenses/gpl-3.0.txt
  */
 
-defined( 'ABSPATH' ) || exit;
+defined('ABSPATH') || exit;
 
 // Include common styles
 wp_register_style(
   'ncs4-custom-blocks_section',
-  plugins_url( 'section.css', __FILE__ ),
+  plugins_url('section.css', __FILE__),
   array(),
-  filemtime( plugin_dir_path( __FILE__ ) . 'section.css' ),
+  filemtime(plugin_dir_path(__FILE__) . 'section.css'),
 );
 
 // Index files to each block
@@ -46,3 +46,4 @@ include 'card/index.php';
 include 'forum-feed/index.php';
 include 'tweet-embed/index.php';
 include 'course-schedule/index.php';
+include 'ncs4-publication-search/ncs4-publication-search.php';
